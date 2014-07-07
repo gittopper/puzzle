@@ -2,101 +2,98 @@
 
 namespace Geometry
 {
-	Solver::Solver():numPlaced(0),progress(0),maxSol(0),dimX(3),dimY(3),dimZ(3)
+	Solver::Solver(const Box initialBox, const vector<PuzzlePart> availablePuzzles):
+		box(initialBox),puzzles(availablePuzzles)
 	{
-		initBox(box,dimX,dimY,dimZ);
-		//    generatePuzzles(puzzles);
-		generateSomaPuzzles(puzzles);
-		cout << puzzles;
 	}
 	void Solver::remove(const PuzzlePart& part)
 	{
 		for(unsigned i = 0; i < part.parts.size(); i++)
 		{
 			const VolPart& vol = part.parts[i];
-			box[vol.xyz[0]][vol.xyz[1]][vol.xyz[2]] -= vol;
+			box.el(vol.getCoords()) -= vol;
 		}
 		numPlaced--;
 	}
-	void Solver::place(const PuzzlePart& part, BOX& b)
+	void Solver::place(const PuzzlePart& part, Box& b)
 	{
 		for(unsigned i = 0; i < part.parts.size(); i++)
 		{
 			const VolPart& vol = part.parts[i];
-			b[vol.xyz[0]][vol.xyz[1]][vol.xyz[2]] += vol;
+			b.el(vol.getCoords()) += vol;
 		}
 		numPlaced++;
 		return;
 	}
-	bool Solver::couldPlace(const PuzzlePart& part, bool& matched)
+	bool Solver::couldPlace(const PuzzlePart& part, bool& matched) const
 	{
 		matched = false;
 		for(unsigned i = 0; i < part.parts.size(); i++)
 		{
 			const VolPart& vol = part.parts[i];
-			if (!box[vol.xyz[0]][vol.xyz[1]][vol.xyz[2]].couldPlace(vol)) return false;
+			if (!box.el(vol.getCoords()).couldPlace(vol)) return false;
 
 			if (matched) continue;
-			matched = matched || box[vol.xyz[0]][vol.xyz[1]][vol.xyz[2]].shareOneOfSides(vol);
+			matched = matched || box.el(vol.getCoords()).shareOneOfSides(vol);
 
-			matched = matched || box[vol.xyz[0]-1][vol.xyz[1]][vol.xyz[2]].shareOneOfSides(vol);
-			matched = matched || box[vol.xyz[0]+1][vol.xyz[1]][vol.xyz[2]].shareOneOfSides(vol);
+			matched = matched || box.el(vol.getCoords()[0]-1, vol.getCoords()[1], vol.getCoords()[2]).shareOneOfSides(vol);
+			matched = matched || box.el(vol.getCoords()[0]+1, vol.getCoords()[1], vol.getCoords()[2]).shareOneOfSides(vol);
 			if (matched) continue;
 
-			matched = matched || box[vol.xyz[0]][vol.xyz[1]-1][vol.xyz[2]].shareOneOfSides(vol);
-			matched = matched || box[vol.xyz[0]][vol.xyz[1]+1][vol.xyz[2]].shareOneOfSides(vol);
+			matched = matched || box.el(vol.getCoords()[0], vol.getCoords()[1]-1, vol.getCoords()[2]).shareOneOfSides(vol);
+			matched = matched || box.el(vol.getCoords()[0], vol.getCoords()[1]+1, vol.getCoords()[2]).shareOneOfSides(vol);
 			if (matched) continue;
 
-			matched = matched || box[vol.xyz[0]][vol.xyz[1]][vol.xyz[2]-1].shareOneOfSides(vol);
-			matched = matched || box[vol.xyz[0]][vol.xyz[1]][vol.xyz[2]+1].shareOneOfSides(vol);
+			matched = matched || box.el(vol.getCoords()[0], vol.getCoords()[1], vol.getCoords()[2]-1).shareOneOfSides(vol);
+			matched = matched || box.el(vol.getCoords()[0], vol.getCoords()[1], vol.getCoords()[2]+1).shareOneOfSides(vol);
 		}
 		return true;
 	}
 	bool Solver::isSqueezed(const VolPart& vol) const
 	{
-		if (vol.fillInfo != VolPart::Angle) return false;
-		BREAK_ON_LINE(!vol.dir[0] || !vol.dir[1] || !vol.dir[2]);
+		if (vol.type() != VolPart::Angle) return false;
+		BREAK_ON_LINE(!vol.getDir()[0] || !vol.getDir()[1] || !vol.getDir()[2]);
 		int n = 0;
-		if (vol.dir[0] != 0)
+		if (vol.getDir()[0] != 0)
 		{
-			const VolPart& nVol = box[vol.xyz[0]+vol.dir[0]][vol.xyz[1]][vol.xyz[2]];
-			if (nVol.fillInfo == VolPart::Full)
+			const VolPart& nVol = box.el(vol.getCoords()[0]+vol.getDir()[0], vol.getCoords()[1], vol.getCoords()[2]);
+			if (nVol.type() == VolPart::Full)
 			{
 				n++;
 			}
-			else if (nVol.fillInfo == VolPart::Angle)
+			else if (nVol.type() == VolPart::Angle)
 			{
-				if (vol.dir[0] * nVol.dir[0] >= 0)
+				if (vol.getDir()[0] * nVol.getDir()[0] >= 0)
 				{
 					n++;
 				}
 			}
 		}
-		if (vol.dir[1] != 0)
+		if (vol.getDir()[1] != 0)
 		{
-			const VolPart& nVol = box[vol.xyz[0]][vol.xyz[1]+vol.dir[1]][vol.xyz[2]];
-			if (nVol.fillInfo == VolPart::Full)
+			const VolPart& nVol = box.el(vol.getCoords()[0], vol.getCoords()[1]+vol.getDir()[1], vol.getCoords()[2]);
+			if (nVol.type() == VolPart::Full)
 			{
 				n++;
 			}
-			else if (nVol.fillInfo == VolPart::Angle)
+			else if (nVol.type() == VolPart::Angle)
 			{
-				if (vol.dir[1] * nVol.dir[1] >= 0)
+				if (vol.getDir()[1] * nVol.getDir()[1] >= 0)
 				{
 					n++;
 				}
 			}
 		}
-		if (vol.dir[2] != 0)
+		if (vol.getDir()[2] != 0)
 		{
-			const VolPart& nVol = box[vol.xyz[0]][vol.xyz[1]][vol.xyz[2]+vol.dir[2]];
-			if (nVol.fillInfo == VolPart::Full)
+			const VolPart& nVol = box.el(vol.getCoords()[0], vol.getCoords()[1], vol.getCoords()[2]+vol.getDir()[2]);
+			if (nVol.type() == VolPart::Full)
 			{
 				n++;
 			}
-			else if (nVol.fillInfo == VolPart::Angle)
+			else if (nVol.type() == VolPart::Angle)
 			{
-				if (vol.dir[2] * nVol.dir[2] >= 0)
+				if (vol.getDir()[2] * nVol.getDir()[2] >= 0)
 				{
 					n++;
 				}
@@ -106,57 +103,57 @@ namespace Geometry
 	}
 	bool Solver::isSqueezedV2(const VolPart& vol) const
 	{
-		if (vol.fillInfo != VolPart::Angle) return false;
+		if (vol.type() != VolPart::Angle) return false;
 
-		BREAK_ON_LINE(dot(vol.dir,vol.dir) == 2);
+		BREAK_ON_LINE(dot(vol.getDir(),vol.getDir()) == 2);
 		int n = 0;
-		if (vol.dir[0] > 0)
+		if (vol.getDir()[0] > 0)
 		{
-			const VolPart& nVol = box[vol.xyz[0]+1][vol.xyz[1]][vol.xyz[2]];
-			if (nVol.fillInfo == VolPart::Full)
+			const VolPart& nVol = box.el(vol.getCoords()[0]+1, vol.getCoords()[1], vol.getCoords()[2]);
+			if (nVol.type() == VolPart::Full)
 			{
 				n++;
 			}
 			else if (nVol.hasSide(0,0)) n++;
 		}
-		if (vol.dir[0] < 0)
+		if (vol.getDir()[0] < 0)
 		{
-			const VolPart& nVol = box[vol.xyz[0]-1][vol.xyz[1]][vol.xyz[2]];
-			if (nVol.fillInfo == VolPart::Full || nVol.hasSide(0,1))
+			const VolPart& nVol = box.el(vol.getCoords()[0]-1, vol.getCoords()[1], vol.getCoords()[2]);
+			if (nVol.type() == VolPart::Full || nVol.hasSide(0,1))
 			{
 				n++;
 			}
 		}
 
-		if (vol.dir[1] > 0)
+		if (vol.getDir()[1] > 0)
 		{
-			const VolPart& nVol = box[vol.xyz[0]][vol.xyz[1]+1][vol.xyz[2]];
-			if (nVol.fillInfo == VolPart::Full || nVol.hasSide(1,0))
+			const VolPart& nVol = box.el(vol.getCoords()[0], vol.getCoords()[1]+1, vol.getCoords()[2]);
+			if (nVol.type() == VolPart::Full || nVol.hasSide(1,0))
 			{
 				n++;
 			}
 		}
-		if (vol.dir[1] < 0)
+		if (vol.getDir()[1] < 0)
 		{
-			const VolPart& nVol = box[vol.xyz[0]][vol.xyz[1]-1][vol.xyz[2]];
-			if (nVol.fillInfo == VolPart::Full || nVol.hasSide(1,1))
+			const VolPart& nVol = box.el(vol.getCoords()[0], vol.getCoords()[1]-1, vol.getCoords()[2]);
+			if (nVol.type() == VolPart::Full || nVol.hasSide(1,1))
 			{
 				n++;
 			}
 		}
 
-		if (vol.dir[2] > 0)
+		if (vol.getDir()[2] > 0)
 		{
-			const VolPart& nVol = box[vol.xyz[0]][vol.xyz[1]][vol.xyz[2]+1];
-			if (nVol.fillInfo == VolPart::Full || nVol.hasSide(2,0))
+			const VolPart& nVol = box.el(vol.getCoords()[0], vol.getCoords()[1], vol.getCoords()[2]+1);
+			if (nVol.type() == VolPart::Full || nVol.hasSide(2,0))
 			{
 				n++;
 			}
 		}
-		if (vol.dir[2] < 0)
+		if (vol.getDir()[2] < 0)
 		{
-			const VolPart& nVol = box[vol.xyz[0]][vol.xyz[1]][vol.xyz[2]-1];
-			if (nVol.fillInfo == VolPart::Full || nVol.hasSide(2,1))
+			const VolPart& nVol = box.el(vol.getCoords()[0], vol.getCoords()[1], vol.getCoords()[2]-1);
+			if (nVol.type() == VolPart::Full || nVol.hasSide(2,1))
 			{
 				n++;
 			}
@@ -177,9 +174,9 @@ namespace Geometry
 				for(int z = bbox.minV[2]; z <= bbox.maxV[2];z++)
 				{
 
-					//          if (isSqueezed(box[x][y][z])) return true;
-					BREAK_ON_LINE(isSqueezed(box[x][y][z]) == isSqueezedV2(box[x][y][z]));
-					if (isSqueezedV2(box[x][y][z])) return true;
+					//          if (isSqueezed(box.el(x, y, z])) return true;
+					BREAK_ON_LINE(isSqueezed(box.el(x, y, z]) == isSqueezedV2(box.el(x, y, z]));
+					if (isSqueezedV2(box.el(x, y, z])) return true;
 				}
 			}
 		}
@@ -206,16 +203,16 @@ namespace Geometry
 	}
 	bool Solver::checkHalf(const VolPart& vol) const
 	{
-		int x = vol.xyz[0];
-		int y = vol.xyz[1];
-		int z = vol.xyz[2];
+		int x = vol.getCoords()[0];
+		int y = vol.getCoords()[1];
+		int z = vol.getCoords()[2];
 		return 
-			box[x-1][y][z].fillInfo == VolPart::Angle && box[x-1][y][z].dir[0]>0 ||
-			box[x+1][y][z].fillInfo == VolPart::Angle && box[x+1][y][z].dir[0]<0 ||
-			box[x][y-1][z].fillInfo == VolPart::Angle && box[x][y-1][z].dir[1]>0 ||
-			box[x][y+1][z].fillInfo == VolPart::Angle && box[x][y+1][z].dir[1]<0 ||
-			box[x][y][z-1].fillInfo == VolPart::Angle && box[x][y][z-1].dir[2]>0 ||
-			box[x][y][z+1].fillInfo == VolPart::Angle && box[x][y][z+1].dir[2]<0;
+			box.el(x-1, y, z).type() == VolPart::Angle && box.el(x-1, y, z).getDir()[0]>0 ||
+			box.el(x+1, y, z).type() == VolPart::Angle && box.el(x+1, y, z).getDir()[0]<0 ||
+			box.el(x, y-1, z).type() == VolPart::Angle && box.el(x, y-1, z).getDir()[1]>0 ||
+			box.el(x, y+1, z).type() == VolPart::Angle && box.el(x, y+1, z).getDir()[1]<0 ||
+			box.el(x, y, z-1).type() == VolPart::Angle && box.el(x, y, z-1).getDir()[2]>0 ||
+			box.el(x, y, z+1).type() == VolPart::Angle && box.el(x, y, z+1).getDir()[2]<0;
 	}
 	bool Solver::hasTwoEmpty() const
 	{
@@ -225,10 +222,10 @@ namespace Geometry
 			{
 				for (int z = 1; z <= dimZ; z++)
 				{
-					if(box[x][y][z].fillInfo == VolPart::Empty && checkHalf(box[x][y][z]) &&(
-						box[x+1][y][z].fillInfo == VolPart::Empty && checkHalf(box[x+1][y][z]) ||
-						box[x][y+1][z].fillInfo == VolPart::Empty && checkHalf(box[x][y+1][z]) ||
-						box[x][y][z+1].fillInfo == VolPart::Empty && checkHalf(box[x][y][z+1])
+					if(box.el(x, y, z).type() == VolPart::Empty && checkHalf(box.el(x, y, z) &&(
+						box.el(x+1, y, z).type() == VolPart::Empty && checkHalf(box.el(x+1, y, z) ||
+						box.el(x, y+1, z).type() == VolPart::Empty && checkHalf(box.el(x, y+1, z) ||
+						box.el(x, y, z+1).type() == VolPart::Empty && checkHalf(box.el(x, y, z+1)
 						))
 						return true;
 				}
@@ -253,7 +250,7 @@ namespace Geometry
 
 	bool Solver::verifyAlgorithm()
 	{
-		BOX tt;
+		Box tt;
 		initBox(tt,dimX,dimY,dimZ);
 		int n = numPlaced;
 		for(unsigned i =0; i < solution.size(); i++)

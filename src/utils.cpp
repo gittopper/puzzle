@@ -2,8 +2,10 @@
 
 using namespace Geometry;
 
-void generatePuzzles(vector<PuzzlePart>& puzzles)
+vector<PuzzlePart>  generateWoodPuzzles()
 {
+	vector<PuzzlePart> puzzles;
+
 	PuzzlePart p1(1);
 	p1.parts.push_back(VolPart(VolPart::Full,IntVector(0,0,0)));
 	p1.parts.push_back(VolPart(VolPart::Full,IntVector(0,1,1)));
@@ -66,9 +68,12 @@ void generatePuzzles(vector<PuzzlePart>& puzzles)
 	p8.parts.push_back(VolPart(VolPart::Angle,IntVector(0,1,1),IntVector(0,1,1)));
 	puzzles.push_back(p8);
 
+	return puzzles;
 }
-void generateSomaPuzzles(vector<PuzzlePart>& puzzles)
+vector<Geometry::PuzzlePart> generateSomaPuzzles()
 {
+	vector<PuzzlePart> puzzles;
+
 	PuzzlePart p1(1);
 	p1.parts.push_back(VolPart(VolPart::Full,IntVector(0,0,0)));
 	p1.parts.push_back(VolPart(VolPart::Full,IntVector(0,1,0)));
@@ -121,10 +126,14 @@ void generateSomaPuzzles(vector<PuzzlePart>& puzzles)
 	p7.parts.push_back(VolPart(VolPart::Full,IntVector(0,1,0)));
 	p7.parts.push_back(VolPart(VolPart::Full,IntVector(1,1,0)));
 	puzzles.push_back(p7);
+
+	return puzzles;
 }
 
-void generatePuzzles2(vector<PuzzlePart>& puzzles)
+vector<Geometry::PuzzlePart> generateTestPuzzles()
 {
+	vector<PuzzlePart> puzzles;
+
 	PuzzlePart p1(1);
 	p1.parts.push_back(VolPart(VolPart::Full,IntVector(0,0,0)));
 	p1.parts.push_back(VolPart(VolPart::Angle,IntVector(0,1,0),IntVector(0,1,-1)));
@@ -144,22 +153,28 @@ void generatePuzzles2(vector<PuzzlePart>& puzzles)
 	p3.parts.push_back(VolPart(VolPart::Angle,IntVector(0,1,0),IntVector(1,1,0)));
 	p3.parts.push_back(VolPart(VolPart::Angle,IntVector(1,0,1),IntVector(1,0,-1)));
 	puzzles.push_back(p3);
+
+	return puzzles;
 }
 
-void initBox(BOX& volume,int dimX,int dimY,int dimZ)
+Box generateEmptyBox(int dimX,int dimY,int dimZ)
 {
+	Box cleanBox(dimX + 2, dimY + 2, dimZ + 2);
+
 	for (int x = 0; x <= dimX + 1; x++)
 	{
-		volume.push_back(vector<vector<VolPart> >());
 		for (int y = 0; y <= dimY + 1; y++)
 		{
-			volume[x].push_back(vector<VolPart>());
 			for (int z = 0; z <= dimZ + 1; z++)
 			{
 				bool isWall = !(x % (dimX + 1)) || !(y % (dimY + 1)) || !(z % (dimZ + 1));
-				volume[x][y].push_back(VolPart(isWall ? VolPart::Full : VolPart::Empty,IntVector(x,y,z),IntVector(0,0,0),isWall));
+				if (isWall)
+				{
+					cleanBox.el(x,y,z) = VolPart(isWall ? VolPart::Full : VolPart::Empty,IntVector(x,y,z),IntVector(0,0,0),isWall);
+				}
 			}
 		}
 	}
+	return cleanBox;
 }
 

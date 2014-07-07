@@ -35,7 +35,7 @@ namespace Geometry
 	{
 		for (vector<VolPart>::iterator it = parts.begin(); it != parts.end(); it++)
 		{
-			(*it).getCoords() = (*it).getCoords() + shift;
+			(*it).setCoords((*it).getCoords() + shift);
 		}
 		return *this;
 	}

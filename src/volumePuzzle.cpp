@@ -1,6 +1,9 @@
 #include "geometry.h"
 #include "print.h"
+#include "solver.h"
 #include "utils.h"
+
+using namespace Geometry;
 
 void makeTests(Solver& solver)
 {
@@ -14,7 +17,7 @@ void makeTests(Solver& solver)
   BREAK_ON_LINE(IntVector(0,1,0).rotate(RotateZ).rotate(RotateZ) == IntVector(0,-1,0));
 
 
-  PuzzlePart part = solver.puzzles[0];
+  PuzzlePart part = solver.getPuzzles()[0];
   part.rotate(RotateX);
   part.centralize();
 
@@ -37,7 +40,7 @@ void makeTests(Solver& solver)
 
 void solvePuzzle()
 {
-  Solver solver;
+  Solver solver(generateEmptyBox(3,4,2),generateWoodPuzzles());
 
   //makeTests(solver);
 

@@ -2,11 +2,11 @@
 
 #include "geometry.h"
 
-void generatePuzzles(vector<Geometry::PuzzlePart>& puzzles);
+vector<Geometry::PuzzlePart> generateWoodPuzzles();
 
-void generateSomaPuzzles(vector<Geometry::PuzzlePart>& puzzles);
+vector<Geometry::PuzzlePart> generateSomaPuzzles();
 
-void generatePuzzles2(vector<Geometry::PuzzlePart>& puzzles);
+vector<Geometry::PuzzlePart> generateTestPuzzles();
 
-void initBox(Geometry::Box& volume,int dimX,int dimY,int dimZ);
+Geometry::Box generateEmptyBox(int dimX,int dimY,int dimZ);
 

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "base.h"
 #include "geometry.h"
 
 namespace Geometry
@@ -8,7 +7,7 @@ namespace Geometry
 	class Solver
 	{
 	public:
-		Solver(const Box& initialBox, const vector<PuzzlePart>& availablePuzzles);
+		Solver(const Box initialBox, const vector<PuzzlePart> availablePuzzles);
 		virtual ~Solver();
 		void remove(const PuzzlePart& part);
 		void place(const PuzzlePart& part, Box& b);
@@ -29,11 +28,12 @@ namespace Geometry
 		bool tryToShow();
 
 		void solve();
+
+		vector<PuzzlePart>& getPuzzles() { return puzzles;}
 	protected:
-		int dimX, dimY, dimZ;
+		Box box;
 		vector<PuzzlePart> solution;
 		vector<vector<PuzzlePart>> solutions;
-		Box box;
 		int numPlaced;
 		vector<PuzzlePart> puzzles;
 		int progress;
