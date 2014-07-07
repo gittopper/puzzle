@@ -3,17 +3,6 @@
 namespace Geometry
 {
 
-	IntVector operator * (const Mat& m, const IntVector& v)
-	{
-		IntVector o;
-		o[0] = int(m.el(0,0) *v[0] + m.el(0,1) *v[1] + m.el(0,2) *v[2]);
-		o[1] = int(m.el(1,0) *v[0] + m.el(1,1) *v[1] + m.el(1,2) *v[2]);
-		o[2] = int(m.el(2,0) *v[0] + m.el(2,1) *v[1] + m.el(2,2) *v[2]);
-		return o;
-	}
-
-
-
 	ostream& operator << (ostream& os, const IntVector& vec)
 	{
 		cout << "(" << vec[0] << "," << vec[1] << "," << vec[2] << ")";

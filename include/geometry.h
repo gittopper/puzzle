@@ -1,3 +1,5 @@
+#pragma once
+
 #include "intvector.h"
 #include "mat.h"
 #include "volpart.h"
@@ -7,10 +9,6 @@
 
 namespace Geometry
 {
-	IntVector operator * (const Mat& m, const IntVector& v);
-
-
-
 	ostream& operator << (ostream& os, const IntVector& vec);
 
 	ostream& operator << (ostream& os, const VolPart& v);

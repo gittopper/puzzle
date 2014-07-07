@@ -1,3 +1,5 @@
+#pragma once
+
 #include "geometry.h"
 
 void generatePuzzles(vector<PuzzlePart>& puzzles);

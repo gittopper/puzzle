@@ -1,4 +1,10 @@
+#pragma once
+
 #include "base.h"
+#include "intvector.h"
+#include "mat.h"
+#include "volpart.h"
+#include "bbox.h"
 
 namespace Geometry
 {
