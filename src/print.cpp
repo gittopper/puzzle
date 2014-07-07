@@ -17,9 +17,13 @@ namespace Geometry
 		return os;
 	}
 
-	ostream& operator << (ostream& os, const PuzzlePart& v)
+	ostream& operator << (ostream& os, const PuzzlePart& p)
 	{
-		v.print();
+		cout<<"Part number "<<p.number<<":"<<endl;
+		for (vector<VolPart>::const_iterator it = parts.cbegin(); it != parts.cend(); it++)
+		{
+			cout<<*it<<endl<<endl;
+		}
 		return os;
 	}
 

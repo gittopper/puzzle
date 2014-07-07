@@ -1,4 +1,5 @@
 #include "geometry.h"
+#include "print.h"
 #include "utils.h"
 
 void makeTests(Solver& solver)

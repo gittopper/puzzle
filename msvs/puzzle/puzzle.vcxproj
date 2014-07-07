@@ -11,20 +11,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\geometry.cpp" />
+    <ClCompile Include="..\..\src\print.cpp" />
     <ClCompile Include="..\..\src\intvector.cpp" />
+    <ClCompile Include="..\..\src\mat.cpp" />
     <ClCompile Include="..\..\src\puzzle.cpp" />
     <ClCompile Include="..\..\src\solver.cpp" />
     <ClCompile Include="..\..\src\utils.cpp" />
+    <ClCompile Include="..\..\src\volpart.cpp" />
     <ClCompile Include="..\..\src\volumePuzzle.cpp" />
-    <ClCompile Include="mat.cpp" />
-    <ClCompile Include="volpart.cpp" />
+    <ClCompile Include="puzzlepart.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\base.h" />
     <ClInclude Include="..\..\include\bbox.h" />
     <ClInclude Include="..\..\include\box.h" />
     <ClInclude Include="..\..\include\geometry.h" />
+    <ClInclude Include="..\..\include\print.h" />
     <ClInclude Include="..\..\include\intvector.h" />
     <ClInclude Include="..\..\include\mat.h" />
     <ClInclude Include="..\..\include\methods.h" />
@@ -62,8 +64,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)\exe\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)\obj\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)\..\exe\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\..\obj\$(Configuration)\</IntDir>
     <IncludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;$(SolutionDir)\..\include</IncludePath>
     <SourcePath>$(VCInstallDir)atlmfc\src\mfc;$(VCInstallDir)atlmfc\src\mfcm;$(VCInstallDir)atlmfc\src\atl;$(VCInstallDir)crt\src;$(SolutionDir)</SourcePath>
   </PropertyGroup>
@@ -86,6 +88,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <BuildLog />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
