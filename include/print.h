@@ -12,5 +12,5 @@ namespace Geometry
 
 	ostream& operator << (ostream& os, const vector<PuzzlePart>& v);
 
-	ostream& operator << (ostream& os, const BOX& v);
+	ostream& operator << (ostream& os, const Box& b);
 }

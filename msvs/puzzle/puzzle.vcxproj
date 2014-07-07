@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\box.cpp" />
     <ClCompile Include="..\..\src\print.cpp" />
     <ClCompile Include="..\..\src\intvector.cpp" />
     <ClCompile Include="..\..\src\mat.cpp" />
@@ -89,6 +90,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <BuildLog />
+    <BuildLog>
+      <Path>$(SolutionDir)\..\obj\$(Configuration)\$(MSBuildProjectName).log</Path>
+    </BuildLog>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>

@@ -27,7 +27,7 @@ namespace Geometry
 	{
 		for (vector<VolPart>::const_iterator it = parts.cbegin(); it != parts.cend(); it++)
 		{
-			box.merge((*it).xyz);
+			box.merge((*it).getCoords());
 		}
 		return;
 	}
@@ -35,20 +35,20 @@ namespace Geometry
 	{
 		for (vector<VolPart>::iterator it = parts.begin(); it != parts.end(); it++)
 		{
-			(*it).xyz = (*it).xyz + shift;
+			(*it).getCoords() = (*it).getCoords() + shift;
 		}
 		return *this;
 	}
 	Mat PuzzlePart::getLCS()
 	{
-		IntVector x = parts[1].xyz - parts[0].xyz;
-		IntVector y = parts[2].xyz - parts[0].xyz;
+		IntVector x = parts[1].getCoords() - parts[0].getCoords();
+		IntVector y = parts[2].getCoords() - parts[0].getCoords();
 		return Mat(x,y,x.cross(y));
 	}
 
 	IntVector PuzzlePart::getZero()
 	{
-		return parts[0].xyz;
+		return parts[0].getCoords();
 	}
 
 	PuzzlePart& PuzzlePart::centralize()

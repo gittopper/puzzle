@@ -10,8 +10,8 @@ namespace Geometry
 	class Box
 	{
 	public:
-		Box(int DX, int DY, int DZ):
-		  dimX(DX),dimY(DY),dimZ(DZ){}
+		Box(int DX, int DY, int DZ);
+
 		VolPart& el(int x,int y,int z)
 		{
 			return box[x * dimZ * dimY + y * dimZ + z];

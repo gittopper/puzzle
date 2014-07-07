@@ -1,5 +1,7 @@
 #include "utils.h"
 
+using namespace Geometry;
+
 void generatePuzzles(vector<PuzzlePart>& puzzles)
 {
 	PuzzlePart p1(1);
