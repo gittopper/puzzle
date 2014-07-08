@@ -33,8 +33,6 @@ namespace Geometry
 
     bool couldPlace(const VolPart& another) const;
 
-    bool match(const VolPart& another) const;
-
     bool shareOneOfSides(const VolPart& another) const;
 
     const IntVector& getCoords() const { return xyz;}
