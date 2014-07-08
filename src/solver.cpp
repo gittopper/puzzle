@@ -249,9 +249,13 @@ namespace Geometry
     }
     if(numPlaced == puzzles.size() - 1 && hasTwoEmpty())
     {
-      puzzleCouldBePlacedSomewhere(seekedPuzzle);
-      cout<<"Found potential solution!"<<endl;
-      tryToShow();
+      if (tryToShow())
+      {
+        if(puzzleCouldBePlacedSomewhere(seekedPuzzle))
+        {
+          cout<<"Found potential solution!"<<endl;
+        }
+      }
     }
     if (numPlaced == puzzles.size())
     {
