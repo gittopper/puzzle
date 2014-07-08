@@ -67,6 +67,14 @@ void solve55()
   cin.get();
 }
 
+void rotatePuzzles(vector<PuzzlePart>& puzzles, Mat rot)
+{
+  for(vector<PuzzlePart>::iterator it = puzzles.begin(); it != puzzles.end(); it++)
+  {
+    (*it).rotate(rot);
+  }
+}
+
 bool makeGeneralTests()
 {
   BREAK_ON_LINE(IntVector(0,0,1).rotate(RotateX) == IntVector(0,1,0));
@@ -94,6 +102,16 @@ bool makeGeneralTests()
   BREAK_ON_LINE(areEqual);
 
   Mat m(IntVector(0,-1,0),IntVector(0,0,1),IntVector(1,0,0));
+
+  Mat rotX(1,0,0, 0,0,-1, 0,1,0);
+  Mat rotZ(0,-1,0, 1,0,0, 0,0,1);
+
+  vector<PuzzlePart> rotatedPuzzles = puzzles;
+  rotatePuzzles(rotatedPuzzles,rotX);
+  BREAK_ON_LINE(puzzlesCouldBeCombined(rotatedPuzzles,puzzles));
+  rotatePuzzles(rotatedPuzzles,rotZ);
+  BREAK_ON_LINE(puzzlesCouldBeCombined(rotatedPuzzles,puzzles));
+
   Mat r = m * m.inverse();
   Mat e(IntVector(1,0,0),IntVector(0,1,0),IntVector(0,0,1));
   BREAK_ON_LINE(r == e);

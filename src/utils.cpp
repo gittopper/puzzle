@@ -156,4 +156,3 @@ vector<Geometry::PuzzlePart> generateTestPuzzles()
 
   return puzzles;
 }
-

@@ -39,14 +39,14 @@ namespace Geometry
     }
     return *this;
   }
-  Mat PuzzlePart::getLCS()
+  Mat PuzzlePart::getLCS() const
   {
     IntVector x = parts[1].getCoords() - parts[0].getCoords();
     IntVector y = parts[2].getCoords() - parts[0].getCoords();
     return Mat(x,y,x.cross(y));
   }
 
-  IntVector PuzzlePart::getZero()
+  IntVector PuzzlePart::getZero() const
   {
     return parts[0].getCoords();
   }
@@ -61,5 +61,37 @@ namespace Geometry
   PuzzlePart PuzzlePart::copy() const
   {
     return PuzzlePart(*this);
+  }
+
+  bool puzzlesCouldBeCombined(const vector<Geometry::PuzzlePart>& vec1, const vector<Geometry::PuzzlePart>& vec2)
+  {
+    if (vec1.size() != vec2.size()) return false;
+    for(unsigned i=0;i<vec1.size();i++)
+    {
+      if (vec1[i].number != vec2[i].number) return false;
+    }
+
+    Mat rot1 = vec1[0].getLCS();
+    Mat rot2 = vec2[0].getLCS();
+
+    Mat invRot1 = rot1.inverse();
+    Mat res = rot2 * invRot1;
+    IntVector prevShift = -vec1[0].getZero();
+    IntVector shift = vec2[0].getZero();
+
+    bool theSame = true;
+
+    for(unsigned i=0;i<vec2.size();i++)
+    {
+      PuzzlePart p = vec1[i];
+
+      p.shift(prevShift);
+      p.rotate(res);
+      p.shift(shift);
+      theSame = theSame && p == vec2[i];
+      if (!theSame) break;
+    }
+
+    return theSame;
   }
 }

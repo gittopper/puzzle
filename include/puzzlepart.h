@@ -24,9 +24,9 @@ namespace Geometry
 
     PuzzlePart& shift(const IntVector& shift);
 
-    Mat getLCS();
+    Mat getLCS() const;
 
-    IntVector getZero();
+    IntVector getZero() const;
 
     PuzzlePart& centralize();
 
@@ -37,4 +37,6 @@ namespace Geometry
     int number;
     vector<VolPart> parts;
   };
+
+  bool puzzlesCouldBeCombined(const vector<Geometry::PuzzlePart>& vec1, const vector<Geometry::PuzzlePart>& vec2);
 }

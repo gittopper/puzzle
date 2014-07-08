@@ -1,4 +1,5 @@
 #include "solver.h"
+#include "utils.h"
 #include "print.h"
 
 namespace Geometry
@@ -156,36 +157,9 @@ namespace Geometry
 
     for(unsigned iSol = 0; iSol < solutions.size(); iSol ++)
     {
-      if (solutions[iSol].size() != sol.size() && sol.size()) continue;
 
-      vector<PuzzlePart>& prevSol = solutions[iSol];
-      for(unsigned i=0;i<prevSol.size();i++)
-      {
-        if (prevSol[i].number != sol[i].number) continue;
-      }
+      if (puzzlesCouldBeCombined(solutions[iSol],sol)) return false;
 
-      Mat rot1 = prevSol[0].getLCS();
-      Mat rot2 = sol[0].getLCS();
-
-      Mat res = rot2 * rot1.inverse();
-      IntVector prevShift = -prevSol[0].getZero();
-      IntVector shift = sol[0].getZero();
-
-      bool theSame = true;
-
-      for(unsigned i=0;i<sol.size();i++)
-      {
-        PuzzlePart p = prevSol[i];
-
-        p.shift(prevShift).rotate(res).shift(shift);
-        theSame = theSame && p == sol[i];
-        if (!theSame) break;
-      }
-
-      if (theSame)
-      {
-        return false;
-      }
     }
     solutions.push_back(sol);
     return true;

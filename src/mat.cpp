@@ -16,6 +16,20 @@ namespace Geometry
     el(1,2) = v3[1];
     el(2,2) = v3[2];
   }
+  Mat::Mat(int a00,int a01,int a02,int a10,int a11,int a12,int a20,int a21,int a22)
+  {
+    el(0,0) = a00;
+    el(0,1) = a01;
+    el(0,2) = a02;
+
+    el(1,0) = a10;
+    el(1,1) = a11;
+    el(1,2) = a12;
+
+    el(2,0) = a20;
+    el(2,1) = a21;
+    el(2,2) = a22;
+  }
   double Mat::det()const
   {
     return el(0,0)*el(1,1)*el(2,2)+el(1,0)*el(2,1)*el(0,2)+el(0,1)*el(1,2)*el(2,0) - el(2,0)*el(1,1)*el(0,2)-el(1,0)*el(0,1)*el(2,2)-el(2,1)*el(1,2)*el(0,0);
