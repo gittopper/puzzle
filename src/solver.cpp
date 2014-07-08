@@ -4,9 +4,10 @@
 namespace Geometry
 {
 	Solver::Solver(int xDim,int yDim,int zDim, const vector<PuzzlePart> availablePuzzles):
-		puzzles(availablePuzzles),dimX(xDim),dimY(yDim),dimZ(zDim),box(0,0,0)
+		puzzles(availablePuzzles),dimX(xDim),dimY(yDim),dimZ(zDim),box(0,0,0),numPlaced(0),maxSol(-1)
 	{
-		generateEmptyBox_(dimX+2,dimY+2,dimZ+2);
+		box = generateEmptyBox_(dimX,dimY,dimZ);
+		cout << puzzles;
 	}
 	void Solver::remove(const PuzzlePart& part)
 	{
@@ -214,10 +215,10 @@ namespace Geometry
 	void Solver::solve()
 	{
 		BREAK_ON_LINE(verifyAlgorithm());
-		//     if (maxSol<numPlaced && (numPlaced < puzzles.size() - 1) || numPlaced == puzzles.size() - 1 && hasTwoEmpty())
-		//     {
-		//       tryToShow();
-		//     }
+		if (maxSol<numPlaced && (numPlaced < puzzles.size() - 1) || numPlaced == puzzles.size() - 1 && hasTwoEmpty())
+		{
+		  tryToShow();
+		}
 		if (numPlaced == puzzles.size())
 		{
 			tryToShow();
