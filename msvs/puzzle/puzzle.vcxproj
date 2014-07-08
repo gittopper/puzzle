@@ -16,11 +16,11 @@
     <ClCompile Include="..\..\src\intvector.cpp" />
     <ClCompile Include="..\..\src\mat.cpp" />
     <ClCompile Include="..\..\src\puzzle.cpp" />
+    <ClCompile Include="..\..\src\puzzlepart.cpp" />
     <ClCompile Include="..\..\src\solver.cpp" />
     <ClCompile Include="..\..\src\utils.cpp" />
     <ClCompile Include="..\..\src\volpart.cpp" />
     <ClCompile Include="..\..\src\volumePuzzle.cpp" />
-    <ClCompile Include="puzzlepart.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\base.h" />

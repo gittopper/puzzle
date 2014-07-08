@@ -39,10 +39,10 @@
     <ClCompile Include="..\..\src\print.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
-    <ClCompile Include="puzzlepart.cpp">
+    <ClCompile Include="..\..\src\box.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\box.cpp">
+    <ClCompile Include="..\..\src\puzzlepart.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
   </ItemGroup>
