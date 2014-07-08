@@ -40,11 +40,13 @@ void makeTests(Solver& solver)
 
 void solvePuzzle()
 {
+  //Solver testSolver(2,2,2,generateTestPuzzles());
+
   Solver solver(3,4,2,generateWoodPuzzles());
-
   //makeTests(solver);
-
   solver.solve();
+
+  //Solver somaSolver(3,3,3,generateSomaPuzzles());
 
   cout << "Press any key to exit..."<<flush;
   cin.get();
