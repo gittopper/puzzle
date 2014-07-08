@@ -7,7 +7,7 @@ namespace Geometry
 		return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
 	}
 
-	IntVector::IntVector(int i = 0, int j = 0, int k = 0)
+	IntVector::IntVector(int i, int j, int k)
 	{
 		vec[0] = i;
 		vec[1] = j;

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 #include <assert.h>
 #include <iostream>
@@ -8,6 +10,6 @@ struct ex
 
 };
 
-//#define BREAK_ON_LINE(x) if (!(x)) { throw ex();}
+#define BREAK_ON_LINE(x) if (!(x)) { throw ex();}
 //#define BREAK_ON_LINE(x) assert(x);
-#define BREAK_ON_LINE(x)
+//#define BREAK_ON_LINE(x)

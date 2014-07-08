@@ -1,3 +1,5 @@
+#pragma once
+
 #include "base.h"
 #include "geometry.h"
 
@@ -6,7 +8,9 @@ namespace Geometry
 	class BBox
 	{
 	public:
-		BBox():minV(1000,1000,1000),maxV(-1000,-1000,-1000){}
+		BBox():
+		  minV(1000,1000,1000),
+		  maxV(-1000,-1000,-1000){}
 		void merge(const IntVector& v)
 		{
 			minV[0] = minV[0] > v[0] ? v[0] : minV[0];

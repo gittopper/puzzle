@@ -3,17 +3,6 @@
 namespace Geometry
 {
 
-	IntVector operator * (const Mat& m, const IntVector& v)
-	{
-		IntVector o;
-		o[0] = int(m.el(0,0) *v[0] + m.el(0,1) *v[1] + m.el(0,2) *v[2]);
-		o[1] = int(m.el(1,0) *v[0] + m.el(1,1) *v[1] + m.el(1,2) *v[2]);
-		o[2] = int(m.el(2,0) *v[0] + m.el(2,1) *v[1] + m.el(2,2) *v[2]);
-		return o;
-	}
-
-
-
 	ostream& operator << (ostream& os, const IntVector& vec)
 	{
 		cout << "(" << vec[0] << "," << vec[1] << "," << vec[2] << ")";
@@ -22,13 +11,19 @@ namespace Geometry
 
 	ostream& operator << (ostream& os, const VolPart& v)
 	{
-		v.print();
+		cout<<(v.type() == VolPart::Empty ? "Empty" : v.type() == VolPart::Full ? "Full" : "Angle");
+		cout<<v.getCoords();
+		if (v.type() == VolPart::Angle) cout << "," << v.getDir();
 		return os;
 	}
 
-	ostream& operator << (ostream& os, const PuzzlePart& v)
+	ostream& operator << (ostream& os, const PuzzlePart& p)
 	{
-		v.print();
+		cout<<"Part number "<<p.number<<":"<<endl;
+		for (vector<VolPart>::const_iterator it = p.parts.cbegin(); it != p.parts.cend(); it++)
+		{
+			cout<<*it<<endl<<endl;
+		}
 		return os;
 	}
 
@@ -42,18 +37,18 @@ namespace Geometry
 	}
 
 
-	ostream& operator << (ostream& os, const BOX& v)
+	ostream& operator << (ostream& os, const Box& b)
 	{
-		int dimX = v.size();
-		int dimY = v[0].size();
-		int dimZ = v[0][0].size();
+		int dimX = b.getDimX();
+		int dimY = b.getDimY();
+		int dimZ = b.getDimZ();
 		for(int x = dimX - 1; x >= 0; x--)
 		{
 			for(int z = dimZ - 1; z >= 0; z--)
 			{
 				for(int y = 0; y <= dimY - 1; y++)
 				{
-					VolPart::VolType t = v[x][y][z].fillInfo;
+					VolPart::VolType t = b.el(x, y, z).type();
 					char s = t == VolPart::Empty ? ' ' : t == VolPart::Full ? 178 : 176;
 					//cout << v[i][j][k];
 					cout << s;

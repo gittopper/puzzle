@@ -1,33 +1,13 @@
-#include "base.h"
+#include "volpart.h"
 
 namespace Geometry
 {
-	struct VolPart
-	{
-		enum VolType
-		{
-			Empty,
-			Full,
-			Angle
-		};
-		VolType fillInfo;
-		IntVector xyz, dir;
-		VolPart(VolType t, IntVector coord, IntVector iniDir = IntVector(0,0,0), bool w = false):fillInfo(t),xyz(coord),dir(iniDir),wall(w){}
-		bool wall;
-
-		void print() const
-		{
-			cout<<(fillInfo == Empty ? "Empty" : fillInfo == Full ? "Full" : "Angle");
-			cout<<xyz;
-			if (fillInfo == Angle) cout<<","<<dir;
-		}
-
-		bool operator==(const VolPart& vol) const
+		bool VolPart::operator==(const VolPart& vol) const
 		{
 			return xyz == vol.xyz && fillInfo == vol.fillInfo && ( fillInfo != Angle || dir == vol.dir); 
 		}
 
-		bool hasSide(int dim, int val) const
+		bool VolPart::hasSide(int dim, int val) const
 		{
 			if (fillInfo == Empty) return false;
 			if (fillInfo == Full) return true;
@@ -35,7 +15,7 @@ namespace Geometry
 			return dir[dim] * (1 - 2 * val) >= 0;
 		}
 
-		VolPart& operator+=(const VolPart& v)
+		VolPart& VolPart::operator+=(const VolPart& v)
 		{
 			BREAK_ON_LINE(xyz == v.xyz);
 			if (fillInfo == Empty)
@@ -53,7 +33,7 @@ namespace Geometry
 			return *this;
 		}
 
-		VolPart& rotate(RotType rot)
+		VolPart& VolPart::rotate(RotType rot)
 		{
 			BREAK_ON_LINE(fillInfo != Empty);
 			xyz.rotate(rot);
@@ -61,14 +41,14 @@ namespace Geometry
 			return *this;
 		}
 
-		VolPart& rotate(const Mat& m)
+		VolPart& VolPart::rotate(const Mat& m)
 		{
 			xyz = m * xyz;
 			if (fillInfo == Angle)  dir = m * dir;
 			return *this;
 		}
 
-		VolPart& operator-=(const VolPart& another)
+		VolPart& VolPart::operator-=(const VolPart& another)
 		{
 			if (fillInfo == Full)
 			{
@@ -102,18 +82,18 @@ namespace Geometry
 			}
 			return *this;
 		}
-		bool couldPlace(const VolPart& another) const
+		bool VolPart::couldPlace(const VolPart& another) const
 		{
 			BREAK_ON_LINE(xyz == another.xyz && another.fillInfo != Empty);
 			return fillInfo == Empty
 				|| fillInfo == Angle && another.fillInfo == Angle && dir == -another.dir
 				|| fillInfo == Full && another.fillInfo == Empty; 
 		}
-		bool match(const VolPart& another) const
+		bool VolPart::match(const VolPart& another) const
 		{
 			return fillInfo != Empty && another.fillInfo != Empty && !wall && !another.wall;
 		}
-		bool shareOneOfSides(const VolPart& another) const
+		bool VolPart::shareOneOfSides(const VolPart& another) const
 		{
 			BREAK_ON_LINE(dot(xyz - another.xyz, xyz - another.xyz)<=1);
 
@@ -143,5 +123,4 @@ namespace Geometry
 			BREAK_ON_LINE(false);
 			return false;
 		}
-	};
 }
