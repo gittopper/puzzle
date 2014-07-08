@@ -89,10 +89,6 @@ namespace Geometry
       || fillInfo == Angle && another.fillInfo == Angle && dir == -another.dir
       || fillInfo == Full && another.fillInfo == Empty; 
   }
-  bool VolPart::match(const VolPart& another) const
-  {
-    return fillInfo != Empty && another.fillInfo != Empty && !wall && !another.wall;
-  }
   bool VolPart::shareOneOfSides(const VolPart& another) const
   {
     BREAK_ON_LINE(dot(xyz - another.xyz, xyz - another.xyz)<=1);

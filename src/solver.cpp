@@ -8,7 +8,7 @@ namespace Geometry
     puzzles(availablePuzzles),dimX(xDim),dimY(yDim),dimZ(zDim),box(0,0,0),numPlaced(0),maxSol(0),progress(0),seekedPuzzle(9)
   {
     box = generateEmptyBox_(dimX,dimY,dimZ);
-    cout << puzzles;
+
     seekedPuzzle.parts.push_back(VolPart(VolPart::Full,IntVector(0,0,0)));
     seekedPuzzle.parts.push_back(VolPart(VolPart::Full,IntVector(0,0,1)));
     seekedPuzzle.parts.push_back(VolPart(VolPart::Angle,IntVector(0,1,0),IntVector(0,1,1)));
@@ -82,7 +82,7 @@ namespace Geometry
       return false;
     }
     place(part,box);
-    if (hasSqueezed(part))
+	if (hasSqueezed(part))
     {
       remove(part);
       return false;
@@ -266,12 +266,7 @@ namespace Geometry
     {
       if (puzzles[iPuzzle].busy) continue;
 
-      if (false && numPlaced == 1 && progress< 1003 ) 
-      {
-        cout <<++progress<<endl;
-        return;
-      }
-      puzzles[iPuzzle].busy = true;
+	  puzzles[iPuzzle].busy = true;
 
       PuzzlePart part = puzzles[iPuzzle];
       for (int i = 0; i < 6; i++)
@@ -319,6 +314,9 @@ namespace Geometry
                 if (tryToPlace(part3))
                 {
                   solution.push_back(part3);
+
+				  //Mat t = part3.getRotationMatrix(puzzles[iPuzzle]);
+
                   solve();
                   remove(part3);
                   solution.pop_back();

@@ -24,6 +24,8 @@ namespace Geometry
 
     PuzzlePart& shift(const IntVector& shift);
 
+	Mat getRotationMatrix(const PuzzlePart& part) const;
+
     Mat getLCS() const;
 
     IntVector getZero() const;
