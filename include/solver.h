@@ -29,9 +29,12 @@ namespace Geometry
 
     void solve();
 
+    bool puzzleCouldBePlacedSomewhere(const PuzzlePart& partToCheck);
     vector<PuzzlePart>& getPuzzles() { return puzzles;}
   protected:
     Box generateEmptyBox_(int dimX,int dimY,int dimZ);
+
+    PuzzlePart seekedPuzzle;
 
     int dimX, dimY, dimZ;
     Box box;

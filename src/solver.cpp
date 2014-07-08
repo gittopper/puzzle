@@ -5,10 +5,14 @@
 namespace Geometry
 {
   Solver::Solver(int xDim,int yDim,int zDim, const vector<PuzzlePart> availablePuzzles):
-    puzzles(availablePuzzles),dimX(xDim),dimY(yDim),dimZ(zDim),box(0,0,0),numPlaced(0),maxSol(0),progress(0)
+    puzzles(availablePuzzles),dimX(xDim),dimY(yDim),dimZ(zDim),box(0,0,0),numPlaced(0),maxSol(0),progress(0),seekedPuzzle(9)
   {
     box = generateEmptyBox_(dimX,dimY,dimZ);
     cout << puzzles;
+    seekedPuzzle.parts.push_back(VolPart(VolPart::Full,IntVector(0,0,0)));
+    seekedPuzzle.parts.push_back(VolPart(VolPart::Full,IntVector(0,0,1)));
+    seekedPuzzle.parts.push_back(VolPart(VolPart::Angle,IntVector(0,1,0),IntVector(0,1,1)));
+    seekedPuzzle.parts.push_back(VolPart(VolPart::Angle,IntVector(0,1,1),IntVector(1,1,0)));
   }
   void Solver::remove(const PuzzlePart& part)
   {
@@ -186,11 +190,67 @@ namespace Geometry
     return false;
   }
 
+  bool Solver::puzzleCouldBePlacedSomewhere(const PuzzlePart& partToCheck)
+  {
+    PuzzlePart part = partToCheck;
+    for (int i = 0; i < 6; i++)
+    {
+      if (i < 4)
+      {
+        part.rotate(RotateY);
+      }
+      else if (i == 4)
+      {
+        part.rotate(RotateX);
+      }else
+      {
+        part.rotate(RotateX);
+        part.rotate(RotateX);
+      }
+      PuzzlePart part2 = part;
+      for (int j = 0; j < 4; j++)
+      {
+        part2.rotate(RotateZ).centralize();
+        BBox boundaries;
+        part2.getBBox(boundaries);
+        int xmax = dimX - boundaries.maxV[0];
+        int ymax = dimY - boundaries.maxV[1];
+        int zmax = dimZ - boundaries.maxV[2];
+
+        if (xmax < 1 || ymax < 1 || zmax < 1 ) continue;
+
+        for(int x = 1; x <= xmax;x++)
+        {
+          for(int y = 1; y <= ymax;y++)
+          {
+            for(int z = 1; z <= zmax;z++)
+            {
+              PuzzlePart part3 = part2;
+              part3.shift(IntVector(x,y,z));
+              if (tryToPlace(part3))
+              {
+                remove(part3);
+                return true;
+              }
+            }
+          }
+        }
+      }
+    }
+    return false;
+  }
+
   void Solver::solve()
   {
     BREAK_ON_LINE(verifyAlgorithm());
-    if (maxSol<numPlaced && (numPlaced < puzzles.size() - 1) || numPlaced == puzzles.size() - 1 && hasTwoEmpty())
+    if (maxSol<numPlaced && (numPlaced < puzzles.size() - 1))
     {
+      tryToShow();
+    }
+    if(numPlaced == puzzles.size() - 1 && hasTwoEmpty())
+    {
+      puzzleCouldBePlacedSomewhere(seekedPuzzle);
+      cout<<"Found potential solution!"<<endl;
       tryToShow();
     }
     if (numPlaced == puzzles.size())
