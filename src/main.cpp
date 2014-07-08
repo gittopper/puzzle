@@ -125,11 +125,11 @@ void solvePuzzle()
   BREAK_ON_LINE(makeGeneralTests());
 //   Solver testSolver(2,2,2,generateTestPuzzles());
 
-//   Solver solver(3,4,2,generateWoodPuzzles());
-//   solver.solve();
+  Solver solver(3,4,2,generateWoodPuzzles());
+  solver.solve();
 
-  Solver somaSolver(3,3,3,generateSomaPuzzles());
-  somaSolver.solve();
+//  Solver somaSolver(3,3,3,generateSomaPuzzles());
+//  somaSolver.solve();
 
   cout << "Press any key to exit..."<<flush;
   cin.get();

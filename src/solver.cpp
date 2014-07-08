@@ -236,12 +236,12 @@ namespace Geometry
 
           if (xmax < 1 || ymax < 1 || zmax < 1 ) continue;
 
-          if (numPlaced == 0)
-          {
-            xmax = xmax / 2 + 1;
-            ymax = ymax / 2 + 1;
-            zmax = zmax / 2 + 1;
-          }
+//           if (numPlaced == 0)
+//           {
+//             xmax = xmax / 2 + 1;
+//             ymax = ymax / 2 + 1;
+//             zmax = zmax / 2 + 1;
+//           }
 
 
           for(int x = 1; x <= xmax;x++)
