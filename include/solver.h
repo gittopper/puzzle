@@ -10,7 +10,7 @@ namespace Geometry
 	{
 	public:
 		Solver(int xDim,int yDim,int zDim, const vector<PuzzlePart> availablePuzzles);
-		virtual ~Solver();
+		virtual ~Solver(){}
 		void remove(const PuzzlePart& part);
 		void place(const PuzzlePart& part, Box& b);
 		bool couldPlace(const PuzzlePart& part, bool& matched) const;
