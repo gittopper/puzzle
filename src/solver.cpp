@@ -4,7 +4,7 @@
 namespace Geometry
 {
 	Solver::Solver(int xDim,int yDim,int zDim, const vector<PuzzlePart> availablePuzzles):
-		puzzles(availablePuzzles),dimX(xDim),dimY(yDim),dimZ(zDim),box(0,0,0),numPlaced(0),maxSol(-1)
+		puzzles(availablePuzzles),dimX(xDim),dimY(yDim),dimZ(zDim),box(0,0,0),numPlaced(0),maxSol(0)
 	{
 		box = generateEmptyBox_(dimX,dimY,dimZ);
 		cout << puzzles;
