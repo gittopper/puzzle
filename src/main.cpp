@@ -125,7 +125,9 @@ void solvePuzzle()
   BREAK_ON_LINE(makeGeneralTests());
 //   Solver testSolver(2,2,2,generateTestPuzzles());
 
-  Solver solver(3,4,2,generateWoodPuzzles());
+  vector<PuzzlePart> puzzles = generateWoodPuzzles();
+  Solver solver(3,4,2,puzzles);
+  cout << puzzles;
   solver.solve();
 
 //  Solver somaSolver(3,3,3,generateSomaPuzzles());

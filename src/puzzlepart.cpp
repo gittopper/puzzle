@@ -63,6 +63,17 @@ namespace Geometry
     return PuzzlePart(*this);
   }
 
+  Mat PuzzlePart::getRotationMatrix(const PuzzlePart& part) const
+  {
+	  Mat rot1 = getLCS();
+	  Mat rot2 = part.getLCS();
+
+	  Mat invRot1 = rot1.inverse();
+	  Mat res = rot2 * invRot1;
+	  BREAK_ON_LINE(res.det() == 1);
+	  return res;
+  }
+
   bool puzzlesCouldBeCombined(const vector<Geometry::PuzzlePart>& vec1, const vector<Geometry::PuzzlePart>& vec2)
   {
     if (vec1.size() != vec2.size()) return false;
@@ -71,12 +82,9 @@ namespace Geometry
       if (vec1[i].number != vec2[i].number) return false;
     }
 
-    Mat rot1 = vec1[0].getLCS();
-    Mat rot2 = vec2[0].getLCS();
+    Mat res = vec1[0].getRotationMatrix(vec2[0]);
 
-    Mat invRot1 = rot1.inverse();
-    Mat res = rot2 * invRot1;
-    IntVector prevShift = -vec1[0].getZero();
+	IntVector prevShift = -vec1[0].getZero();
     IntVector shift = vec2[0].getZero();
 
     bool theSame = true;
@@ -88,7 +96,7 @@ namespace Geometry
       p.shift(prevShift);
       p.rotate(res);
       p.shift(shift);
-      theSame = theSame && p == vec2[i];
+      theSame = p == vec2[i];
       if (!theSame) break;
     }
 
