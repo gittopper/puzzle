@@ -1,0 +1,1 @@
+puzzle.exe > result.log
