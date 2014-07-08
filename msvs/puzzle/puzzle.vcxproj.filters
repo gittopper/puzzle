@@ -62,9 +62,6 @@
     <ClInclude Include="..\..\include\mat.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\methods.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\puzzlepart.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>

@@ -30,7 +30,6 @@
     <ClInclude Include="..\..\include\print.h" />
     <ClInclude Include="..\..\include\intvector.h" />
     <ClInclude Include="..\..\include\mat.h" />
-    <ClInclude Include="..\..\include\methods.h" />
     <ClInclude Include="..\..\include\puzzlepart.h" />
     <ClInclude Include="..\..\include\solver.h" />
     <ClInclude Include="..\..\include\utils.h" />
