@@ -38,13 +38,13 @@ namespace Geometry
 		bool shareOneOfSides(const VolPart& another) const;
 
 		const IntVector& getCoords() const { return xyz;}
-		IntVector& setCoords(const IntVector& coords) { xyz = coords;}
+		void setCoords(const IntVector& coords) { xyz = coords;}
 
 		const IntVector& getDir() const { return dir;}
 		void setDir(const IntVector& d) { dir = d;}
 
 		VolType type() const { return fillInfo;}
-		VolType setType(VolType t) { fillInfo = t;}
+		void setType(VolType t) { fillInfo = t;}
 	private:
 
 		VolType fillInfo;

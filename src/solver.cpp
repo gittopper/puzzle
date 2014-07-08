@@ -1,27 +1,21 @@
 #include "solver.h"
+#include "print.h"
 
 namespace Geometry
 {
-	Solver::Solver(const Box initialBox, const vector<PuzzlePart> availablePuzzles):
-		box(initialBox),puzzles(availablePuzzles)
+	Solver::Solver(int xDim,int yDim,int zDim, const vector<PuzzlePart> availablePuzzles):
+		puzzles(availablePuzzles),dimX(xDim),dimY(yDim),dimZ(zDim),box(0,0,0)
 	{
+		generateEmptyBox_(dimX+2,dimY+2,dimZ+2);
 	}
 	void Solver::remove(const PuzzlePart& part)
 	{
-		for(unsigned i = 0; i < part.parts.size(); i++)
-		{
-			const VolPart& vol = part.parts[i];
-			box.el(vol.getCoords()) -= vol;
-		}
+		box.remove(part.parts);
 		numPlaced--;
 	}
 	void Solver::place(const PuzzlePart& part, Box& b)
 	{
-		for(unsigned i = 0; i < part.parts.size(); i++)
-		{
-			const VolPart& vol = part.parts[i];
-			b.el(vol.getCoords()) += vol;
-		}
+		box.add(part.parts);
 		numPlaced++;
 		return;
 	}
@@ -49,118 +43,6 @@ namespace Geometry
 		}
 		return true;
 	}
-	bool Solver::isSqueezed(const VolPart& vol) const
-	{
-		if (vol.type() != VolPart::Angle) return false;
-		BREAK_ON_LINE(!vol.getDir()[0] || !vol.getDir()[1] || !vol.getDir()[2]);
-		int n = 0;
-		if (vol.getDir()[0] != 0)
-		{
-			const VolPart& nVol = box.el(vol.getCoords()[0]+vol.getDir()[0], vol.getCoords()[1], vol.getCoords()[2]);
-			if (nVol.type() == VolPart::Full)
-			{
-				n++;
-			}
-			else if (nVol.type() == VolPart::Angle)
-			{
-				if (vol.getDir()[0] * nVol.getDir()[0] >= 0)
-				{
-					n++;
-				}
-			}
-		}
-		if (vol.getDir()[1] != 0)
-		{
-			const VolPart& nVol = box.el(vol.getCoords()[0], vol.getCoords()[1]+vol.getDir()[1], vol.getCoords()[2]);
-			if (nVol.type() == VolPart::Full)
-			{
-				n++;
-			}
-			else if (nVol.type() == VolPart::Angle)
-			{
-				if (vol.getDir()[1] * nVol.getDir()[1] >= 0)
-				{
-					n++;
-				}
-			}
-		}
-		if (vol.getDir()[2] != 0)
-		{
-			const VolPart& nVol = box.el(vol.getCoords()[0], vol.getCoords()[1], vol.getCoords()[2]+vol.getDir()[2]);
-			if (nVol.type() == VolPart::Full)
-			{
-				n++;
-			}
-			else if (nVol.type() == VolPart::Angle)
-			{
-				if (vol.getDir()[2] * nVol.getDir()[2] >= 0)
-				{
-					n++;
-				}
-			}
-		}
-		return n>1;
-	}
-	bool Solver::isSqueezedV2(const VolPart& vol) const
-	{
-		if (vol.type() != VolPart::Angle) return false;
-
-		BREAK_ON_LINE(dot(vol.getDir(),vol.getDir()) == 2);
-		int n = 0;
-		if (vol.getDir()[0] > 0)
-		{
-			const VolPart& nVol = box.el(vol.getCoords()[0]+1, vol.getCoords()[1], vol.getCoords()[2]);
-			if (nVol.type() == VolPart::Full)
-			{
-				n++;
-			}
-			else if (nVol.hasSide(0,0)) n++;
-		}
-		if (vol.getDir()[0] < 0)
-		{
-			const VolPart& nVol = box.el(vol.getCoords()[0]-1, vol.getCoords()[1], vol.getCoords()[2]);
-			if (nVol.type() == VolPart::Full || nVol.hasSide(0,1))
-			{
-				n++;
-			}
-		}
-
-		if (vol.getDir()[1] > 0)
-		{
-			const VolPart& nVol = box.el(vol.getCoords()[0], vol.getCoords()[1]+1, vol.getCoords()[2]);
-			if (nVol.type() == VolPart::Full || nVol.hasSide(1,0))
-			{
-				n++;
-			}
-		}
-		if (vol.getDir()[1] < 0)
-		{
-			const VolPart& nVol = box.el(vol.getCoords()[0], vol.getCoords()[1]-1, vol.getCoords()[2]);
-			if (nVol.type() == VolPart::Full || nVol.hasSide(1,1))
-			{
-				n++;
-			}
-		}
-
-		if (vol.getDir()[2] > 0)
-		{
-			const VolPart& nVol = box.el(vol.getCoords()[0], vol.getCoords()[1], vol.getCoords()[2]+1);
-			if (nVol.type() == VolPart::Full || nVol.hasSide(2,0))
-			{
-				n++;
-			}
-		}
-		if (vol.getDir()[2] < 0)
-		{
-			const VolPart& nVol = box.el(vol.getCoords()[0], vol.getCoords()[1], vol.getCoords()[2]-1);
-			if (nVol.type() == VolPart::Full || nVol.hasSide(2,1))
-			{
-				n++;
-			}
-		}
-
-		return n > 1;
-	}
 	bool Solver::hasSqueezed(const PuzzlePart& part) const
 	{
 		BBox bbox;
@@ -175,8 +57,8 @@ namespace Geometry
 				{
 
 					//          if (isSqueezed(box.el(x, y, z])) return true;
-					BREAK_ON_LINE(isSqueezed(box.el(x, y, z]) == isSqueezedV2(box.el(x, y, z]));
-					if (isSqueezedV2(box.el(x, y, z])) return true;
+					BREAK_ON_LINE(box.isSqueezed(box.el(x, y, z)) == box.isSqueezedV2(box.el(x, y, z)));
+					if (box.isSqueezedV2(box.el(x, y, z))) return true;
 				}
 			}
 		}
@@ -201,19 +83,6 @@ namespace Geometry
 		}
 		return true;
 	}
-	bool Solver::checkHalf(const VolPart& vol) const
-	{
-		int x = vol.getCoords()[0];
-		int y = vol.getCoords()[1];
-		int z = vol.getCoords()[2];
-		return 
-			box.el(x-1, y, z).type() == VolPart::Angle && box.el(x-1, y, z).getDir()[0]>0 ||
-			box.el(x+1, y, z).type() == VolPart::Angle && box.el(x+1, y, z).getDir()[0]<0 ||
-			box.el(x, y-1, z).type() == VolPart::Angle && box.el(x, y-1, z).getDir()[1]>0 ||
-			box.el(x, y+1, z).type() == VolPart::Angle && box.el(x, y+1, z).getDir()[1]<0 ||
-			box.el(x, y, z-1).type() == VolPart::Angle && box.el(x, y, z-1).getDir()[2]>0 ||
-			box.el(x, y, z+1).type() == VolPart::Angle && box.el(x, y, z+1).getDir()[2]<0;
-	}
 	bool Solver::hasTwoEmpty() const
 	{
 		for (int x = 1; x <= dimX; x++)
@@ -222,10 +91,10 @@ namespace Geometry
 			{
 				for (int z = 1; z <= dimZ; z++)
 				{
-					if(box.el(x, y, z).type() == VolPart::Empty && checkHalf(box.el(x, y, z) &&(
-						box.el(x+1, y, z).type() == VolPart::Empty && checkHalf(box.el(x+1, y, z) ||
-						box.el(x, y+1, z).type() == VolPart::Empty && checkHalf(box.el(x, y+1, z) ||
-						box.el(x, y, z+1).type() == VolPart::Empty && checkHalf(box.el(x, y, z+1)
+					if(box.el(x, y, z).type() == VolPart::Empty && box.checkHalf(box.el(x, y, z)) &&(
+						box.el(x+1, y, z).type() == VolPart::Empty && box.checkHalf(box.el(x+1, y, z)) ||
+						box.el(x, y+1, z).type() == VolPart::Empty && box.checkHalf(box.el(x, y+1, z)) ||
+						box.el(x, y, z+1).type() == VolPart::Empty && box.checkHalf(box.el(x, y, z+1))
 						))
 						return true;
 				}
@@ -235,7 +104,7 @@ namespace Geometry
 	}
 	vector<vector<PuzzlePart> > solutions;
 
-	vector<PuzzlePart> getOrdered(const vector<PuzzlePart >& sol)
+	vector<PuzzlePart> Solver::getOrdered(const vector<PuzzlePart >& sol)
 	{
 		vector<PuzzlePart> ordered;
 		for(unsigned i = 1; i<=puzzles.size();i++)
@@ -250,15 +119,34 @@ namespace Geometry
 
 	bool Solver::verifyAlgorithm()
 	{
-		Box tt;
-		initBox(tt,dimX,dimY,dimZ);
-		int n = numPlaced;
+		Box tt(generateEmptyBox_(dimX,dimY,dimZ));
+
 		for(unsigned i =0; i < solution.size(); i++)
 		{
-			place(solution[i],tt);
+			tt.add(solution[i].parts);
 		}
-		numPlaced = n;
 		return tt == box;
+	}
+
+	Box Solver::generateEmptyBox_(int dimX,int dimY,int dimZ)
+	{
+		Box cleanBox(dimX + 2, dimY + 2, dimZ + 2);
+
+		for (int x = 0; x <= dimX + 1; x++)
+		{
+			for (int y = 0; y <= dimY + 1; y++)
+			{
+				for (int z = 0; z <= dimZ + 1; z++)
+				{
+					bool isWall = !(x % (dimX + 1)) || !(y % (dimY + 1)) || !(z % (dimZ + 1));
+					if (isWall)
+					{
+						cleanBox.el(x,y,z) = VolPart(isWall ? VolPart::Full : VolPart::Empty,IntVector(x,y,z),IntVector(0,0,0),isWall);
+					}
+				}
+			}
+		}
+		return cleanBox;
 	}
 
 	bool Solver::newSolution()

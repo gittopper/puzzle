@@ -4,19 +4,19 @@
 
 namespace Geometry
 {
+
+
 	class Solver
 	{
 	public:
-		Solver(const Box initialBox, const vector<PuzzlePart> availablePuzzles);
+		Solver(int xDim,int yDim,int zDim, const vector<PuzzlePart> availablePuzzles);
 		virtual ~Solver();
 		void remove(const PuzzlePart& part);
 		void place(const PuzzlePart& part, Box& b);
 		bool couldPlace(const PuzzlePart& part, bool& matched) const;
-		bool isSqueezed(const VolPart& vol) const;
-		bool isSqueezedV2(const VolPart& vol) const;
 		bool hasSqueezed(const PuzzlePart& part) const;
 		bool tryToPlace(const PuzzlePart& part);
-		bool checkHalf(const VolPart& vol) const;
+
 		bool hasTwoEmpty() const;
 
 		vector<PuzzlePart> getOrdered(const vector<PuzzlePart >& sol);
@@ -31,6 +31,9 @@ namespace Geometry
 
 		vector<PuzzlePart>& getPuzzles() { return puzzles;}
 	protected:
+		Box generateEmptyBox_(int dimX,int dimY,int dimZ);
+
+		int dimX, dimY, dimZ;
 		Box box;
 		vector<PuzzlePart> solution;
 		vector<vector<PuzzlePart>> solutions;

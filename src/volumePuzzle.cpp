@@ -40,7 +40,7 @@ void makeTests(Solver& solver)
 
 void solvePuzzle()
 {
-  Solver solver(generateEmptyBox(3,4,2),generateWoodPuzzles());
+  Solver solver(3,4,2,generateWoodPuzzles());
 
   //makeTests(solver);
 

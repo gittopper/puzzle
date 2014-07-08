@@ -157,24 +157,3 @@ vector<Geometry::PuzzlePart> generateTestPuzzles()
 	return puzzles;
 }
 
-Box generateEmptyBox(int dimX,int dimY,int dimZ)
-{
-	Box cleanBox(dimX + 2, dimY + 2, dimZ + 2);
-
-	for (int x = 0; x <= dimX + 1; x++)
-	{
-		for (int y = 0; y <= dimY + 1; y++)
-		{
-			for (int z = 0; z <= dimZ + 1; z++)
-			{
-				bool isWall = !(x % (dimX + 1)) || !(y % (dimY + 1)) || !(z % (dimZ + 1));
-				if (isWall)
-				{
-					cleanBox.el(x,y,z) = VolPart(isWall ? VolPart::Full : VolPart::Empty,IntVector(x,y,z),IntVector(0,0,0),isWall);
-				}
-			}
-		}
-	}
-	return cleanBox;
-}
-
