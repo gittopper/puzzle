@@ -119,7 +119,6 @@ namespace Geometry
         return dot(dir, another.xyz - xyz) < 0 && dot(another.dir, xyz - another.xyz) < 0;
       }
     }
-    cout << "problem 3\n";
     BREAK_ON_LINE(false);
     return false;
   }

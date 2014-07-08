@@ -22,8 +22,9 @@ namespace Geometry
     cout<<"Part number "<<p.number<<":"<<endl;
     for (vector<VolPart>::const_iterator it = p.parts.cbegin(); it != p.parts.cend(); it++)
     {
-      cout<<*it<<endl<<endl;
+      cout<<*it<<endl;
     }
+    cout<<endl;
     return os;
   }
 
@@ -50,12 +51,12 @@ namespace Geometry
         {
           VolPart::VolType t = b.el(x, y, z).type();
           char s = t == VolPart::Empty ? ' ' : t == VolPart::Full ? 178 : 176;
-          //cout << v[i][j][k];
+          //cout << b.el(x,y,z);
           cout << s;
         }
         cout << endl;
       }
-      cout << endl << endl;
+      cout << endl;
     }
     return os;
   }

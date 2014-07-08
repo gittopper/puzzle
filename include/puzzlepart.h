@@ -11,9 +11,6 @@ namespace Geometry
   class PuzzlePart
   {
   public:
-    PuzzlePart():
-    number(0),busy(false){}
-
     PuzzlePart(int n):
     number(n),busy(false){}
 

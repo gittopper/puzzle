@@ -4,7 +4,7 @@
 namespace Geometry
 {
   Solver::Solver(int xDim,int yDim,int zDim, const vector<PuzzlePart> availablePuzzles):
-    puzzles(availablePuzzles),dimX(xDim),dimY(yDim),dimZ(zDim),box(0,0,0),numPlaced(0),maxSol(0)
+    puzzles(availablePuzzles),dimX(xDim),dimY(yDim),dimZ(zDim),box(0,0,0),numPlaced(0),maxSol(0),progress(0)
   {
     box = generateEmptyBox_(dimX,dimY,dimZ);
     cout << puzzles;
@@ -291,7 +291,7 @@ namespace Geometry
         }
       }
       puzzles[iPuzzle].busy = false;
-      if (numPlaced == 0) return; //first figure only once should be checked
+      if (numPlaced == 0) return; //we should find all solutions only for one first figure
       if (numPlaced == 1) 
       {
         cout <<++progress<<endl;

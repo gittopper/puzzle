@@ -15,12 +15,11 @@
     <ClCompile Include="..\..\src\print.cpp" />
     <ClCompile Include="..\..\src\intvector.cpp" />
     <ClCompile Include="..\..\src\mat.cpp" />
-    <ClCompile Include="..\..\src\puzzle.cpp" />
+    <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\puzzlepart.cpp" />
     <ClCompile Include="..\..\src\solver.cpp" />
     <ClCompile Include="..\..\src\utils.cpp" />
     <ClCompile Include="..\..\src\volpart.cpp" />
-    <ClCompile Include="..\..\src\volumePuzzle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\base.h" />
@@ -30,6 +29,7 @@
     <ClInclude Include="..\..\include\print.h" />
     <ClInclude Include="..\..\include\intvector.h" />
     <ClInclude Include="..\..\include\mat.h" />
+    <ClInclude Include="..\..\include\puzzle55.h" />
     <ClInclude Include="..\..\include\puzzlepart.h" />
     <ClInclude Include="..\..\include\solver.h" />
     <ClInclude Include="..\..\include\utils.h" />
