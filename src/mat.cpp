@@ -68,6 +68,10 @@ namespace Geometry
     }
     return true;
   }
+  Mat Mat::identity()
+  {
+    return Mat(IntVector(1,0,0),IntVector(0,1,0),IntVector(0,0,1));
+  }
   Mat Mat::operator * (const Mat& m) const
   {
     Mat n;

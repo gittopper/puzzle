@@ -6,6 +6,7 @@ namespace Geometry
   class Mat
   {
   public:
+    static Mat identity();
     Mat(){}
     Mat(IntVector v1,IntVector v2, IntVector v3);
     Mat(int a00,int a01,int a02,int a10,int a11,int a12,int a20,int a21,int a22);

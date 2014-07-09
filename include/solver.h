@@ -19,12 +19,12 @@ namespace Geometry
 
     bool hasTwoEmpty() const;
 
-    PuzzlesSet getNormalized(const PuzzlesSet& sol);
+    PuzzlesSet getNormalized(const PuzzlesSet& sol,Mat&rotation);
 
     bool verifyAlgorithm();
 
     bool newSolution();
-    void drawSolution(const PuzzlesSet& s) const;
+    void drawSolution(const PuzzlesSet& s, Mat rot) const;
     bool tryToShow();
 
     void solve();
@@ -32,7 +32,7 @@ namespace Geometry
     bool puzzleCouldBePlacedSomewhere(const PuzzlePart& partToCheck);
     PuzzlesSet& getPuzzles() { return puzzles;}
   protected:
-    Box generateEmptyBox_(int dimX,int dimY,int dimZ);
+    Box generateEmptyBox_(int dimX,int dimY,int dimZ) const;
 
     PuzzlePart seekedPuzzle;
 
@@ -40,6 +40,7 @@ namespace Geometry
     Box box;
     PuzzlesSet solution;
     vector<PuzzlesSet> solutions;
+    vector<Mat> transforms;
     unsigned numPlaced;
     PuzzlesSet puzzles;
     int progress;

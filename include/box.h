@@ -41,6 +41,8 @@ namespace Geometry
 
     void remove(const vector<VolPart>& vols);
 
+    void rotate(Mat rot);
+
     bool isSqueezed(const VolPart& vol) const;
 
     bool isSqueezedV2(const VolPart& vol) const;

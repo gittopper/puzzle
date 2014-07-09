@@ -43,9 +43,9 @@ namespace Geometry
     int dimX = b.getDimX();
     int dimY = b.getDimY();
     int dimZ = b.getDimZ();
-    for(int x = dimX - 1; x >= 0; x--)
+    for(int z = dimZ - 1; z >= 0; z--)
     {
-      for(int z = dimZ - 1; z >= 0; z--)
+      for(int x = dimX - 1; x >= 0; x--)
       {
         for(int y = 0; y <= dimY - 1; y++)
         {
@@ -54,7 +54,7 @@ namespace Geometry
           //cout << b.el(x,y,z);
           cout << s;
         }
-        cout << endl;
+        cout << " ";
       }
       cout << endl;
     }

@@ -100,9 +100,9 @@ bool makeGeneralTests()
 
   PuzzlesSet rotatedPuzzles = puzzles;
   rotatedPuzzles.rotate(rotX);
-  BREAK_ON_LINE(puzzlesCouldBeCombined(rotatedPuzzles,puzzles));
+  BREAK_ON_LINE(rotatedPuzzles==puzzles);
   rotatedPuzzles.rotate(rotZ);
-  BREAK_ON_LINE(puzzlesCouldBeCombined(rotatedPuzzles,puzzles));
+  BREAK_ON_LINE(rotatedPuzzles==puzzles);
 
   Mat r = m * m.inverse();
   Mat e(IntVector(1,0,0),IntVector(0,1,0),IntVector(0,0,1));

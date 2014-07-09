@@ -1,7 +1,7 @@
 #pragma once
 
 #include "base.h"
-#include "geometry.h"
+#include "intvector.h"
 
 namespace Geometry
 {

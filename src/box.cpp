@@ -1,4 +1,5 @@
 #include "box.h"
+#include "bbox.h"
 
 namespace Geometry
 {
@@ -11,7 +12,9 @@ namespace Geometry
       {
         for(int k=0;k<DZ;k++)
         {
-          box.push_back(VolPart(VolPart::Empty,IntVector(i,j,k)));
+          VolPart v = VolPart(VolPart::Empty,IntVector(i,j,k));
+          box.push_back(v);
+          BREAK_ON_LINE(el(i,j,k) == v);
         }
       }
     }
@@ -127,6 +130,43 @@ namespace Geometry
     }
 
     return n > 1;
+  }
+
+  void  Box::rotate(Mat rot)
+  {
+    BBox bbox;
+
+    for(int i=0;i<dimX;i++)
+    {
+      for(int j=0;j<dimY;j++)
+      {
+        for(int k=0;k<dimZ;k++)
+        {
+          IntVector v(i, j, k);
+          v = rot * v;
+          bbox.merge(v);
+        }
+      }
+    }
+
+
+    Box newBox(bbox.maxV[0]-bbox.minV[0]+1,bbox.maxV[1]-bbox.minV[1]+1,bbox.maxV[2]-bbox.minV[2]+1);
+    IntVector shift(-bbox.minV);
+
+    for(int i=0;i<dimX;i++)
+    {
+      for(int j=0;j<dimY;j++)
+      {
+        for(int k=0;k<dimZ;k++)
+        {
+          VolPart newVol(el(i, j, k));
+          newVol.rotate(rot).shift(shift);
+          const IntVector& xyz = newVol.getCoords();
+          newBox.el(xyz[0], xyz[1], xyz[2]) = newVol;
+        }
+      }
+    }
+    *this = newBox;
   }
 
   void Box::add(const vector<VolPart>& vols)

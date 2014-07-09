@@ -82,7 +82,7 @@ namespace Geometry
       return false;
     }
     place(part,box);
-	if (hasSqueezed(part))
+	  if (hasSqueezed(part))
     {
       remove(part);
       return false;
@@ -108,9 +108,8 @@ namespace Geometry
     }
     return false;
   }
-  vector<PuzzlesSet > solutions;
 
-  PuzzlesSet Solver::getNormalized(const PuzzlesSet& sol)
+  PuzzlesSet Solver::getNormalized(const PuzzlesSet& sol,Mat&rotation)
   {
     PuzzlesSet ordered;
     for(unsigned i = 1; i<=puzzles.size();i++)
@@ -121,9 +120,9 @@ namespace Geometry
       }
     }
     const PuzzlePart& part = ordered[0];
-    Mat m = part.getRotationMatrix(puzzles[part.number-1]);
-    BREAK_ON_LINE(m.det()==1);
-    ordered.rotate(m);
+    rotation = part.getRotationMatrix(puzzles[part.number-1]);
+    BREAK_ON_LINE(rotation.det()==1);
+    ordered.rotate(rotation);
 
     return ordered;
   }
@@ -139,15 +138,15 @@ namespace Geometry
     return tt == box;
   }
 
-  Box Solver::generateEmptyBox_(int dimX,int dimY,int dimZ)
+  Box Solver::generateEmptyBox_(int dimX,int dimY,int dimZ) const
   {
     Box cleanBox(dimX + 2, dimY + 2, dimZ + 2);
 
-    for (int x = 0; x <= dimX + 1; x++)
+    for (int x = 0; x < dimX + 2; x++)
     {
-      for (int y = 0; y <= dimY + 1; y++)
+      for (int y = 0; y < dimY + 2; y++)
       {
-        for (int z = 0; z <= dimZ + 1; z++)
+        for (int z = 0; z < dimZ + 2; z++)
         {
           bool isWall = !(x % (dimX + 1)) || !(y % (dimY + 1)) || !(z % (dimZ + 1));
           if (isWall)
@@ -162,7 +161,8 @@ namespace Geometry
 
   bool Solver::newSolution()
   {
-    PuzzlesSet sol = getNormalized(solution);
+    Mat rot;
+    PuzzlesSet sol = getNormalized(solution,rot);
 
     for(unsigned iSol = 0; iSol < solutions.size(); iSol ++)
     {
@@ -171,15 +171,26 @@ namespace Geometry
 
     }
     solutions.push_back(sol);
+    transforms.push_back(rot);
     return true;
   }
-  void Solver::drawSolution(const PuzzlesSet& s) const
+  void Solver::drawSolution(const PuzzlesSet& s, Mat rot) const
   {
     for (unsigned i = 0; i < s.size(); i++)
     {
       cout << ( i > 0 ? "," : "") << s[i].number;
     }
-    cout << endl << box;
+    Box tt = box;
+    tt.rotate(rot);
+    cout << endl << tt <<endl;
+
+    Box emptyBox(generateEmptyBox_(tt.getDimX()-2,tt.getDimY()-2,tt.getDimZ()-2));
+    for (unsigned i = 0; i < s.size(); i++)
+    {
+      emptyBox.add(s[i].parts);
+      cout << emptyBox<<endl;
+      emptyBox.remove(s[i].parts);
+    }
   }
   bool Solver::tryToShow()
   {
@@ -189,7 +200,7 @@ namespace Geometry
       cout << "Solution number " << solutions.size() << ":"<< endl;
       cout << "Number of figures is " << numPlaced << ":"<< endl;
       cout << solutions[solutions.size()-1] << endl;
-      drawSolution(solutions[solutions.size()-1]);
+      drawSolution(solutions[solutions.size()-1],transforms[transforms.size()-1]);
       return true;
     }
     return false;
