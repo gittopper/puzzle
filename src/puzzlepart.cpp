@@ -1,5 +1,5 @@
 #include "puzzlepart.h"
-
+#include <algorithm>
 
 namespace Geometry
 {
@@ -74,32 +74,48 @@ namespace Geometry
 	  return res;
   }
 
-  bool puzzlesCouldBeCombined(const vector<Geometry::PuzzlePart>& vec1, const vector<Geometry::PuzzlePart>& vec2)
+  bool PuzzlesSet::operator == (const PuzzlesSet& set) const
   {
-    if (vec1.size() != vec2.size()) return false;
-    for(unsigned i=0;i<vec1.size();i++)
+    if (puzzles.size() != set.puzzles.size()) return false;
+    for(unsigned i=0;i<puzzles.size();i++)
     {
-      if (vec1[i].number != vec2[i].number) return false;
+      if (puzzles[i].number != set.puzzles[i].number) return false;
     }
 
-    Mat res = vec1[0].getRotationMatrix(vec2[0]);
+    Mat res = puzzles[0].getRotationMatrix(set.puzzles[0]);
 
-	IntVector prevShift = -vec1[0].getZero();
-    IntVector shift = vec2[0].getZero();
+    IntVector prevShift = -puzzles[0].getZero();
+    IntVector shift = set.puzzles[0].getZero();
 
     bool theSame = true;
 
-    for(unsigned i=0;i<vec2.size();i++)
+    for(unsigned i=0;i<set.puzzles.size();i++)
     {
-      PuzzlePart p = vec1[i];
+      PuzzlePart p = puzzles[i];
 
       p.shift(prevShift);
       p.rotate(res);
       p.shift(shift);
-      theSame = p == vec2[i];
+      theSame = p == set.puzzles[i];
       if (!theSame) break;
     }
 
     return theSame;
+  }
+
+  void PuzzlesSet::rotate(Mat rot)
+  {
+    for (vector<PuzzlePart>::iterator it = puzzles.begin(); it != puzzles.end(); it++)
+    {
+      (*it).rotate(rot);
+    }
+  }
+
+  bool compNumbers (PuzzlePart i,PuzzlePart j) { return i.number < j.number; }
+
+  void PuzzlesSet::order()
+  {
+    int maxn = 0;
+    std::sort(puzzles.begin(), puzzles.end(), compNumbers);
   }
 }

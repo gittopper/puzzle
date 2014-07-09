@@ -4,7 +4,7 @@
 
 namespace Geometry
 {
-  Solver::Solver(int xDim,int yDim,int zDim, const vector<PuzzlePart> availablePuzzles):
+  Solver::Solver(int xDim,int yDim,int zDim, const PuzzlesSet availablePuzzles):
     puzzles(availablePuzzles),dimX(xDim),dimY(yDim),dimZ(zDim),box(0,0,0),numPlaced(0),maxSol(0),progress(0),seekedPuzzle(9)
   {
     box = generateEmptyBox_(dimX,dimY,dimZ);
@@ -108,18 +108,23 @@ namespace Geometry
     }
     return false;
   }
-  vector<vector<PuzzlePart> > solutions;
+  vector<PuzzlesSet > solutions;
 
-  vector<PuzzlePart> Solver::getOrdered(const vector<PuzzlePart >& sol)
+  PuzzlesSet Solver::getNormalized(const PuzzlesSet& sol)
   {
-    vector<PuzzlePart> ordered;
+    PuzzlesSet ordered;
     for(unsigned i = 1; i<=puzzles.size();i++)
     {
       for(unsigned j = 0; j<sol.size();j++)
       {
-        if (sol[j].number == i) ordered.push_back(sol[j]);
+        if (sol[j].number == i) ordered.puzzles.push_back(sol[j]);
       }
     }
+    const PuzzlePart& part = ordered[0];
+    Mat m = part.getRotationMatrix(puzzles[part.number-1]);
+    BREAK_ON_LINE(m.det()==1);
+    ordered.rotate(m);
+
     return ordered;
   }
 
@@ -157,18 +162,18 @@ namespace Geometry
 
   bool Solver::newSolution()
   {
-    vector<PuzzlePart> sol = getOrdered(solution);
+    PuzzlesSet sol = getNormalized(solution);
 
     for(unsigned iSol = 0; iSol < solutions.size(); iSol ++)
     {
 
-      if (puzzlesCouldBeCombined(solutions[iSol],sol)) return false;
+      if (solutions[iSol] == sol) return false;
 
     }
     solutions.push_back(sol);
     return true;
   }
-  void Solver::drawSolution(const vector<PuzzlePart>& s) const
+  void Solver::drawSolution(const PuzzlesSet& s) const
   {
     for (unsigned i = 0; i < s.size(); i++)
     {
@@ -313,13 +318,13 @@ namespace Geometry
                 part3.shift(IntVector(x,y,z));
                 if (tryToPlace(part3))
                 {
-                  solution.push_back(part3);
+                  solution.puzzles.push_back(part3);
 
 				  //Mat t = part3.getRotationMatrix(puzzles[iPuzzle]);
 
                   solve();
                   remove(part3);
-                  solution.pop_back();
+                  solution.puzzles.pop_back();
                 }
               }
             }

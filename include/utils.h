@@ -2,9 +2,9 @@
 
 #include "geometry.h"
 
-vector<Geometry::PuzzlePart> generateWoodPuzzles();
+Geometry::PuzzlesSet generateWoodPuzzles();
 
-vector<Geometry::PuzzlePart> generateSomaPuzzles();
+Geometry::PuzzlesSet generateSomaPuzzles();
 
-vector<Geometry::PuzzlePart> generateTestPuzzles();
+Geometry::PuzzlesSet generateTestPuzzles();
 

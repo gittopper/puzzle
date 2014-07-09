@@ -67,14 +67,6 @@ void solve55()
   cin.get();
 }
 
-void rotatePuzzles(vector<PuzzlePart>& puzzles, Mat rot)
-{
-  for(vector<PuzzlePart>::iterator it = puzzles.begin(); it != puzzles.end(); it++)
-  {
-    (*it).rotate(rot);
-  }
-}
-
 bool makeGeneralTests()
 {
   BREAK_ON_LINE(IntVector(0,0,1).rotate(RotateX) == IntVector(0,1,0));
@@ -87,7 +79,7 @@ bool makeGeneralTests()
   BREAK_ON_LINE(IntVector(0,1,0).rotate(RotateZ).rotate(RotateZ) == IntVector(0,-1,0));
 
 
-  vector<PuzzlePart> puzzles = generateWoodPuzzles();
+  PuzzlesSet puzzles = generateWoodPuzzles();
   PuzzlePart part = puzzles[0];
   part.rotate(RotateX);
   part.centralize();
@@ -106,10 +98,10 @@ bool makeGeneralTests()
   Mat rotX(1,0,0, 0,0,-1, 0,1,0);
   Mat rotZ(0,-1,0, 1,0,0, 0,0,1);
 
-  vector<PuzzlePart> rotatedPuzzles = puzzles;
-  rotatePuzzles(rotatedPuzzles,rotX);
+  PuzzlesSet rotatedPuzzles = puzzles;
+  rotatedPuzzles.rotate(rotX);
   BREAK_ON_LINE(puzzlesCouldBeCombined(rotatedPuzzles,puzzles));
-  rotatePuzzles(rotatedPuzzles,rotZ);
+  rotatedPuzzles.rotate(rotZ);
   BREAK_ON_LINE(puzzlesCouldBeCombined(rotatedPuzzles,puzzles));
 
   Mat r = m * m.inverse();
@@ -125,13 +117,13 @@ void solvePuzzle()
   BREAK_ON_LINE(makeGeneralTests());
 //   Solver testSolver(2,2,2,generateTestPuzzles());
 
-  vector<PuzzlePart> puzzles = generateWoodPuzzles();
+  PuzzlesSet puzzles = generateWoodPuzzles();
   Solver solver(3,4,2,puzzles);
   cout << puzzles;
   solver.solve();
 
-//  Solver somaSolver(3,3,3,generateSomaPuzzles());
-//  somaSolver.solve();
+//   Solver somaSolver(3,3,3,generateSomaPuzzles());
+//   somaSolver.solve();
 
   cout << "Press any key to exit..."<<flush;
   cin.get();

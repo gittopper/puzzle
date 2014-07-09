@@ -28,11 +28,11 @@ namespace Geometry
     return os;
   }
 
-  ostream& operator << (ostream& os, const vector<PuzzlePart>& v)
+  ostream& operator << (ostream& os, const PuzzlesSet& v)
   {
-    for(vector<PuzzlePart>::const_iterator it = v.cbegin(); it != v.cend(); it++)
+    for(unsigned i = 0; i < v.size(); i++)
     {
-      cout << *it;
+      cout << v[i];
     }
     return os;
   }

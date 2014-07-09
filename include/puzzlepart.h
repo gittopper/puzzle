@@ -40,5 +40,16 @@ namespace Geometry
     vector<VolPart> parts;
   };
 
-  bool puzzlesCouldBeCombined(const vector<Geometry::PuzzlePart>& vec1, const vector<Geometry::PuzzlePart>& vec2);
+  class PuzzlesSet
+  {
+  public:
+    PuzzlePart& operator[](int i){ return puzzles[i];}
+    const PuzzlePart& operator[](int i) const { return puzzles[i];}
+    unsigned size() const { return puzzles.size();}
+    bool operator == (const PuzzlesSet& vec2) const;
+    void rotate(Mat rot);
+    void order();
+    vector<PuzzlePart> puzzles;
+  };
+
 }

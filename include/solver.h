@@ -9,7 +9,7 @@ namespace Geometry
   class Solver
   {
   public:
-    Solver(int xDim,int yDim,int zDim, const vector<PuzzlePart> availablePuzzles);
+    Solver(int xDim,int yDim,int zDim, const PuzzlesSet availablePuzzles);
     virtual ~Solver(){}
     void remove(const PuzzlePart& part);
     void place(const PuzzlePart& part, Box& b);
@@ -19,18 +19,18 @@ namespace Geometry
 
     bool hasTwoEmpty() const;
 
-    vector<PuzzlePart> getOrdered(const vector<PuzzlePart >& sol);
+    PuzzlesSet getNormalized(const PuzzlesSet& sol);
 
     bool verifyAlgorithm();
 
     bool newSolution();
-    void drawSolution(const vector<PuzzlePart>& s) const;
+    void drawSolution(const PuzzlesSet& s) const;
     bool tryToShow();
 
     void solve();
 
     bool puzzleCouldBePlacedSomewhere(const PuzzlePart& partToCheck);
-    vector<PuzzlePart>& getPuzzles() { return puzzles;}
+    PuzzlesSet& getPuzzles() { return puzzles;}
   protected:
     Box generateEmptyBox_(int dimX,int dimY,int dimZ);
 
@@ -38,11 +38,11 @@ namespace Geometry
 
     int dimX, dimY, dimZ;
     Box box;
-    vector<PuzzlePart> solution;
-    vector<vector<PuzzlePart>> solutions;
-    int numPlaced;
-    vector<PuzzlePart> puzzles;
+    PuzzlesSet solution;
+    vector<PuzzlesSet> solutions;
+    unsigned numPlaced;
+    PuzzlesSet puzzles;
     int progress;
-    int maxSol;
+    unsigned maxSol;
   };
 }
