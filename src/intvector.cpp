@@ -60,4 +60,11 @@ namespace Geometry
   {
     return IntVector(vec[0] + v[0], vec[1] + v[1], vec[2] + v[2]);
   }
+  IntVector IntVector::operator+=(const IntVector& v)
+  {
+	  vec[0] += v[0];
+	  vec[1] += v[1];
+	  vec[2] += v[2];
+	  return *this;
+  }
 }

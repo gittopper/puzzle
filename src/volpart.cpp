@@ -15,6 +15,12 @@ namespace Geometry
     return dir[dim] * (1 - 2 * val) >= 0;
   }
 
+  VolPart& VolPart::shift(const IntVector& shift)
+  {
+	  xyz += shift;
+	  return *this;
+  }
+
   VolPart& VolPart::operator+=(const VolPart& v)
   {
     BREAK_ON_LINE(xyz == v.xyz);

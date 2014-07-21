@@ -4,6 +4,7 @@
 #include "print.h"
 #include "solver.h"
 #include "utils.h"
+#include "visualization.h"
 
 using namespace Geometry;
 
@@ -128,8 +129,9 @@ void solvePuzzle()
   cout << "Press any key to exit..."<<flush;
   cin.get();
 }
-int main()
+int main(int argc, char ** argv)
 {
+  return realMain(argc, argv);
   solvePuzzle();
   //solve55();
 
