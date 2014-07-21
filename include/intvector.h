@@ -39,6 +39,7 @@ namespace Geometry
 
     IntVector operator+(const IntVector& v) const;
 
+	IntVector operator+=(const IntVector& v);
   private:
     int vec[3];
   };

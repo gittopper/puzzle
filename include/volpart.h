@@ -25,7 +25,9 @@ namespace Geometry
 
     VolPart& operator+=(const VolPart& v);
 
-    VolPart& rotate(RotType rot);
+	VolPart& shift(const IntVector& shift);
+
+	VolPart& rotate(RotType rot);
 
     VolPart& rotate(const Mat& m);
 
