@@ -19,6 +19,7 @@
     <ClCompile Include="..\..\src\puzzlepart.cpp" />
     <ClCompile Include="..\..\src\puzzlepartshower.cpp" />
     <ClCompile Include="..\..\src\solver.cpp" />
+    <ClCompile Include="..\..\src\threads.cpp" />
     <ClCompile Include="..\..\src\utils.cpp" />
     <ClCompile Include="..\..\src\visualization.cpp" />
     <ClCompile Include="..\..\src\volpart.cpp" />
@@ -35,6 +36,7 @@
     <ClInclude Include="..\..\include\puzzlepart.h" />
     <ClInclude Include="..\..\include\puzzlepartshower.h" />
     <ClInclude Include="..\..\include\solver.h" />
+    <ClInclude Include="..\..\include\threads.h" />
     <ClInclude Include="..\..\include\utils.h" />
     <ClInclude Include="..\..\include\visualization.h" />
     <ClInclude Include="..\..\include\volpart.h" />

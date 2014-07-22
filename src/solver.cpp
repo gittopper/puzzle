@@ -2,6 +2,7 @@
 #include "utils.h"
 #include "print.h"
 #include "puzzlepartshower.h"
+#include "visualization.h"
 
 namespace Geometry
 {
@@ -192,8 +193,7 @@ namespace Geometry
       cout << emptyBox<<endl;
       emptyBox.remove(s[i].parts);
     }
-    Visualization::PuzzlesSetDrawer drawer;
-    drawer.draw(s);
+	puzzlesSetToShow = s;
   }
   bool Solver::tryToShow()
   {

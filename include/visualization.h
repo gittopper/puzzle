@@ -1,3 +1,17 @@
 #pragma once
+#include "threads.h"
+#include "puzzlepart.h"
 
-int realMain(int argc, char ** argv);
+class Gfx: public Runnable {
+public:
+	Gfx(): myID(0){}
+	void init(int argc, char ** argv);
+	virtual void* run();
+private:
+	int _argc;
+	char ** _argv;
+	int myID;
+};
+
+
+extern Geometry::PuzzlesSet puzzlesSetToShow;
