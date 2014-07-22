@@ -117,16 +117,16 @@ void Display() {
 	glEnd();
 
 	glColor3f(   0.2,  0.0, 0.0 );
-// 	PuzzlePartDrawer drawer;
-// 	PuzzlesSet puzzles = generateWoodPuzzles();
-// 
-// 	for (int i = 0; i < puzzles.size(); i++)
-// 	{
-// 		PuzzlePart p = puzzles[i];
-// 		p.shift(FloatVector(i*3));
-// 		drawer.draw(p);
-// 	}
-  solvePuzzle();
+	PuzzlePartDrawer drawer;
+	PuzzlesSet puzzles = generateWoodPuzzles();
+
+	for (int i = 0; i < puzzles.size(); i++)
+	{
+		PuzzlePart p = puzzles[i];
+		p.shift(FloatVector(i*3));
+		drawer.draw(p);
+	}
+//  solvePuzzle();
 
 	glPopMatrix();
 
