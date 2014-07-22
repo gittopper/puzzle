@@ -5,6 +5,7 @@ namespace Geometry
 {
 	class PuzzlePart;
 	class VolPart;
+  class PuzzlesSet;
 }
 
 namespace Visualization
@@ -15,6 +16,14 @@ namespace Visualization
 	public:
 		void draw(const Geometry::PuzzlePart& part) const;
 	};
+
+  class PuzzlesSetDrawer
+  {
+  public:
+    void draw(const Geometry::PuzzlesSet& puzzles) const;
+  private:
+    PuzzlePartDrawer partDrawer;
+  };
 
 	class VolPartDrawer
 	{

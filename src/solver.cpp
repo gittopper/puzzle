@@ -1,6 +1,7 @@
 #include "solver.h"
 #include "utils.h"
 #include "print.h"
+#include "puzzlepartshower.h"
 
 namespace Geometry
 {
@@ -191,6 +192,8 @@ namespace Geometry
       cout << emptyBox<<endl;
       emptyBox.remove(s[i].parts);
     }
+    Visualization::PuzzlesSetDrawer drawer;
+    drawer.draw(s);
   }
   bool Solver::tryToShow()
   {

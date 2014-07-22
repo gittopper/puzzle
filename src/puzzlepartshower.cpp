@@ -190,3 +190,13 @@ bool VolPartDrawer::triIntersectsPlane_(Triangle tri, Plane p) const
 	return !(dot(tri.n,p.p - tri.v1) >=0 && dot(tri.n,p.p - tri.v2) >=0 && dot(tri.n,p.p - tri.v3) >=0 || dot(tri.n,p.p - tri.v1) <=0 && dot(tri.n,p.p - tri.v2) <=0 && dot(tri.n,p.p - tri.v3) <=0);
 }
 
+void PuzzlesSetDrawer::draw(const Geometry::PuzzlesSet& puzzles) const
+{
+	for (int i = 0; i < puzzles.puzzles.size(); i++)
+	{
+		PuzzlePart p = puzzles.puzzles[i];
+		p.shift(FloatVector(i*3));
+		partDrawer.draw(p);
+	}
+}
+

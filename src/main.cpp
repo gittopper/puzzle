@@ -1,7 +1,6 @@
 #include "puzzle55.h"
 
 #include "geometry.h"
-#include "print.h"
 #include "solver.h"
 #include "utils.h"
 #include "visualization.h"
@@ -68,71 +67,9 @@ void solve55()
   cin.get();
 }
 
-bool makeGeneralTests()
-{
-  BREAK_ON_LINE(FloatVector(0,0,1).rotate(RotateX) == FloatVector(0,1,0));
-  BREAK_ON_LINE(FloatVector(0,0,1).rotate(RotateX).rotate(RotateX) == FloatVector(0,0,-1));
-
-  BREAK_ON_LINE(FloatVector(1,0,0).rotate(RotateY) == FloatVector(0,0,1));
-  BREAK_ON_LINE(FloatVector(1,0,0).rotate(RotateY).rotate(RotateY) == FloatVector(-1,0,0));
-
-  BREAK_ON_LINE(FloatVector(0,1,0).rotate(RotateZ) == FloatVector(1,0,0));
-  BREAK_ON_LINE(FloatVector(0,1,0).rotate(RotateZ).rotate(RotateZ) == FloatVector(0,-1,0));
-
-
-  PuzzlesSet puzzles = generateWoodPuzzles();
-  PuzzlePart part = puzzles[0];
-  part.rotate(RotateX);
-  part.centralize();
-
-  PuzzlePart p1(1);
-  p1.parts.push_back(VolPart(VolPart::Full,FloatVector(0,0,1)));
-  p1.parts.push_back(VolPart(VolPart::Full,FloatVector(0,1,0)));
-  p1.parts.push_back(VolPart(VolPart::Angle,FloatVector(0,0,0),FloatVector(1,0,-1)));
-  p1.parts.push_back(VolPart(VolPart::Angle,FloatVector(0,1,1),FloatVector(0,1,1)));
-
-  bool areEqual = part == p1;
-  BREAK_ON_LINE(areEqual);
-
-  Mat m(FloatVector(0,-1,0),FloatVector(0,0,1),FloatVector(1,0,0));
-
-  Mat rotX(1,0,0, 0,0,-1, 0,1,0);
-  Mat rotZ(0,-1,0, 1,0,0, 0,0,1);
-
-  PuzzlesSet rotatedPuzzles = puzzles;
-  rotatedPuzzles.rotate(rotX);
-  BREAK_ON_LINE(rotatedPuzzles==puzzles);
-  rotatedPuzzles.rotate(rotZ);
-  BREAK_ON_LINE(rotatedPuzzles==puzzles);
-
-  Mat r = m * m.inverse();
-  Mat e(FloatVector(1,0,0),FloatVector(0,1,0),FloatVector(0,0,1));
-  BREAK_ON_LINE(r == e);
-  FloatVector v = e * FloatVector(-1,1,2);
-  BREAK_ON_LINE(v == FloatVector(-1,1,2));
-  return true;
-}
-
-void solvePuzzle()
-{
-  BREAK_ON_LINE(makeGeneralTests());
-//   Solver testSolver(2,2,2,generateTestPuzzles());
-
-  PuzzlesSet puzzles = generateWoodPuzzles();
-  Solver solver(3,4,2,puzzles);
-  cout << puzzles;
-  solver.solve();
-
-//   Solver somaSolver(3,3,3,generateSomaPuzzles());
-//   somaSolver.solve();
-
-  cout << "Press any key to exit..."<<flush;
-  cin.get();
-}
 int main(int argc, char ** argv)
 {
   return realMain(argc, argv);
-  solvePuzzle();
   //solve55();
 
   return 0;

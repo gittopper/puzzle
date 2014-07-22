@@ -2,12 +2,77 @@
 #include "visualization.h"
 #include <glut.h>
 #include "utils.h"
+#include "solver.h"
+#include "print.h"
 
 using namespace Visualization;
 using namespace Geometry;
 
-double rotate_y=0; 
-double rotate_x=0;
+double rotate_y=45; 
+double rotate_x=45;
+
+
+bool makeGeneralTests()
+{
+  BREAK_ON_LINE(FloatVector(0,0,1).rotate(RotateX) == FloatVector(0,1,0));
+  BREAK_ON_LINE(FloatVector(0,0,1).rotate(RotateX).rotate(RotateX) == FloatVector(0,0,-1));
+
+  BREAK_ON_LINE(FloatVector(1,0,0).rotate(RotateY) == FloatVector(0,0,1));
+  BREAK_ON_LINE(FloatVector(1,0,0).rotate(RotateY).rotate(RotateY) == FloatVector(-1,0,0));
+
+  BREAK_ON_LINE(FloatVector(0,1,0).rotate(RotateZ) == FloatVector(1,0,0));
+  BREAK_ON_LINE(FloatVector(0,1,0).rotate(RotateZ).rotate(RotateZ) == FloatVector(0,-1,0));
+
+
+  PuzzlesSet puzzles = generateWoodPuzzles();
+  PuzzlePart part = puzzles[0];
+  part.rotate(RotateX);
+  part.centralize();
+
+  PuzzlePart p1(1);
+  p1.parts.push_back(VolPart(VolPart::Full,FloatVector(0,0,1)));
+  p1.parts.push_back(VolPart(VolPart::Full,FloatVector(0,1,0)));
+  p1.parts.push_back(VolPart(VolPart::Angle,FloatVector(0,0,0),FloatVector(1,0,-1)));
+  p1.parts.push_back(VolPart(VolPart::Angle,FloatVector(0,1,1),FloatVector(0,1,1)));
+
+  bool areEqual = part == p1;
+  BREAK_ON_LINE(areEqual);
+
+  Mat m(FloatVector(0,-1,0),FloatVector(0,0,1),FloatVector(1,0,0));
+
+  Mat rotX(1,0,0, 0,0,-1, 0,1,0);
+  Mat rotZ(0,-1,0, 1,0,0, 0,0,1);
+
+  PuzzlesSet rotatedPuzzles = puzzles;
+  rotatedPuzzles.rotate(rotX);
+  BREAK_ON_LINE(rotatedPuzzles==puzzles);
+  rotatedPuzzles.rotate(rotZ);
+  BREAK_ON_LINE(rotatedPuzzles==puzzles);
+
+  Mat r = m * m.inverse();
+  Mat e(FloatVector(1,0,0),FloatVector(0,1,0),FloatVector(0,0,1));
+  BREAK_ON_LINE(r == e);
+  FloatVector v = e * FloatVector(-1,1,2);
+  BREAK_ON_LINE(v == FloatVector(-1,1,2));
+  return true;
+}
+
+void solvePuzzle()
+{
+  BREAK_ON_LINE(makeGeneralTests());
+  //   Solver testSolver(2,2,2,generateTestPuzzles());
+
+  PuzzlesSet puzzles = generateWoodPuzzles();
+  Solver solver(3,4,2,puzzles);
+  cout << puzzles;
+  solver.solve();
+
+  //   Solver somaSolver(3,3,3,generateSomaPuzzles());
+  //   somaSolver.solve();
+
+  cout << "Press any key to exit..."<<flush;
+  cin.get();
+}
 
 void Display() {
   glMatrixMode(GL_MODELVIEW);
@@ -18,8 +83,9 @@ void Display() {
 
 	glLoadIdentity();
 
-	float l = 10;
-	glOrtho(-l, l, -l, l, -l, l);
+	float l = 15;
+	//glOrtho(-l, l, -l, l, -l, l);
+  glOrtho(-3, l, -3, l, -l, l);
 
 
 	GLfloat pos[]={5.0, 0.0, 5.0, 0.0};
@@ -51,21 +117,16 @@ void Display() {
 	glEnd();
 
 	glColor3f(   0.2,  0.0, 0.0 );
-	PuzzlePartDrawer drawer;
-	PuzzlesSet puzzles = generateWoodPuzzles();
-  PuzzlePart p2(2);
-  p2.parts.push_back(VolPart(VolPart::Full,FloatVector(0,0,0)));
-  drawer.draw(puzzles[0]);
+// 	PuzzlePartDrawer drawer;
+// 	PuzzlesSet puzzles = generateWoodPuzzles();
+// 
 // 	for (int i = 0; i < puzzles.size(); i++)
 // 	{
 // 		PuzzlePart p = puzzles[i];
 // 		p.shift(FloatVector(i*3));
 // 		drawer.draw(p);
 // 	}
-	//glutSolidTeapot(2.0);
-  //glutSolidCube(2.);
-  //glTranslatef(2.,0.,0.);
-  //glutSolidCube(2.);
+  solvePuzzle();
 
 	glPopMatrix();
 
