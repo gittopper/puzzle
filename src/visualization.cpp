@@ -10,6 +10,7 @@ double rotate_y=0;
 double rotate_x=0;
 
 void Display() {
+  glMatrixMode(GL_MODELVIEW);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glShadeModel(GL_SMOOTH);
@@ -21,13 +22,8 @@ void Display() {
 	glOrtho(-l, l, -l, l, -l, l);
 
 
-	glPushMatrix();
-	glRotatef( -rotate_y, 0.0, 1.0, 0.0 );
-	glRotatef( -rotate_x, 1.0, 0.0, 0.0 );
-
 	GLfloat pos[]={5.0, 0.0, 5.0, 0.0};
 	glLightfv(GL_LIGHT0, GL_POSITION, pos);
-	glPopMatrix();
 
 	glPushMatrix();
 	glRotatef( rotate_x, 1.0, 0.0, 0.0 );
@@ -57,7 +53,9 @@ void Display() {
 	glColor3f(   0.2,  0.0, 0.0 );
 	PuzzlePartDrawer drawer;
 	PuzzlesSet puzzles = generateWoodPuzzles();
-	drawer.draw(puzzles[3]);
+  PuzzlePart p2(2);
+  p2.parts.push_back(VolPart(VolPart::Full,IntVector(0,0,0)));
+  drawer.draw(puzzles[0]);
 // 	for (int i = 0; i < puzzles.size(); i++)
 // 	{
 // 		PuzzlePart p = puzzles[i];
@@ -65,6 +63,9 @@ void Display() {
 // 		drawer.draw(p);
 // 	}
 	//glutSolidTeapot(2.0);
+  //glutSolidCube(2.);
+  //glTranslatef(2.,0.,0.);
+  //glutSolidCube(2.);
 
 	glPopMatrix();
 
@@ -73,14 +74,13 @@ void Display() {
 }
 
 void Initialize() {
-	glFrontFace(GL_CW);
-	glMatrixMode(GL_MODELVIEW);
+	glFrontFace(GL_CCW);
 	//glMatrixMode(GL_PROJECTION);
 	glEnable(GL_COLOR_MATERIAL);
 	glClearColor(0.5,0.5,0.5,1.0);
 	glEnable(GL_LIGHTING);
 	glEnable(GL_DEPTH_TEST); 
-	GLfloat diffuse[]={0.8, 0.8, 0.8, 1.0};
+	GLfloat diffuse[]={1.0, 1.0, 1.0, 1.0};
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
 	glEnable(GL_LIGHT0);
 }
