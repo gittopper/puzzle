@@ -3,6 +3,7 @@
 #include "print.h"
 #include "puzzlepartshower.h"
 #include "visualization.h"
+#include "glut.h"
 
 namespace Geometry
 {
@@ -197,8 +198,9 @@ namespace Geometry
 	for (int i=0;i<s.size();i++)
 	{
 		visSol.puzzles.push_back(s[i]);
+		lockPuzzlesToShow.acquire();
 		puzzlesSetToShow = visSol;
-		Display();
+		lockPuzzlesToShow.release();
 		Sleep(1000);
 	}
   }

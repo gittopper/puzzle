@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\box.cpp" />
+    <ClCompile Include="..\..\src\mutex.cpp" />
     <ClCompile Include="..\..\src\print.cpp" />
     <ClCompile Include="..\..\src\intvector.cpp" />
     <ClCompile Include="..\..\src\mat.cpp" />
@@ -29,6 +30,7 @@
     <ClInclude Include="..\..\include\bbox.h" />
     <ClInclude Include="..\..\include\box.h" />
     <ClInclude Include="..\..\include\geometry.h" />
+    <ClInclude Include="..\..\include\mutex.h" />
     <ClInclude Include="..\..\include\print.h" />
     <ClInclude Include="..\..\include\intvector.h" />
     <ClInclude Include="..\..\include\mat.h" />

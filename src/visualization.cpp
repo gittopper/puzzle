@@ -9,6 +9,7 @@ using namespace Geometry;
 double rotate_y=45; 
 double rotate_x=45;
 
+examples::MutexLock  lockPuzzlesToShow;
 Geometry::PuzzlesSet puzzlesSetToShow;
 
 bool initalized = false;
@@ -59,7 +60,9 @@ void Display() {
 	glColor3f(   0.2,  0.0, 0.0 );
 	PuzzlesSetDrawer drawer;
 	//PuzzlesSet puzzles = generateWoodPuzzles();
+	lockPuzzlesToShow.acquire();
 	drawer.draw(puzzlesSetToShow);
+	lockPuzzlesToShow.release();
 
 	glPopMatrix();
 
@@ -100,6 +103,13 @@ void specialKeys( int key, int x, int y ) {
 	glutPostRedisplay();
 
 }
+
+void refresh(int v)
+{
+	glutPostRedisplay();
+	glutTimerFunc(1, refresh,0);
+}
+
 void Gfx::init(int argc, char ** argv)
 {
 	_argc = argc;
@@ -111,6 +121,7 @@ void Gfx::init(int argc, char ** argv)
 	glutCreateWindow("Puzzle visualizer");
 	glutDisplayFunc(Display);
 	glutSpecialFunc(specialKeys);
+	glutTimerFunc(1, refresh,0);
 }
 
 void* Gfx::run() {

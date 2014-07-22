@@ -1,6 +1,7 @@
 #pragma once
 #include "threads.h"
 #include "puzzlepart.h"
+#include "mutex.h"
 
 class Gfx: public Runnable {
 public:
@@ -15,4 +16,5 @@ private:
 
 void Display();
 
+extern examples::MutexLock  lockPuzzlesToShow;
 extern Geometry::PuzzlesSet puzzlesSetToShow;
