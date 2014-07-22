@@ -16,7 +16,7 @@ namespace Geometry
       Angle
     };
 
-    VolPart(VolType t, IntVector coord, IntVector iniDir = IntVector(0,0,0), bool w = false):
+    VolPart(VolType t, FloatVector coord, FloatVector iniDir = FloatVector(0,0,0), bool w = false):
       fillInfo(t),xyz(coord),dir(iniDir),wall(w){}
 
     bool operator==(const VolPart& vol) const;
@@ -25,7 +25,7 @@ namespace Geometry
 
     VolPart& operator+=(const VolPart& v);
 
-	VolPart& shift(const IntVector& shift);
+	VolPart& shift(const FloatVector& shift);
 
 	VolPart& rotate(RotType rot);
 
@@ -37,18 +37,18 @@ namespace Geometry
 
     bool shareOneOfSides(const VolPart& another) const;
 
-    const IntVector& getCoords() const { return xyz;}
-    void setCoords(const IntVector& coords) { xyz = coords;}
+    const FloatVector& getCoords() const { return xyz;}
+    void setCoords(const FloatVector& coords) { xyz = coords;}
 
-    const IntVector& getDir() const { return dir;}
-    void setDir(const IntVector& d) { dir = d;}
+    const FloatVector& getDir() const { return dir;}
+    void setDir(const FloatVector& d) { dir = d;}
 
     VolType type() const { return fillInfo;}
     void setType(VolType t) { fillInfo = t;}
   private:
 
     VolType fillInfo;
-    IntVector xyz, dir;
+    FloatVector xyz, dir;
     bool wall;
   };
 }

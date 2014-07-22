@@ -12,38 +12,38 @@ namespace Geometry
     RotateZ
   };
 
-  class IntVector
+  class FloatVector
   {
   public:
-    IntVector(int i = 0, int j = 0, int k = 0);
+    FloatVector(float i = 0, float j = 0, float k = 0);
 
-    IntVector cross(const IntVector v);
+    FloatVector cross(const FloatVector v);
 
-    IntVector& rotate(RotType rotation);
+    FloatVector& rotate(RotType rotation);
 
-    const int& IntVector::operator[](int i) const
+    const float& FloatVector::operator[](int i) const
     {
       return vec[i];
     }
 
-    int& IntVector::operator[](int i)
+    float& FloatVector::operator[](int i)
     {
       return vec[i];
     }
 
-    IntVector operator-(const IntVector& v) const;
+    FloatVector operator-(const FloatVector& v) const;
 
-    bool operator==(const IntVector& v) const;
+    bool operator==(const FloatVector& v) const;
 
-    IntVector operator-() const;
+    FloatVector operator-() const;
 
-    IntVector operator+(const IntVector& v) const;
+    FloatVector operator+(const FloatVector& v) const;
 
-	IntVector operator+=(const IntVector& v);
+	FloatVector operator+=(const FloatVector& v);
   private:
-    int vec[3];
+    float vec[3];
   };
 
 
-  int dot(const IntVector& v1, const IntVector& v2);
+  float dot(const FloatVector& v1, const FloatVector& v2);
 }

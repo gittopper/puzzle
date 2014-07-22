@@ -4,7 +4,7 @@
 
 namespace Geometry
 {
-  ostream& operator << (ostream& os, const IntVector& vec);
+  ostream& operator << (ostream& os, const FloatVector& vec);
 
   ostream& operator << (ostream& os, const VolPart& v);
 

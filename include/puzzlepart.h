@@ -22,13 +22,13 @@ namespace Geometry
 
     void getBBox(BBox& box) const;
 
-    PuzzlePart& shift(const IntVector& shift);
+    PuzzlePart& shift(const FloatVector& shift);
 
 	Mat getRotationMatrix(const PuzzlePart& part) const;
 
     Mat getLCS() const;
 
-    IntVector getZero() const;
+    FloatVector getZero() const;
 
     PuzzlePart& centralize();
 

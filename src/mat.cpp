@@ -2,7 +2,7 @@
 
 namespace Geometry
 {
-  Mat::Mat(IntVector v1,IntVector v2, IntVector v3)
+  Mat::Mat(FloatVector v1,FloatVector v2, FloatVector v3)
   {
     el(0,0) = v1[0];
     el(1,0) = v1[1];
@@ -70,7 +70,7 @@ namespace Geometry
   }
   Mat Mat::identity()
   {
-    return Mat(IntVector(1,0,0),IntVector(0,1,0),IntVector(0,0,1));
+    return Mat(FloatVector(1,0,0),FloatVector(0,1,0),FloatVector(0,0,1));
   }
   Mat Mat::operator * (const Mat& m) const
   {
@@ -85,9 +85,9 @@ namespace Geometry
     return n;
   }
 
-  IntVector Mat::operator * (const IntVector& v) const
+  FloatVector Mat::operator * (const FloatVector& v) const
   {
-    IntVector o;
+    FloatVector o;
     o[0] = int(el(0,0) * v[0] + el(0,1) * v[1] + el(0,2) * v[2]);
     o[1] = int(el(1,0) * v[0] + el(1,1) * v[1] + el(1,2) * v[2]);
     o[2] = int(el(2,0) * v[0] + el(2,1) * v[1] + el(2,2) * v[2]);

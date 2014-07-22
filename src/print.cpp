@@ -3,7 +3,7 @@
 namespace Geometry
 {
 
-  ostream& operator << (ostream& os, const IntVector& vec)
+  ostream& operator << (ostream& os, const FloatVector& vec)
   {
     cout << "(" << vec[0] << "," << vec[1] << "," << vec[2] << ")";
     return os;

@@ -31,7 +31,7 @@ namespace Geometry
     }
     return;
   }
-  PuzzlePart& PuzzlePart::shift(const IntVector& shift)
+  PuzzlePart& PuzzlePart::shift(const FloatVector& shift)
   {
     for (vector<VolPart>::iterator it = parts.begin(); it != parts.end(); it++)
     {
@@ -41,12 +41,12 @@ namespace Geometry
   }
   Mat PuzzlePart::getLCS() const
   {
-    IntVector x = parts[1].getCoords() - parts[0].getCoords();
-    IntVector y = parts[2].getCoords() - parts[0].getCoords();
+    FloatVector x = parts[1].getCoords() - parts[0].getCoords();
+    FloatVector y = parts[2].getCoords() - parts[0].getCoords();
     return Mat(x,y,x.cross(y));
   }
 
-  IntVector PuzzlePart::getZero() const
+  FloatVector PuzzlePart::getZero() const
   {
     return parts[0].getCoords();
   }
@@ -84,8 +84,8 @@ namespace Geometry
 
     Mat res = puzzles[0].getRotationMatrix(set.puzzles[0]);
 
-    IntVector prevShift = -puzzles[0].getZero();
-    IntVector shift = set.puzzles[0].getZero();
+    FloatVector prevShift = -puzzles[0].getZero();
+    FloatVector shift = set.puzzles[0].getZero();
 
     bool theSame = true;
 

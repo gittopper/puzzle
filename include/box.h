@@ -13,7 +13,7 @@ namespace Geometry
   public:
     Box(int DX, int DY, int DZ);
 
-    VolPart& el(const IntVector& coords)
+    VolPart& el(const FloatVector& coords)
     {
       return el(coords[0], coords[1], coords[2]);
     }
@@ -27,7 +27,7 @@ namespace Geometry
     int getDimY() const { return dimY;}
     int getDimZ() const { return dimZ;}
 
-    const VolPart& el(const IntVector& coords) const
+    const VolPart& el(const FloatVector& coords) const
     {
       return el(coords[0], coords[1], coords[2]);
     }

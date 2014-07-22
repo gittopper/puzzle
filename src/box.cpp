@@ -12,7 +12,7 @@ namespace Geometry
       {
         for(int k=0;k<DZ;k++)
         {
-          VolPart v = VolPart(VolPart::Empty,IntVector(i,j,k));
+          VolPart v = VolPart(VolPart::Empty,FloatVector(i,j,k));
           box.push_back(v);
           BREAK_ON_LINE(el(i,j,k) == v);
         }
@@ -142,7 +142,7 @@ namespace Geometry
       {
         for(int k=0;k<dimZ;k++)
         {
-          IntVector v(i, j, k);
+          FloatVector v(i, j, k);
           v = rot * v;
           bbox.merge(v);
         }
@@ -151,7 +151,7 @@ namespace Geometry
 
 
     Box newBox(bbox.maxV[0]-bbox.minV[0]+1,bbox.maxV[1]-bbox.minV[1]+1,bbox.maxV[2]-bbox.minV[2]+1);
-    IntVector shift(-bbox.minV);
+    FloatVector shift(-bbox.minV);
 
     for(int i=0;i<dimX;i++)
     {
@@ -161,7 +161,7 @@ namespace Geometry
         {
           VolPart newVol(el(i, j, k));
           newVol.rotate(rot).shift(shift);
-          const IntVector& xyz = newVol.getCoords();
+          const FloatVector& xyz = newVol.getCoords();
           newBox.el(xyz[0], xyz[1], xyz[2]) = newVol;
         }
       }

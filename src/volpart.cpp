@@ -15,7 +15,7 @@ namespace Geometry
     return dir[dim] * (1 - 2 * val) >= 0;
   }
 
-  VolPart& VolPart::shift(const IntVector& shift)
+  VolPart& VolPart::shift(const FloatVector& shift)
   {
 	  xyz += shift;
 	  return *this;

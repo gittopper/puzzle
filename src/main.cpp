@@ -70,14 +70,14 @@ void solve55()
 
 bool makeGeneralTests()
 {
-  BREAK_ON_LINE(IntVector(0,0,1).rotate(RotateX) == IntVector(0,1,0));
-  BREAK_ON_LINE(IntVector(0,0,1).rotate(RotateX).rotate(RotateX) == IntVector(0,0,-1));
+  BREAK_ON_LINE(FloatVector(0,0,1).rotate(RotateX) == FloatVector(0,1,0));
+  BREAK_ON_LINE(FloatVector(0,0,1).rotate(RotateX).rotate(RotateX) == FloatVector(0,0,-1));
 
-  BREAK_ON_LINE(IntVector(1,0,0).rotate(RotateY) == IntVector(0,0,1));
-  BREAK_ON_LINE(IntVector(1,0,0).rotate(RotateY).rotate(RotateY) == IntVector(-1,0,0));
+  BREAK_ON_LINE(FloatVector(1,0,0).rotate(RotateY) == FloatVector(0,0,1));
+  BREAK_ON_LINE(FloatVector(1,0,0).rotate(RotateY).rotate(RotateY) == FloatVector(-1,0,0));
 
-  BREAK_ON_LINE(IntVector(0,1,0).rotate(RotateZ) == IntVector(1,0,0));
-  BREAK_ON_LINE(IntVector(0,1,0).rotate(RotateZ).rotate(RotateZ) == IntVector(0,-1,0));
+  BREAK_ON_LINE(FloatVector(0,1,0).rotate(RotateZ) == FloatVector(1,0,0));
+  BREAK_ON_LINE(FloatVector(0,1,0).rotate(RotateZ).rotate(RotateZ) == FloatVector(0,-1,0));
 
 
   PuzzlesSet puzzles = generateWoodPuzzles();
@@ -86,15 +86,15 @@ bool makeGeneralTests()
   part.centralize();
 
   PuzzlePart p1(1);
-  p1.parts.push_back(VolPart(VolPart::Full,IntVector(0,0,1)));
-  p1.parts.push_back(VolPart(VolPart::Full,IntVector(0,1,0)));
-  p1.parts.push_back(VolPart(VolPart::Angle,IntVector(0,0,0),IntVector(1,0,-1)));
-  p1.parts.push_back(VolPart(VolPart::Angle,IntVector(0,1,1),IntVector(0,1,1)));
+  p1.parts.push_back(VolPart(VolPart::Full,FloatVector(0,0,1)));
+  p1.parts.push_back(VolPart(VolPart::Full,FloatVector(0,1,0)));
+  p1.parts.push_back(VolPart(VolPart::Angle,FloatVector(0,0,0),FloatVector(1,0,-1)));
+  p1.parts.push_back(VolPart(VolPart::Angle,FloatVector(0,1,1),FloatVector(0,1,1)));
 
   bool areEqual = part == p1;
   BREAK_ON_LINE(areEqual);
 
-  Mat m(IntVector(0,-1,0),IntVector(0,0,1),IntVector(1,0,0));
+  Mat m(FloatVector(0,-1,0),FloatVector(0,0,1),FloatVector(1,0,0));
 
   Mat rotX(1,0,0, 0,0,-1, 0,1,0);
   Mat rotZ(0,-1,0, 1,0,0, 0,0,1);
@@ -106,10 +106,10 @@ bool makeGeneralTests()
   BREAK_ON_LINE(rotatedPuzzles==puzzles);
 
   Mat r = m * m.inverse();
-  Mat e(IntVector(1,0,0),IntVector(0,1,0),IntVector(0,0,1));
+  Mat e(FloatVector(1,0,0),FloatVector(0,1,0),FloatVector(0,0,1));
   BREAK_ON_LINE(r == e);
-  IntVector v = e * IntVector(-1,1,2);
-  BREAK_ON_LINE(v == IntVector(-1,1,2));
+  FloatVector v = e * FloatVector(-1,1,2);
+  BREAK_ON_LINE(v == FloatVector(-1,1,2));
   return true;
 }
 

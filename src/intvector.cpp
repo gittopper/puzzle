@@ -2,31 +2,31 @@
 
 namespace Geometry
 {
-  int dot(const IntVector& v1, const IntVector& v2)
+  float dot(const FloatVector& v1, const FloatVector& v2)
   {
     return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
   }
 
-  IntVector::IntVector(int i, int j, int k)
+  FloatVector::FloatVector(float i, float j, float k)
   {
     vec[0] = i;
     vec[1] = j;
     vec[2] = k;
   }
 
-  IntVector IntVector::cross(const IntVector v)
+  FloatVector FloatVector::cross(const FloatVector v)
   {
-    IntVector r;
+    FloatVector r;
     r[0] = vec[1] * v.vec[2] - vec[2] * v.vec[1];
     r[1] = vec[2] * v.vec[0] - vec[0] * v.vec[2];
     r[2] = vec[0] * v.vec[1] - vec[1] * v.vec[0];
     return r;
   }
-  IntVector& IntVector::rotate(RotType rotation)
+  FloatVector& FloatVector::rotate(RotType rotation)
   {
-    int x = vec[0];
-    int y = vec[1];
-    int z = vec[2];
+    float x = vec[0];
+    float y = vec[1];
+    float z = vec[2];
 
     switch(rotation)
     {
@@ -44,23 +44,23 @@ namespace Geometry
     };
     return *this;
   }
-  IntVector IntVector::operator-(const IntVector& v) const
+  FloatVector FloatVector::operator-(const FloatVector& v) const
   {
-    return IntVector(vec[0] - v[0], vec[1] - v[1], vec[2] - v[2]);
+    return FloatVector(vec[0] - v[0], vec[1] - v[1], vec[2] - v[2]);
   }
-  bool IntVector::operator==(const IntVector& v) const
+  bool FloatVector::operator==(const FloatVector& v) const
   {
     return vec[0] == v[0] && vec[1] == v[1] && vec[2] == v[2];
   }
-  IntVector IntVector::operator-() const
+  FloatVector FloatVector::operator-() const
   {
-    return IntVector(-vec[0], -vec[1], -vec[2]);
+    return FloatVector(-vec[0], -vec[1], -vec[2]);
   }
-  IntVector IntVector::operator+(const IntVector& v) const
+  FloatVector FloatVector::operator+(const FloatVector& v) const
   {
-    return IntVector(vec[0] + v[0], vec[1] + v[1], vec[2] + v[2]);
+    return FloatVector(vec[0] + v[0], vec[1] + v[1], vec[2] + v[2]);
   }
-  IntVector IntVector::operator+=(const IntVector& v)
+  FloatVector FloatVector::operator+=(const FloatVector& v)
   {
 	  vec[0] += v[0];
 	  vec[1] += v[1];

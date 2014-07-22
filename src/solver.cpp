@@ -9,10 +9,10 @@ namespace Geometry
   {
     box = generateEmptyBox_(dimX,dimY,dimZ);
 
-    seekedPuzzle.parts.push_back(VolPart(VolPart::Full,IntVector(0,0,0)));
-    seekedPuzzle.parts.push_back(VolPart(VolPart::Full,IntVector(0,0,1)));
-    seekedPuzzle.parts.push_back(VolPart(VolPart::Angle,IntVector(0,1,0),IntVector(0,1,1)));
-    seekedPuzzle.parts.push_back(VolPart(VolPart::Angle,IntVector(0,1,1),IntVector(1,1,0)));
+    seekedPuzzle.parts.push_back(VolPart(VolPart::Full,FloatVector(0,0,0)));
+    seekedPuzzle.parts.push_back(VolPart(VolPart::Full,FloatVector(0,0,1)));
+    seekedPuzzle.parts.push_back(VolPart(VolPart::Angle,FloatVector(0,1,0),FloatVector(0,1,1)));
+    seekedPuzzle.parts.push_back(VolPart(VolPart::Angle,FloatVector(0,1,1),FloatVector(1,1,0)));
   }
   void Solver::remove(const PuzzlePart& part)
   {
@@ -151,7 +151,7 @@ namespace Geometry
           bool isWall = !(x % (dimX + 1)) || !(y % (dimY + 1)) || !(z % (dimZ + 1));
           if (isWall)
           {
-            cleanBox.el(x,y,z) = VolPart(isWall ? VolPart::Full : VolPart::Empty,IntVector(x,y,z),IntVector(0,0,0),isWall);
+            cleanBox.el(x,y,z) = VolPart(isWall ? VolPart::Full : VolPart::Empty,FloatVector(x,y,z),FloatVector(0,0,0),isWall);
           }
         }
       }
@@ -242,7 +242,7 @@ namespace Geometry
             for(int z = 1; z <= zmax;z++)
             {
               PuzzlePart part3 = part2;
-              part3.shift(IntVector(x,y,z));
+              part3.shift(FloatVector(x,y,z));
               if (tryToPlace(part3))
               {
                 remove(part3);
@@ -326,7 +326,7 @@ namespace Geometry
               for(int z = 1; z <= zmax;z++)
               {
                 PuzzlePart part3 = part2;
-                part3.shift(IntVector(x,y,z));
+                part3.shift(FloatVector(x,y,z));
                 if (tryToPlace(part3))
                 {
                   solution.puzzles.push_back(part3);

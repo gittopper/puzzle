@@ -11,7 +11,7 @@ namespace Geometry
     BBox():
       minV(1000,1000,1000),
       maxV(-1000,-1000,-1000){}
-    void merge(const IntVector& v)
+    void merge(const FloatVector& v)
     {
       minV[0] = minV[0] > v[0] ? v[0] : minV[0];
       minV[1] = minV[1] > v[1] ? v[1] : minV[1];
@@ -23,10 +23,10 @@ namespace Geometry
     }
     void grow()
     {
-      minV = minV - IntVector(1,1,1);
-      maxV = maxV + IntVector(1,1,1);
+      minV = minV - FloatVector(1,1,1);
+      maxV = maxV + FloatVector(1,1,1);
     }
 
-    IntVector minV,maxV;
+    FloatVector minV,maxV;
   };
 }

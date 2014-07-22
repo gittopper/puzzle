@@ -54,12 +54,12 @@ void Display() {
 	PuzzlePartDrawer drawer;
 	PuzzlesSet puzzles = generateWoodPuzzles();
   PuzzlePart p2(2);
-  p2.parts.push_back(VolPart(VolPart::Full,IntVector(0,0,0)));
+  p2.parts.push_back(VolPart(VolPart::Full,FloatVector(0,0,0)));
   drawer.draw(puzzles[0]);
 // 	for (int i = 0; i < puzzles.size(); i++)
 // 	{
 // 		PuzzlePart p = puzzles[i];
-// 		p.shift(IntVector(i*3));
+// 		p.shift(FloatVector(i*3));
 // 		drawer.draw(p);
 // 	}
 	//glutSolidTeapot(2.0);
