@@ -13,5 +13,6 @@ private:
 	int myID;
 };
 
+void Display();
 
 extern Geometry::PuzzlesSet puzzlesSetToShow;

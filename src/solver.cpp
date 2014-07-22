@@ -193,7 +193,14 @@ namespace Geometry
       cout << emptyBox<<endl;
       emptyBox.remove(s[i].parts);
     }
-	puzzlesSetToShow = s;
+	PuzzlesSet visSol;
+	for (int i=0;i<s.size();i++)
+	{
+		visSol.puzzles.push_back(s[i]);
+		puzzlesSetToShow = visSol;
+		Display();
+		Sleep(1000);
+	}
   }
   bool Solver::tryToShow()
   {

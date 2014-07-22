@@ -2,6 +2,7 @@
 #include "puzzlepart.h"
 #include "glut.h"
 #include "math.h"
+#include "visualization.h"
 
 using namespace Visualization;
 using namespace Geometry;
@@ -195,7 +196,6 @@ void PuzzlesSetDrawer::draw(const Geometry::PuzzlesSet& puzzles) const
 	for (int i = 0; i < puzzles.puzzles.size(); i++)
 	{
 		PuzzlePart p = puzzles.puzzles[i];
-		p.shift(FloatVector(i*3));
 		partDrawer.draw(p);
 	}
 }

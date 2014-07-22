@@ -11,7 +11,10 @@ double rotate_x=45;
 
 Geometry::PuzzlesSet puzzlesSetToShow;
 
+bool initalized = false;
+
 void Display() {
+	if (!initalized) return;
     glMatrixMode(GL_MODELVIEW);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -74,6 +77,7 @@ void Initialize() {
 	GLfloat diffuse[]={1.0, 1.0, 1.0, 1.0};
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
 	glEnable(GL_LIGHT0);
+	initalized = true;
 }
 
 void specialKeys( int key, int x, int y ) {
