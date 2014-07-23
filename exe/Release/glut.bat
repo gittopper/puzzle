@@ -1,3 +1,3 @@
 set PATH=%PATH%;../../glutdlls37beta
 
-puzzle.exe
+puzzle.exe >result.log

@@ -56,7 +56,7 @@ PuzzlesSet  generateWoodPuzzles()
   PuzzlePart p7(7);
   p7.parts.push_back(VolPart(VolPart::Full,FloatVector(1,0,0)));
   p7.parts.push_back(VolPart(VolPart::Full,FloatVector(1,0,1)));
-  p7.parts.push_back(VolPart(VolPart::Angle,FloatVector(0,0,1),FloatVector(0,-1,-1)));
+  p7.parts.push_back(VolPart(VolPart::Angle,FloatVector(0,0,1),FloatVector(-1,0,-1)));
   p7.parts.push_back(VolPart(VolPart::Angle,FloatVector(1,1,0),FloatVector(0,1,1)));
   puzzles.puzzles.push_back(p7);
 

@@ -59,7 +59,19 @@ void Display() {
 
 	glColor3f(   0.2,  0.0, 0.0 );
 	PuzzlesSetDrawer drawer;
-	//PuzzlesSet puzzles = generateWoodPuzzles();
+//   if (true)
+//   {
+//     PuzzlePartDrawer partDrawer;
+//     PuzzlesSet puzzles = generateWoodPuzzles();
+//     for (int i = 0; i < puzzles.puzzles.size(); i++)
+//     {
+//       PuzzlePart p = puzzles.puzzles[i];
+//       p.shift(i*3);
+//       partDrawer.draw(p);
+//     }
+//   }
+
+
 	lockPuzzlesToShow.acquire();
 	drawer.draw(puzzlesSetToShow);
 	lockPuzzlesToShow.release();
