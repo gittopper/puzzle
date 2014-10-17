@@ -1,8 +1,8 @@
 #pragma once
 
-#include "intvector.h"
+#include "vector.h"
 #include "mat.h"
 #include "volpart.h"
-#include "puzzlepart.h"
+#include "piece.h"
 #include "bbox.h"
 #include "box.h"

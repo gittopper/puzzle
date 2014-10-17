@@ -1,7 +1,7 @@
 #pragma once
 
 #include "base.h"
-#include "intvector.h"
+#include "vector.h"
 
 namespace Geometry
 {
@@ -11,7 +11,7 @@ namespace Geometry
     BBox():
       minV(1000,1000,1000),
       maxV(-1000,-1000,-1000){}
-    void merge(const FloatVector& v)
+    void merge(const Vector& v)
     {
       minV[0] = minV[0] > v[0] ? v[0] : minV[0];
       minV[1] = minV[1] > v[1] ? v[1] : minV[1];
@@ -23,10 +23,10 @@ namespace Geometry
     }
     void grow()
     {
-      minV = minV - FloatVector(1,1,1);
-      maxV = maxV + FloatVector(1,1,1);
+      minV = minV - Vector(1,1,1);
+      maxV = maxV + Vector(1,1,1);
     }
 
-    FloatVector minV,maxV;
+    Vector minV,maxV;
   };
 }

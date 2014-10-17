@@ -1,7 +1,7 @@
 #pragma once
 
 #include "base.h"
-#include "intvector.h"
+#include "vector.h"
 #include "mat.h"
 
 namespace Geometry
@@ -16,7 +16,7 @@ namespace Geometry
       Angle
     };
 
-    VolPart(VolType t, FloatVector coord, FloatVector iniDir = FloatVector(0,0,0), bool w = false):
+    VolPart(VolType t, Vector coord, Vector iniDir = Vector(0,0,0), bool w = false):
       fillInfo(t),xyz(coord),dir(iniDir),wall(w){}
 
     bool operator==(const VolPart& vol) const;
@@ -25,9 +25,9 @@ namespace Geometry
 
     VolPart& operator+=(const VolPart& v);
 
-	VolPart& shift(const FloatVector& shift);
+  VolPart& shift(const Vector& shift);
 
-	VolPart& rotate(RotType rot);
+  VolPart& rotate(RotType rot);
 
     VolPart& rotate(const Mat& m);
 
@@ -37,18 +37,18 @@ namespace Geometry
 
     bool shareOneOfSides(const VolPart& another) const;
 
-    const FloatVector& getCoords() const { return xyz;}
-    void setCoords(const FloatVector& coords) { xyz = coords;}
+    const Vector& getCoords() const { return xyz;}
+    void setCoords(const Vector& coords) { xyz = coords;}
 
-    const FloatVector& getDir() const { return dir;}
-    void setDir(const FloatVector& d) { dir = d;}
+    const Vector& getDir() const { return dir;}
+    void setDir(const Vector& d) { dir = d;}
 
     VolType type() const { return fillInfo;}
     void setType(VolType t) { fillInfo = t;}
   private:
 
     VolType fillInfo;
-    FloatVector xyz, dir;
+    Vector xyz, dir;
     bool wall;
   };
 }

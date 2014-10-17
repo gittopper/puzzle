@@ -3,7 +3,7 @@
 namespace Geometry
 {
 
-  ostream& operator << (ostream& os, const FloatVector& vec)
+  ostream& operator << (ostream& os, const Vector& vec)
   {
     cout << "(" << vec[0] << "," << vec[1] << "," << vec[2] << ")";
     return os;
@@ -17,10 +17,10 @@ namespace Geometry
     return os;
   }
 
-  ostream& operator << (ostream& os, const PuzzlePart& p)
+  ostream& operator << (ostream& os, const Piece& p)
   {
     cout<<"Part number "<<p.number<<":"<<endl;
-    for (vector<VolPart>::const_iterator it = p.parts.cbegin(); it != p.parts.cend(); it++)
+    for (vector<VolPart>::const_iterator it = p.parts.begin(); it != p.parts.end(); it++)
     {
       cout<<*it<<endl;
     }
@@ -28,7 +28,7 @@ namespace Geometry
     return os;
   }
 
-  ostream& operator << (ostream& os, const PuzzlesSet& v)
+  ostream& operator << (ostream& os, const PiecesSet& v)
   {
     for(unsigned i = 0; i < v.size(); i++)
     {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "base.h"
-#include "intvector.h"
+#include "vector.h"
 #include "volpart.h"
 
 
@@ -13,7 +13,7 @@ namespace Geometry
   public:
     Box(int DX, int DY, int DZ);
 
-    VolPart& el(const FloatVector& coords)
+    VolPart& el(const Vector& coords)
     {
       return el(coords[0], coords[1], coords[2]);
     }
@@ -27,7 +27,7 @@ namespace Geometry
     int getDimY() const { return dimY;}
     int getDimZ() const { return dimZ;}
 
-    const VolPart& el(const FloatVector& coords) const
+    const VolPart& el(const Vector& coords) const
     {
       return el(coords[0], coords[1], coords[2]);
     }

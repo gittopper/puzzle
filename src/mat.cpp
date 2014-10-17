@@ -2,7 +2,7 @@
 
 namespace Geometry
 {
-  Mat::Mat(FloatVector v1,FloatVector v2, FloatVector v3)
+  Mat::Mat(Vector v1,Vector v2, Vector v3)
   {
     el(0,0) = v1[0];
     el(1,0) = v1[1];
@@ -16,7 +16,7 @@ namespace Geometry
     el(1,2) = v3[1];
     el(2,2) = v3[2];
   }
-  Mat::Mat(int a00,int a01,int a02,int a10,int a11,int a12,int a20,int a21,int a22)
+  Mat::Mat(float a00, float a01, float a02, float a10, float a11, float a12, float a20, float a21, float a22)
   {
     el(0,0) = a00;
     el(0,1) = a01;
@@ -30,20 +30,20 @@ namespace Geometry
     el(2,1) = a21;
     el(2,2) = a22;
   }
-  double Mat::det()const
+  float Mat::det()const
   {
     return el(0,0)*el(1,1)*el(2,2)+el(1,0)*el(2,1)*el(0,2)+el(0,1)*el(1,2)*el(2,0) - el(2,0)*el(1,1)*el(0,2)-el(1,0)*el(0,1)*el(2,2)-el(2,1)*el(1,2)*el(0,0);
   }
-  void Mat::scale(double val)
+  void Mat::scale(float val)
   {
     for (int i =0; i <9; i++) 
     {
-      double r = ar[i] * val;
+      float r = ar[i] * val;
       ar[i] = r;
       //BREAK_ON_LINE(ar[i] == r);
     }
   }
-  Mat Mat::inverse()
+  Mat Mat::inverse() const
   {
     Mat inv;
     inv.el(0,0) = (el(1,1) * el(2,2) - el(1,2) * el(2,1));
@@ -68,10 +68,6 @@ namespace Geometry
     }
     return true;
   }
-  Mat Mat::identity()
-  {
-    return Mat(FloatVector(1,0,0),FloatVector(0,1,0),FloatVector(0,0,1));
-  }
   Mat Mat::operator * (const Mat& m) const
   {
     Mat n;
@@ -85,12 +81,40 @@ namespace Geometry
     return n;
   }
 
-  FloatVector Mat::operator * (const FloatVector& v) const
+  Mat Mat::operator + (const Mat& m) const
   {
-    FloatVector o;
-    o[0] = int(el(0,0) * v[0] + el(0,1) * v[1] + el(0,2) * v[2]);
-    o[1] = int(el(1,0) * v[0] + el(1,1) * v[1] + el(1,2) * v[2]);
-    o[2] = int(el(2,0) * v[0] + el(2,1) * v[1] + el(2,2) * v[2]);
+    Mat n;
+    for (int i = 0; i < 9; i++)
+    {
+      n.ar[i] = ar[i] + m.ar[i];
+    }
+    return n;
+  }
+
+  Vector Mat::operator * (const Vector& v) const
+  {
+    Vector o;
+    o[0] = el(0,0) * v[0] + el(0,1) * v[1] + el(0,2) * v[2];
+    o[1] = el(1,0) * v[0] + el(1,1) * v[1] + el(1,2) * v[2];
+    o[2] = el(2,0) * v[0] + el(2,1) * v[1] + el(2,2) * v[2];
     return o;
+  }
+
+  Mat Mat::operator * (float f) const
+  {
+    Mat res(*this);
+    for (int i = 0; i < 9; i++)
+    {
+      res.ar[i] = res.ar[i] * f;
+    }
+    return res;
+  }
+  Mat Mat::rotate(Vector v, float angle) const
+  {
+    Vector norm = v.normalized();
+    Mat w(0, -norm[2], norm[1],     norm[2], 0, -norm[0],          -norm[1], norm[0], 0);
+    //Rodrigues' Rotation Formula
+    Mat res = res + w * sin(angle) + w * w * 2 * sin(angle / 2);
+    return res;
   }
 }

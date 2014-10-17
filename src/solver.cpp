@@ -1,34 +1,41 @@
 #include "solver.h"
 #include "utils.h"
 #include "print.h"
-#include "puzzlepartshower.h"
-#include "visualization.h"
-#include "glut.h"
+#include "pieceshower.h"
 
 namespace Geometry
 {
-  Solver::Solver(int xDim,int yDim,int zDim, const PuzzlesSet availablePuzzles):
-    puzzles(availablePuzzles),dimX(xDim),dimY(yDim),dimZ(zDim),box(0,0,0),numPlaced(0),maxSol(0),progress(0),seekedPuzzle(9)
+  Solver::Solver(VolumePuzzle& puzzleInstance) :
+   box(0,0,0),
+   numPlaced(0),
+   maxSol(0),
+   progress(0),
+   seekedPuzzle(9),
+   puzzle(puzzleInstance)
   {
-    box = generateEmptyBox_(dimX,dimY,dimZ);
+    box = puzzle.getEmptyBox();
+    pieces = puzzle.getPieces();
+    dimX = puzzle.getXDim();
+    dimY = puzzle.getYDim();
+    dimZ = puzzle.getZDim();
 
-    seekedPuzzle.parts.push_back(VolPart(VolPart::Full,FloatVector(0,0,0)));
-    seekedPuzzle.parts.push_back(VolPart(VolPart::Full,FloatVector(0,0,1)));
-    seekedPuzzle.parts.push_back(VolPart(VolPart::Angle,FloatVector(0,1,0),FloatVector(0,1,1)));
-    seekedPuzzle.parts.push_back(VolPart(VolPart::Angle,FloatVector(0,1,1),FloatVector(1,1,0)));
+    seekedPuzzle.parts.push_back(VolPart(VolPart::Full,Vector(0,0,0)));
+    seekedPuzzle.parts.push_back(VolPart(VolPart::Full,Vector(0,0,1)));
+    seekedPuzzle.parts.push_back(VolPart(VolPart::Angle,Vector(0,1,0),Vector(0,1,1)));
+    seekedPuzzle.parts.push_back(VolPart(VolPart::Angle,Vector(0,1,1),Vector(1,1,0)));
   }
-  void Solver::remove(const PuzzlePart& part)
+  void Solver::remove(const Piece& part)
   {
     box.remove(part.parts);
     numPlaced--;
   }
-  void Solver::place(const PuzzlePart& part, Box& b)
+  void Solver::place(const Piece& part, Box& b)
   {
     box.add(part.parts);
     numPlaced++;
     return;
   }
-  bool Solver::couldPlace(const PuzzlePart& part, bool& matched) const
+  bool Solver::couldPlace(const Piece& part, bool& matched) const
   {
     matched = false;
     for(unsigned i = 0; i < part.parts.size(); i++)
@@ -52,7 +59,7 @@ namespace Geometry
     }
     return true;
   }
-  bool Solver::hasSqueezed(const PuzzlePart& part) const
+  bool Solver::hasSqueezed(const Piece& part) const
   {
     BBox bbox;
     part.getBBox(bbox);
@@ -73,7 +80,7 @@ namespace Geometry
     }
     return false;
   }
-  bool Solver::tryToPlace(const PuzzlePart& part)
+  bool Solver::tryToPlace(const Piece& part)
   {
     bool matched;
     if (!couldPlace(part,matched))
@@ -85,7 +92,7 @@ namespace Geometry
       return false;
     }
     place(part,box);
-	  if (hasSqueezed(part))
+    if (hasSqueezed(part))
     {
       remove(part);
       return false;
@@ -112,27 +119,9 @@ namespace Geometry
     return false;
   }
 
-  PuzzlesSet Solver::getNormalized(const PuzzlesSet& sol,Mat&rotation)
-  {
-    PuzzlesSet ordered;
-    for(unsigned i = 1; i<=puzzles.size();i++)
-    {
-      for(unsigned j = 0; j<sol.size();j++)
-      {
-        if (sol[j].number == i) ordered.puzzles.push_back(sol[j]);
-      }
-    }
-    const PuzzlePart& part = ordered[0];
-    rotation = part.getRotationMatrix(puzzles[part.number-1]);
-    BREAK_ON_LINE(rotation.det()==1);
-    ordered.rotate(rotation);
-
-    return ordered;
-  }
-
   bool Solver::verifyAlgorithm()
   {
-    Box tt(generateEmptyBox_(dimX,dimY,dimZ));
+    Box tt = puzzle.getEmptyBox();
 
     for(unsigned i =0; i < solution.size(); i++)
     {
@@ -141,86 +130,20 @@ namespace Geometry
     return tt == box;
   }
 
-  Box Solver::generateEmptyBox_(int dimX,int dimY,int dimZ) const
+  bool Solver::foundNewSolution()
   {
-    Box cleanBox(dimX + 2, dimY + 2, dimZ + 2);
-
-    for (int x = 0; x < dimX + 2; x++)
+    if (puzzle.addSolution(solution))
     {
-      for (int y = 0; y < dimY + 2; y++)
-      {
-        for (int z = 0; z < dimZ + 2; z++)
-        {
-          bool isWall = !(x % (dimX + 1)) || !(y % (dimY + 1)) || !(z % (dimZ + 1));
-          if (isWall)
-          {
-            cleanBox.el(x,y,z) = VolPart(isWall ? VolPart::Full : VolPart::Empty,FloatVector(x,y,z),FloatVector(0,0,0),isWall);
-          }
-        }
-      }
-    }
-    return cleanBox;
-  }
-
-  bool Solver::newSolution()
-  {
-    Mat rot;
-    PuzzlesSet sol = getNormalized(solution,rot);
-
-    for(unsigned iSol = 0; iSol < solutions.size(); iSol ++)
-    {
-
-      if (solutions[iSol] == sol) return false;
-
-    }
-    solutions.push_back(sol);
-    transforms.push_back(rot);
-    return true;
-  }
-  void Solver::drawSolution(const PuzzlesSet& s, Mat rot) const
-  {
-    for (unsigned i = 0; i < s.size(); i++)
-    {
-      cout << ( i > 0 ? "," : "") << s[i].number;
-    }
-    Box tt = box;
-    tt.rotate(rot);
-    cout << endl << tt <<endl;
-
-    Box emptyBox(generateEmptyBox_(tt.getDimX()-2,tt.getDimY()-2,tt.getDimZ()-2));
-    for (unsigned i = 0; i < s.size(); i++)
-    {
-      emptyBox.add(s[i].parts);
-      cout << emptyBox<<endl;
-      emptyBox.remove(s[i].parts);
-    }
-	PuzzlesSet visSol;
-	for (int i=0;i<s.size();i++)
-	{
-		visSol.puzzles.push_back(s[i]);
-		lockPuzzlesToShow.acquire();
-		puzzlesSetToShow = visSol;
-		lockPuzzlesToShow.release();
-		Sleep(1000);
-	}
-  }
-  bool Solver::tryToShow()
-  {
-    maxSol = numPlaced;
-    if (newSolution())
-    {
-      cout << "Solution number " << solutions.size() << ":"<< endl;
-      cout << "Number of figures is " << numPlaced << ":"<< endl;
-      cout << solutions[solutions.size()-1] << endl;
-      drawSolution(solutions[solutions.size()-1],transforms[transforms.size()-1]);
+      printLastSolution(puzzle);
+      maxSol = numPlaced;
       return true;
     }
     return false;
   }
 
-  bool Solver::puzzleCouldBePlacedSomewhere(const PuzzlePart& partToCheck)
+  bool Solver::puzzleCouldBePlacedSomewhere(const Piece& partToCheck)
   {
-    PuzzlePart part = partToCheck;
+    Piece part = partToCheck;
     for (int i = 0; i < 6; i++)
     {
       if (i < 4)
@@ -235,7 +158,7 @@ namespace Geometry
         part.rotate(RotateX);
         part.rotate(RotateX);
       }
-      PuzzlePart part2 = part;
+      Piece part2 = part;
       for (int j = 0; j < 4; j++)
       {
         part2.rotate(RotateZ).centralize();
@@ -253,8 +176,8 @@ namespace Geometry
           {
             for(int z = 1; z <= zmax;z++)
             {
-              PuzzlePart part3 = part2;
-              part3.shift(FloatVector(x,y,z));
+              Piece part3 = part2;
+              part3.shift(Vector(x,y,z));
               if (tryToPlace(part3))
               {
                 remove(part3);
@@ -271,13 +194,13 @@ namespace Geometry
   void Solver::solve()
   {
     BREAK_ON_LINE(verifyAlgorithm());
-    if (maxSol<numPlaced && (numPlaced < puzzles.size() - 1))
+    if (maxSol<numPlaced && (numPlaced < pieces.size() - 1))
     {
-      tryToShow();
+      foundNewSolution();
     }
-    if(numPlaced == puzzles.size() - 1 && hasTwoEmpty())
+    if(numPlaced == pieces.size() - 1 && hasTwoEmpty())
     {
-      if (tryToShow())
+      if (foundNewSolution())
       {
         if(puzzleCouldBePlacedSomewhere(seekedPuzzle))
         {
@@ -285,18 +208,18 @@ namespace Geometry
         }
       }
     }
-    if (numPlaced == puzzles.size())
+    if (numPlaced == pieces.size())
     {
-      tryToShow();
+      foundNewSolution();
       return;
     }
-    for(unsigned iPuzzle = 0; iPuzzle <puzzles.size(); iPuzzle ++)
+    for(unsigned iPuzzle = 0; iPuzzle <pieces.size(); iPuzzle ++)
     {
-      if (puzzles[iPuzzle].busy) continue;
+      if (pieces[iPuzzle].busy) continue;
 
-	  puzzles[iPuzzle].busy = true;
+    pieces[iPuzzle].busy = true;
 
-      PuzzlePart part = puzzles[iPuzzle];
+      Piece part = pieces[iPuzzle];
       for (int i = 0; i < 6; i++)
       {
         if (i < 4)
@@ -311,7 +234,7 @@ namespace Geometry
           part.rotate(RotateX);
           part.rotate(RotateX);
         }
-        PuzzlePart part2 = part;
+        Piece part2 = part;
         for (int j = 0; j < 4; j++)
         {
           part2.rotate(RotateZ).centralize();
@@ -337,24 +260,24 @@ namespace Geometry
             {
               for(int z = 1; z <= zmax;z++)
               {
-                PuzzlePart part3 = part2;
-                part3.shift(FloatVector(x,y,z));
+                Piece part3 = part2;
+                part3.shift(Vector(x,y,z));
                 if (tryToPlace(part3))
                 {
-                  solution.puzzles.push_back(part3);
+                  solution.pieces.push_back(part3);
 
-				  //Mat t = part3.getRotationMatrix(puzzles[iPuzzle]);
+          //Mat t = part3.getRotationMatrix(pieces[iPuzzle]);
 
                   solve();
                   remove(part3);
-                  solution.puzzles.pop_back();
+                  solution.pieces.pop_back();
                 }
               }
             }
           }
         }
       }
-      puzzles[iPuzzle].busy = false;
+      pieces[iPuzzle].busy = false;
       if (numPlaced == 0) return; //we should find all solutions only for one first figure
       if (numPlaced == 1) 
       {

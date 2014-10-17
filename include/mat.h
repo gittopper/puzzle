@@ -1,30 +1,34 @@
 #pragma once
-#include "intvector.h"
+#include "vector.h"
 
 namespace Geometry
 {
   class Mat
   {
   public:
-    static Mat identity();
-    Mat(){}
-    Mat(FloatVector v1,FloatVector v2, FloatVector v3);
-    Mat(int a00,int a01,int a02,int a10,int a11,int a12,int a20,int a21,int a22);
-    const double el(int i, int j) const
+
+    Mat(Vector v1,Vector v2, Vector v3);
+    Mat(float a00 = 1,float a01 = 0,float a02 = 0,float a10 = 0,float a11 = 1,float a12 = 0,float a20 = 0,float a21 = 0,float a22 = 1);
+    const float el(int i, int j) const
     {
       return ar[i*3 + j];
     }
-    double& el(int i, int j)
+    float& el(int i, int j)
     {
       return ar[i*3 + j];
     }
-    double det()const;
-    void scale(double val);
-    Mat inverse();
+    float det()const;
+    void scale(float val);
+    Mat inverse() const;
     bool operator == (const Mat& m) const;
     Mat operator * (const Mat& m) const;
-    FloatVector operator * (const FloatVector& v) const;
+    Mat operator + (const Mat& m) const;
+    Mat operator * (float f) const;
+    Vector operator * (const Vector& v) const;
+
+    Mat rotate(Vector v, float angle) const;
   private:
-    double ar[9];
+    float ar[9];
   };
+
 }

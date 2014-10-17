@@ -7,7 +7,7 @@ class Puzzle55
 {
 public:
   static const int N = 5;
-  vector<vector<int> > puzzles;
+  vector<vector<int> > pieces;
 
   bool table[N][N];
   bool table2[N][N];
@@ -17,7 +17,7 @@ public:
   bool partIsUsed[8];
   int solution[2 * N - 2][2];
 
-  Puzzle55(vector<vector<int> > puzzleFigures): puzzles(puzzleFigures),num(0)
+  Puzzle55(vector<vector<int> > puzzleFigures): pieces(puzzleFigures),num(0)
   {
     for (int i=0;i<N;i++)
     {
@@ -55,7 +55,7 @@ public:
 
   void getCubeCoordinates(int nthPuzzle, bool revert, int iCube, int &i, int &j)
   {
-    int k = puzzles[nthPuzzle][iCube];
+    int k = pieces[nthPuzzle][iCube];
 
     j = k % 5;
     i = (k - j) / 5;
