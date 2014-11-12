@@ -8,6 +8,8 @@ bool VolumePuzzle::addSolution(const PiecesSet& sol)
   PiecesSet orderedSolution = sol;
   orderedSolution.order();
 
+  orderedSolution.shift(-orderedSolution[0].getZero());
+
   PiecesSet normalizedSolution = orderedSolution;
 
   Piece part = normalizedSolution[0];

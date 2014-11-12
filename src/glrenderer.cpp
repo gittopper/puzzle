@@ -93,7 +93,7 @@ void GLRenderer::display()
     }
 
     glColor3f(colors[i][0], colors[i][1], colors[i][2]);
-    p.shift(-cm + (sol.pieces[i].getZero() - cm)*0.2);
+    //p.shift(-cm + (sol.pieces[i].getZero() - cm)*0.2);
     p.shift(-cm);
     partDrawer.draw(p);
   }
