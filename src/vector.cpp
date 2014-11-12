@@ -50,7 +50,8 @@ namespace Geometry
   }
   bool Vector::operator==(const Vector& v) const
   {
-    return vec[0] == v[0] && vec[1] == v[1] && vec[2] == v[2];
+//    return vec[0] == v[0] && vec[1] == v[1] && vec[2] == v[2];
+    return fabs(dot(*this, v) - v.len() * this->len()) < FLOAT_EPS;
   }
   Vector Vector::operator-() const
   {

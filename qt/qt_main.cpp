@@ -8,6 +8,7 @@ void solvePuzzle(VolumePuzzle* puzzle)
 {
     Solver solver(*puzzle);
     solver.solve();
+    int r;
 }
 
 int main(int argc, char *argv[])
@@ -33,6 +34,5 @@ int main(int argc, char *argv[])
 
     int result = a.exec();
 //    int solveResult = reinterpret_cast<int>(solvingThread->join());
-    solvingThread.join();
     return result;
 }

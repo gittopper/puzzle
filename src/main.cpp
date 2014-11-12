@@ -26,9 +26,9 @@ int main(int argc, char ** argv)
 
   std::thread st(solve, &puzzle);
 
-//   std::auto_ptr<Task> solvingTask(new SolvingTask(puzzle));
-//   std::auto_ptr<Thread> solvingThread(new Thread(solvingTask));
-//   solvingThread->start();
+//    std::auto_ptr<Task> solvingTask(new SolvingTask(puzzle));
+//    std::auto_ptr<Thread> solvingThread(new Thread(solvingTask));
+//    solvingThread->start();
 
   GlutRenderer glutRenderer;
 

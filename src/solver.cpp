@@ -217,7 +217,7 @@ namespace Geometry
     {
       if (pieces[iPuzzle].busy) continue;
 
-    pieces[iPuzzle].busy = true;
+      pieces[iPuzzle].busy = true;
 
       Piece part = pieces[iPuzzle];
       for (int i = 0; i < 6; i++)
@@ -271,6 +271,7 @@ namespace Geometry
                   solve();
                   remove(part3);
                   solution.pieces.pop_back();
+
                 }
               }
             }
@@ -278,8 +279,11 @@ namespace Geometry
         }
       }
       pieces[iPuzzle].busy = false;
-      if (numPlaced == 0) return; //we should find all solutions only for one first figure
-      if (numPlaced == 1) 
+      if (numPlaced == 0)
+      {
+        return; //we should find all solutions only for one first figure
+      }
+      if (numPlaced == 1)
       {
         cout <<++progress<<endl;
       }

@@ -5,21 +5,23 @@ using namespace Geometry;
 bool VolumePuzzle::addSolution(const PiecesSet& sol)
 {
   std::lock_guard<std::mutex> block(lock);
-  Mat rot;
   PiecesSet orderedSolution = sol;
   orderedSolution.order();
 
   PiecesSet normalizedSolution = orderedSolution;
 
-  const Piece& part = orderedSolution[0];
+  Piece part = normalizedSolution[0];
   Piece p = pieces[part.number - 1];
-  Mat rotation = part.getRotationMatrix(p);
+  p.shift(-p.getZero());
 
+  Mat rotation = part.getRotationMatrix(p);
   BREAK_ON_LINE(rotation.det() == 1);
-  p.rotate(rotation.inverse());
-  BREAK_ON_LINE(part == p);
 
   normalizedSolution.rotate(rotation);
+  normalizedSolution.shift(-normalizedSolution[0].getZero());
+
+  part = normalizedSolution[0];
+  BREAK_ON_LINE(part == p);
 
   for (unsigned iSol = 0; iSol < normalizedSolutions.size(); iSol++)
   {

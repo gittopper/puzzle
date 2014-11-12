@@ -10,6 +10,7 @@ struct ex
 
 };
 
+#define FLOAT_EPS 0.0001
 
 //#define BREAK_ON_LINE(x) if (!(x)) { throw ex();}
 //#define BREAK_ON_LINE(x) assert(x);
