@@ -17,7 +17,7 @@ public:
   int getZDim() const;
 
   Box getEmptyBox() const;
-  PiecesSet getPieces() const;
+  const PiecesSet& getPieces() const;
 
   //true - new solution
   //false - there already exists the same solution

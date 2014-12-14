@@ -13,6 +13,9 @@ namespace Geometry
     Solver(VolumePuzzle& puzzle);
 
   void solve();
+
+  void multithread(bool ml = false);
+  void stopSolving();
   protected:
   void remove(const Piece& part);
     void place(const Piece& part, Box& b);
@@ -33,6 +36,7 @@ namespace Geometry
   VolumePuzzle& puzzle;
     int dimX, dimY, dimZ;
     Box box;
+    bool continueToSolve;
     PiecesSet solution;
     unsigned numPlaced;
     PiecesSet pieces;

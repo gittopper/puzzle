@@ -1,4 +1,5 @@
 #include "qtsolutionslist.h"
+#include "utils.h"
 #include <sstream>
 
 QTSolutionsList::QTSolutionsList(QWidget *parent) :
@@ -11,6 +12,15 @@ void QTSolutionsList::refreshSolutions(VolumePuzzle* puzzle)
 {
     int i = puzzle->numFoundSolutions();
     clear();
+
+    if (i>1)
+    {
+        cout << "Solution number " << i << ":" << endl;
+        PiecesSet sol;
+        puzzle->getSolution(sol, i);
+        printLastSolution(sol, puzzle->getEmptyBox());
+    }
+
     for(int k = 1; k <= i; k++)
     {
         PiecesSet p;

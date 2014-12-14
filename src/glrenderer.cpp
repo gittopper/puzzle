@@ -55,9 +55,8 @@ void GLRenderer::display()
 
   drawLCS();
 
-  glColor3f(0.2, 0.0, 0.0);
+  glColor3f(0.2f, 0.0f, 0.0f);
 
-  PiecesSetShower drawer;
   PiecesSet sol;
   int ns = puzzle->numFoundSolutions();
   int i = curSol>0 ? curSol : ns;
@@ -82,19 +81,25 @@ void GLRenderer::display()
   {
     cm += sol.pieces[i].getZero();
   }
-  cm = cm * (1. / sol.pieces.size());
+  cm = cm * (1.f / sol.pieces.size());
 
   for (int i = 0; i < sol.pieces.size(); i++)
   {
     Piece p = sol.pieces[i];
     if (colors.size() <= i)
     {
-      colors.push_back(Vector((rand() % 256) / 256., (rand() % 256) / 256., (rand() % 256) / 256.));
+      colors.push_back(Vector((rand() % 256) / 256.f, (rand() % 256) / 256.f, (rand() % 256) / 256.f));
     }
 
     glColor3f(colors[i][0], colors[i][1], colors[i][2]);
-    p.shift(-cm + (sol.pieces[i].getZero() - cm)*0.2);
-    p.shift(-cm);
+    if (true)
+    {
+        p.shift(-cm + (sol.pieces[i].getZero() - cm)*0.2f);
+    }
+    else
+    {
+        p.shift(-cm);
+    }
     partDrawer.draw(p);
   }
 
@@ -115,11 +120,11 @@ void GLRenderer::resize(int width, int height)
   glLoadIdentity();
   if (w <= h)
     glOrtho(-l, l, -l*(GLfloat)h / (GLfloat)w,
-    l*(GLfloat)h / (GLfloat)w, -l, l);
+    l*(GLfloat)h / (GLfloat)w, -10*l, 10*l);
 
   else
     glOrtho(-l*(GLfloat)w / (GLfloat)h,
-    l*(GLfloat)w / (GLfloat)h, -l, l, -l, l);
+    l*(GLfloat)w / (GLfloat)h, -l, l, -10*l, 10*l);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 }
@@ -157,8 +162,8 @@ void GLRenderer::mouseLButtonDown(int x, int y)
   rx0 = rotate_x;
   ry0 = rotate_y;
 
-  xm = x;
-  ym = y;
+  xm = (float)x;
+  ym = (float)y;
 }
 
 void GLRenderer::mouseLButtonUp(int x, int y)
@@ -171,14 +176,14 @@ void GLRenderer::mouseRButtonDown(int x, int y)
   rx0 = rotate_x;
   ry0 = rotate_y;
 
-  xm = x;
-  ym = y;
+  xm = (float)x;
+  ym = (float)y;
 }
 
 void GLRenderer::mouseMove(int x, int y)
 {
-  rotate_x = rx0 - 180. * float(ym - y) / h;
-  rotate_y = ry0 - 180. * float(xm - x) / w;
+  rotate_x = rx0 - 180.f * float(ym - y) / h;
+  rotate_y = ry0 - 180.f * float(xm - x) / w;
 }
 
 void GLRenderer::mouseRButtonUp(int x, int y)

@@ -4,34 +4,36 @@ using namespace Geometry;
 
 bool VolumePuzzle::addSolution(const PiecesSet& sol)
 {
-  std::lock_guard<std::mutex> block(lock);
-  PiecesSet orderedSolution = sol;
-  orderedSolution.order();
-
-  orderedSolution.shift(-orderedSolution[0].getZero());
-
-  PiecesSet normalizedSolution = orderedSolution;
-
-  Piece part = normalizedSolution[0];
-  Piece p = pieces[part.number - 1];
-  p.shift(-p.getZero());
-
-  Mat rotation = part.getRotationMatrix(p);
-  BREAK_ON_LINE(rotation.det() == 1);
-
-  normalizedSolution.rotate(rotation);
-  normalizedSolution.shift(-normalizedSolution[0].getZero());
-
-  part = normalizedSolution[0];
-  BREAK_ON_LINE(part == p);
-
-  for (unsigned iSol = 0; iSol < normalizedSolutions.size(); iSol++)
   {
-    if (normalizedSolutions[iSol] == normalizedSolution) return false;
-  }
+      std::lock_guard<std::mutex> block(lock);
+      PiecesSet orderedSolution = sol;
+      orderedSolution.order();
 
-  solutions.push_back(orderedSolution);
-  normalizedSolutions.push_back(normalizedSolution);
+      orderedSolution.shift(-orderedSolution[0].getZero());
+
+      PiecesSet normalizedSolution = orderedSolution;
+
+      Piece part = normalizedSolution[0];
+      Piece p = pieces[part.number - 1];
+      p.shift(-p.getZero());
+
+      Mat rotation = part.getRotationMatrix(p);
+      BREAK_ON_LINE(rotation.det() == 1);
+
+      normalizedSolution.rotate(rotation);
+      normalizedSolution.shift(-normalizedSolution[0].getZero());
+
+      part = normalizedSolution[0];
+      BREAK_ON_LINE(part == p);
+
+      for (unsigned iSol = 0; iSol < normalizedSolutions.size(); iSol++)
+      {
+        if (normalizedSolutions[iSol] == normalizedSolution) return false;
+      }
+
+      solutions.push_back(orderedSolution);
+      normalizedSolutions.push_back(normalizedSolution);
+  }
   addedSolution();
   return true;
 }
@@ -80,7 +82,7 @@ int VolumePuzzle::getZDim() const
   return dimZ;
 }
 
-Geometry::PiecesSet VolumePuzzle::getPieces() const
+const Geometry::PiecesSet& VolumePuzzle::getPieces() const
 {
   return pieces;
 }

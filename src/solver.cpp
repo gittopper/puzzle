@@ -1,12 +1,12 @@
 #include "solver.h"
 #include "utils.h"
-#include "print.h"
 #include "pieceshower.h"
 
 namespace Geometry
 {
   Solver::Solver(VolumePuzzle& puzzleInstance) :
    box(0,0,0),
+   continueToSolve(true),
    numPlaced(0),
    maxSol(0),
    progress(0),
@@ -134,11 +134,20 @@ namespace Geometry
   {
     if (puzzle.addSolution(solution))
     {
-      printLastSolution(puzzle);
       maxSol = numPlaced;
       return true;
     }
     return false;
+  }
+
+  void Solver::multithread(bool ml)
+  {
+
+  }
+
+  void Solver::stopSolving()
+  {
+    continueToSolve = false;
   }
 
   bool Solver::puzzleCouldBePlacedSomewhere(const Piece& partToCheck)
@@ -198,6 +207,7 @@ namespace Geometry
     {
       foundNewSolution();
     }
+/*
     if(numPlaced == pieces.size() - 1 && hasTwoEmpty())
     {
       if (foundNewSolution())
@@ -208,6 +218,7 @@ namespace Geometry
         }
       }
     }
+*/
     if (numPlaced == pieces.size())
     {
       foundNewSolution();
@@ -246,12 +257,12 @@ namespace Geometry
 
           if (xmax < 1 || ymax < 1 || zmax < 1 ) continue;
 
-//           if (numPlaced == 0)
-//           {
-//             xmax = xmax / 2 + 1;
-//             ymax = ymax / 2 + 1;
-//             zmax = zmax / 2 + 1;
-//           }
+           if (numPlaced == 0)
+           {
+             xmax = min(xmax, xmax / 2 + 1);
+             ymax = min(ymax, ymax / 2 + 1);
+             zmax = min(zmax, zmax / 2 + 1);
+           }
 
 
           for(int x = 1; x <= xmax;x++)
@@ -260,14 +271,15 @@ namespace Geometry
             {
               for(int z = 1; z <= zmax;z++)
               {
+                if (!continueToSolve)
+                {
+                    return;
+                }
                 Piece part3 = part2;
                 part3.shift(Vector(x,y,z));
                 if (tryToPlace(part3))
                 {
                   solution.pieces.push_back(part3);
-
-          //Mat t = part3.getRotationMatrix(pieces[iPuzzle]);
-
                   solve();
                   remove(part3);
                   solution.pieces.pop_back();

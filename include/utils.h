@@ -7,7 +7,7 @@ Geometry::PiecesSet generateWoodPuzzles();
 
 Geometry::PiecesSet generateSomaPuzzles();
 
-void printLastSolution(const VolumePuzzle& puzzle);
+void printLastSolution(const PiecesSet& sol, Box box);
 
 class SolvingTask : public Task
 {

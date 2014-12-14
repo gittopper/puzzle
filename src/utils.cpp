@@ -202,14 +202,8 @@ void* SolvingTask::run()
 }
 
 
-void printLastSolution(const VolumePuzzle& puzzle)
+void printLastSolution(const PiecesSet& sol, Box box)
 {
-  int iSol = puzzle.numFoundSolutions();
-
-  PiecesSet sol;
-  puzzle.getSolution(sol, iSol);
-
-  cout << "Solution number " << iSol << ":" << endl;
   cout << "Number of figures is " << sol.size() << ":" << endl;
   cout << sol << endl;
 
@@ -217,7 +211,6 @@ void printLastSolution(const VolumePuzzle& puzzle)
   {
     cout << (i > 0 ? "," : "") << sol[i].number;
   }
-  Box box(puzzle.getEmptyBox());
   Box filledBox = box;
 
   for (unsigned i = 0; i < sol.size(); i++)

@@ -4,11 +4,9 @@
 #include "qtvolumepuzzle.h"
 #include <thread>
 
-void solvePuzzle(VolumePuzzle* puzzle)
+void solvePuzzle(Solver* solver)
 {
-    Solver solver(*puzzle);
-    solver.solve();
-    int r;
+    solver->solve();
 }
 
 int main(int argc, char *argv[])
@@ -26,7 +24,8 @@ int main(int argc, char *argv[])
 //    std::auto_ptr<Task> solvingTask(new SolvingTask(puzzle));
 //    std::auto_ptr<Thread> solvingThread(new Thread(solvingTask));
 //    solvingThread->start();
-    std::thread solvingThread(solvePuzzle, &puzzle);
+    Solver solver(dynamic_cast<VolumePuzzle&>(puzzle));
+    std::thread solvingThread(solvePuzzle, &solver);
 
     MainWindow w;
     w.setPuzzleToRender(puzzle);
@@ -34,5 +33,7 @@ int main(int argc, char *argv[])
 
     int result = a.exec();
 //    int solveResult = reinterpret_cast<int>(solvingThread->join());
+    solver.stopSolving();
+    solvingThread.join();
     return result;
 }
