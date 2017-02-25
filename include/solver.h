@@ -10,6 +10,14 @@ namespace Geometry
 
 class Solver
 {
+public:
+    Solver(VolumePuzzle& puzzle);
+
+    void solve();
+
+    void multithread(bool ml = false);
+    void stopSolving();
+private:
     Timer m_timer;
     VolumePuzzle& m_puzzle;
     int m_dimX, m_dimY, m_dimZ;
@@ -37,12 +45,5 @@ class Solver
     bool newSolution();
     bool foundNewSolution();
     void recursiveSolve();
-public:
-    Solver(VolumePuzzle& puzzle);
-
-    void solve();
-
-    void multithread(bool ml = false);
-    void stopSolving();
 };
 }

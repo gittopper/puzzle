@@ -22,21 +22,21 @@ public:
     ///obtain volume part of space
     VolPart& getVolPart(int x, int y, int z)
     {
-        BREAK_ON_LINE(x < dimX || y < dimY || z < dimZ);
-        return box[x * dimZ * dimY + y * dimZ + z];
+        BREAK_ON_LINE(x < m_dimX || y < m_dimY || z < m_dimZ);
+        return m_box[x * m_dimZ * m_dimY + y * m_dimZ + z];
     }
 
     int getDimX() const
     {
-        return dimX;
+        return m_dimX;
     }
     int getDimY() const
     {
-        return dimY;
+        return m_dimY;
     }
     int getDimZ() const
     {
-        return dimZ;
+        return m_dimZ;
     }
 
     const VolPart& getVolPart(const Vector& coords) const
@@ -46,7 +46,7 @@ public:
 
     const VolPart& getVolPart(int x, int y, int z) const
     {
-        return box[x * dimZ * dimY + y * dimZ + z];
+        return m_box[x * m_dimZ * m_dimY + y * m_dimZ + z];
     }
 
     void rotate(Mat rot);
@@ -61,10 +61,12 @@ public:
 
     bool operator == (const Box& b) const
     {
-        return box == b.box;
+        return m_box == b.m_box;
     }
 private:
-    std::vector<VolPart> box;
-    int dimX, dimY, dimZ;
+    std::vector<VolPart> m_box;
+    int m_dimX;
+    int m_dimY;
+    int m_dimZ;
 };
 }

@@ -15,7 +15,7 @@ class Piece
 {
 public:
     Piece(int n):
-        number(n) {}
+        id(n) {}
 
     Piece& rotate(RotType rot);
 
@@ -40,7 +40,7 @@ public:
     Piece copy() const;
 
 
-    int number;
+    int id;
     std::vector<VolPart> parts;
 };
 
