@@ -4,13 +4,13 @@
 
 namespace Geometry
 {
-  ostream& operator << (ostream& os, const Vector& vec);
+std::ostream& operator << (std::ostream& os, const Vector& vec);
 
-  ostream& operator << (ostream& os, const VolPart& v);
+std::ostream& operator << (std::ostream& os, const VolPart& v);
 
-  ostream& operator << (ostream& os, const Piece& v);
+std::ostream& operator << (std::ostream& os, const Piece& v);
 
-  ostream& operator << (ostream& os, const PiecesSet& v);
+std::ostream& operator << (std::ostream& os, const PiecesSet& v);
 
-  ostream& operator << (ostream& os, const Box& b);
+std::ostream& operator << (std::ostream& os, const Box& b);
 }

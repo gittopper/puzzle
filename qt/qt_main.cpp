@@ -3,6 +3,9 @@
 #include "utils.h"
 #include "qtvolumepuzzle.h"
 #include <thread>
+#include "tests.h"
+
+using namespace Geometry;
 
 void solvePuzzle(Solver* solver)
 {
@@ -21,9 +24,6 @@ int main(int argc, char *argv[])
   //   Solver VolumePuzzle(2,2,2,generateTestPuzzles());
   //   Solver VolumePuzzle(3,3,3,generateSomaPuzzles());
 
-//    std::auto_ptr<Task> solvingTask(new SolvingTask(puzzle));
-//    std::auto_ptr<Thread> solvingThread(new Thread(solvingTask));
-//    solvingThread->start();
     Solver solver(dynamic_cast<VolumePuzzle&>(puzzle));
     std::thread solvingThread(solvePuzzle, &solver);
 
@@ -32,7 +32,6 @@ int main(int argc, char *argv[])
     w.show();
 
     int result = a.exec();
-//    int solveResult = reinterpret_cast<int>(solvingThread->join());
     solver.stopSolving();
     solvingThread.join();
     return result;

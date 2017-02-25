@@ -4,301 +4,285 @@
 
 namespace Geometry
 {
-  Solver::Solver(VolumePuzzle& puzzleInstance) :
-   box(0,0,0),
-   continueToSolve(true),
-   numPlaced(0),
-   maxSol(0),
-   progress(0),
-   seekedPuzzle(9),
-   puzzle(puzzleInstance)
-  {
-    box = puzzle.getEmptyBox();
-    pieces = puzzle.getPieces();
-    dimX = puzzle.getXDim();
-    dimY = puzzle.getYDim();
-    dimZ = puzzle.getZDim();
-
-    seekedPuzzle.parts.push_back(VolPart(VolPart::Full,Vector(0,0,0)));
-    seekedPuzzle.parts.push_back(VolPart(VolPart::Full,Vector(0,0,1)));
-    seekedPuzzle.parts.push_back(VolPart(VolPart::Angle,Vector(0,1,0),Vector(0,1,1)));
-    seekedPuzzle.parts.push_back(VolPart(VolPart::Angle,Vector(0,1,1),Vector(1,1,0)));
-  }
-  void Solver::remove(const Piece& part)
-  {
-    box.remove(part.parts);
-    numPlaced--;
-  }
-  void Solver::place(const Piece& part, Box& b)
-  {
-    box.add(part.parts);
-    numPlaced++;
-    return;
-  }
-  bool Solver::couldPlace(const Piece& part, bool& matched) const
-  {
-    matched = false;
-    for(unsigned i = 0; i < part.parts.size(); i++)
+Solver::Solver(VolumePuzzle& puzzleInstance) :
+    m_continueToSolve(true),
+    m_numPlaced(0),
+    m_maxSol(0),
+    m_progress(0),
+    m_searchAllSollutions(false),
+    m_puzzle(puzzleInstance),
+    m_box(m_puzzle.getEmptyBox()),
+    m_dimX(m_puzzle.getXDim()),
+    m_dimY(m_puzzle.getYDim()),
+    m_dimZ(m_puzzle.getZDim())
+{
+    m_pieces = m_puzzle.getPieces();
+    m_bs.resize(m_pieces.size());
+    for(unsigned pn = 0; pn < m_pieces.size(); pn++)
     {
-      const VolPart& vol = part.parts[i];
-      if (!box.el(vol.getCoords()).couldPlace(vol)) return false;
+        m_allPositionsNumber = 0;
+        const Piece& piece = m_pieces[pn];
+        m_bs[pn] = true;
+        Piece copy1 = piece;
+        PiecesSet pieceInAllPositions;
+        std::vector<BBox> piecesBoxes;
+        for (int i = 0; i < 6; i++)
+        {
+            if (i < 4)
+            {
+                copy1.rotate(RotateY);
+            }
+            else if (i == 4)
+            {
+                copy1.rotate(RotateX);
+            }
+            else
+            {
+                copy1.rotate(RotateX);
+                copy1.rotate(RotateX);
+            }
 
-      if (matched) continue;
-      matched = matched || box.el(vol.getCoords()).shareOneOfSides(vol);
+            Piece copy2 = copy1;
 
-      matched = matched || box.el(vol.getCoords()[0]-1, vol.getCoords()[1], vol.getCoords()[2]).shareOneOfSides(vol);
-      matched = matched || box.el(vol.getCoords()[0]+1, vol.getCoords()[1], vol.getCoords()[2]).shareOneOfSides(vol);
-      if (matched) continue;
+            for (int j = 0; j < 4; j++)
+            {
+                BBox box = copy2.rotate(RotateZ).getBBox();
+                copy2.shift(-box.minV);
 
-      matched = matched || box.el(vol.getCoords()[0], vol.getCoords()[1]-1, vol.getCoords()[2]).shareOneOfSides(vol);
-      matched = matched || box.el(vol.getCoords()[0], vol.getCoords()[1]+1, vol.getCoords()[2]).shareOneOfSides(vol);
-      if (matched) continue;
+                if (m_dimX - box.getXSize() < 1 || m_dimY - box.getYSize() < 1 || m_dimZ - box.getZSize() < 1 ) continue;
 
-      matched = matched || box.el(vol.getCoords()[0], vol.getCoords()[1], vol.getCoords()[2]-1).shareOneOfSides(vol);
-      matched = matched || box.el(vol.getCoords()[0], vol.getCoords()[1], vol.getCoords()[2]+1).shareOneOfSides(vol);
+                for(const Piece& p : pieceInAllPositions.pieces)
+                {
+                    if(p == copy2) continue;
+                }
+                pieceInAllPositions.pieces.push_back(copy2);
+                piecesBoxes.push_back(box);
+            }
+        }
+        m_allPositionsNumber += pieceInAllPositions.size();
+        m_piecesInAllPositions.push_back(pieceInAllPositions);
+        m_piecesBBoxes.push_back(piecesBoxes);
     }
+}
+
+void Solver::remove(const Piece& part)
+{
+    m_box.remove(part.parts);
+    m_numPlaced--;
+}
+
+void Solver::place(const Piece& part)
+{
+    m_box.add(part.parts);
+    m_numPlaced++;
+    return;
+}
+
+bool Solver::couldPlace(const Piece& part, bool& matched) const
+{
+    matched = true;
+    for (unsigned i = 0; i < part.parts.size(); i++)
+    {
+        const VolPart& vol = part.parts[i];
+        if (!m_box.getVolPart(vol.getCoords()).couldPlace(vol)) return false;
+
+        continue;
+
+        if (matched) continue;
+        matched = matched || m_box.getVolPart(vol.getCoords()).shareOneOfSides(vol);
+        if (matched) continue;
+
+        matched = matched || m_box.getVolPart(vol.getCoords() - XSHIFT).shareOneOfSides(vol);
+        if (matched) continue;
+
+        matched = matched || m_box.getVolPart(vol.getCoords() + XSHIFT).shareOneOfSides(vol);
+        if (matched) continue;
+
+        matched = matched || m_box.getVolPart(vol.getCoords() - YSHIFT).shareOneOfSides(vol);
+        if (matched) continue;
+
+        matched = matched || m_box.getVolPart(vol.getCoords() + YSHIFT).shareOneOfSides(vol);
+        if (matched) continue;
+
+        matched = matched || m_box.getVolPart(vol.getCoords() - ZSHIFT).shareOneOfSides(vol);
+        if (matched) continue;
+
+        matched = matched || m_box.getVolPart(vol.getCoords() + ZSHIFT).shareOneOfSides(vol);
+        if (matched) continue;
+    }
+
     return true;
-  }
-  bool Solver::hasSqueezed(const Piece& part) const
-  {
+}
+
+bool Solver::hasSqueezed(const Piece& part) const
+{
+    return false;
     BBox bbox;
-    part.getBBox(bbox);
+    part.addToBBox(bbox);
     bbox.grow();
 
-    for(int x = bbox.minV[0]; x <= bbox.maxV[0];x++)
+    for (int x = bbox.minV[0]; x <= bbox.maxV[0]; x++)
     {
-      for(int y = bbox.minV[1]; y <= bbox.maxV[1];y++)
-      {
-        for(int z = bbox.minV[2]; z <= bbox.maxV[2];z++)
+        for (int y = bbox.minV[1]; y <= bbox.maxV[1]; y++)
         {
+            for (int z = bbox.minV[2]; z <= bbox.maxV[2]; z++)
+            {
 
-          //          if (isSqueezed(box.el(x, y, z])) return true;
-          BREAK_ON_LINE(box.isSqueezed(box.el(x, y, z)) == box.isSqueezedV2(box.el(x, y, z)));
-          if (box.isSqueezedV2(box.el(x, y, z))) return true;
+                //          if (isSqueezed(box.getVolPart(x, y, z])) return true;
+                BREAK_ON_LINE(m_box.isSqueezed(m_box.getVolPart(x, y, z)) == m_box.isSqueezedV2(m_box.getVolPart(x, y, z)));
+                if (m_box.isSqueezedV2(m_box.getVolPart(x, y, z))) return true;
+            }
         }
-      }
     }
+
     return false;
-  }
-  bool Solver::tryToPlace(const Piece& part)
-  {
+}
+
+bool Solver::tryToPlace(const Piece& part)
+{
     bool matched;
-    if (!couldPlace(part,matched))
+
+    if (!couldPlace(part, matched))
     {
-      return false;
+        return false;
     }
-    if (numPlaced && !matched)
+
+    if (m_numPlaced && !matched)
     {
-      return false;
+        return false;
     }
-    place(part,box);
+
+    place(part);
+
     if (hasSqueezed(part))
     {
-      remove(part);
-      return false;
+        remove(part);
+        return false;
     }
+
     return true;
-  }
-  bool Solver::hasTwoEmpty() const
-  {
-    for (int x = 1; x <= dimX; x++)
+}
+
+
+bool Solver::verifyAlgorithm()
+{
+    Box tt = m_puzzle.getEmptyBox();
+
+    for (unsigned i = 0; i < m_solution.size(); i++)
     {
-      for (int y = 1; y <= dimY; y++)
-      {
-        for (int z = 1; z <= dimZ; z++)
-        {
-          if(box.el(x, y, z).type() == VolPart::Empty && box.checkHalf(box.el(x, y, z)) &&(
-            box.el(x+1, y, z).type() == VolPart::Empty && box.checkHalf(box.el(x+1, y, z)) ||
-            box.el(x, y+1, z).type() == VolPart::Empty && box.checkHalf(box.el(x, y+1, z)) ||
-            box.el(x, y, z+1).type() == VolPart::Empty && box.checkHalf(box.el(x, y, z+1))
-            ))
-            return true;
-        }
-      }
+        tt.add(m_solution[i].parts);
     }
+
+    return tt == m_box;
+}
+
+bool Solver::foundNewSolution()
+{
+    if (m_puzzle.addSolution(m_solution))
+    {
+        m_maxSol = m_numPlaced;
+        return true;
+    }
+
     return false;
-  }
+}
 
-  bool Solver::verifyAlgorithm()
-  {
-    Box tt = puzzle.getEmptyBox();
+void Solver::multithread(bool ml)
+{
 
-    for(unsigned i =0; i < solution.size(); i++)
-    {
-      tt.add(solution[i].parts);
-    }
-    return tt == box;
-  }
+}
 
-  bool Solver::foundNewSolution()
-  {
-    if (puzzle.addSolution(solution))
-    {
-      maxSol = numPlaced;
-      return true;
-    }
-    return false;
-  }
+void Solver::stopSolving()
+{
+    m_continueToSolve = false;
+}
 
-  void Solver::multithread(bool ml)
-  {
+void Solver::solve()
+{
+   std::cout << "starting to solve puzzle" << std::endl;
+   m_timer.start();
+   recursiveSolve();
+   m_timer.stop();
+   std::cout << "solved" << std::endl;
+   std::cout << getLogString("finish time: ", m_timer.time()) << std::endl;
+}
 
-  }
-
-  void Solver::stopSolving()
-  {
-    continueToSolve = false;
-  }
-
-  bool Solver::puzzleCouldBePlacedSomewhere(const Piece& partToCheck)
-  {
-    Piece part = partToCheck;
-    for (int i = 0; i < 6; i++)
-    {
-      if (i < 4)
-      {
-        part.rotate(RotateY);
-      }
-      else if (i == 4)
-      {
-        part.rotate(RotateX);
-      }else
-      {
-        part.rotate(RotateX);
-        part.rotate(RotateX);
-      }
-      Piece part2 = part;
-      for (int j = 0; j < 4; j++)
-      {
-        part2.rotate(RotateZ).centralize();
-        BBox boundaries;
-        part2.getBBox(boundaries);
-        int xmax = dimX - boundaries.maxV[0];
-        int ymax = dimY - boundaries.maxV[1];
-        int zmax = dimZ - boundaries.maxV[2];
-
-        if (xmax < 1 || ymax < 1 || zmax < 1 ) continue;
-
-        for(int x = 1; x <= xmax;x++)
-        {
-          for(int y = 1; y <= ymax;y++)
-          {
-            for(int z = 1; z <= zmax;z++)
-            {
-              Piece part3 = part2;
-              part3.shift(Vector(x,y,z));
-              if (tryToPlace(part3))
-              {
-                remove(part3);
-                return true;
-              }
-            }
-          }
-        }
-      }
-    }
-    return false;
-  }
-
-  void Solver::solve()
-  {
+void Solver::recursiveSolve()
+{
     BREAK_ON_LINE(verifyAlgorithm());
-    if (maxSol<numPlaced && (numPlaced < pieces.size() - 1))
+
+    if (m_maxSol < m_numPlaced && (m_numPlaced < m_pieces.size() - 1))
     {
-      foundNewSolution();
+        foundNewSolution();
     }
-/*
-    if(numPlaced == pieces.size() - 1 && hasTwoEmpty())
+
+    if (m_numPlaced == m_pieces.size())
     {
-      if (foundNewSolution())
-      {
-        if(puzzleCouldBePlacedSomewhere(seekedPuzzle))
-        {
-          cout<<"Found potential solution!"<<endl;
-        }
-      }
+        foundNewSolution();
+        if (!m_searchAllSollutions) return;
     }
-*/
-    if (numPlaced == pieces.size())
+    for (unsigned iPuzzle = 0; iPuzzle < m_pieces.size(); iPuzzle++)
     {
-      foundNewSolution();
-      return;
-    }
-    for(unsigned iPuzzle = 0; iPuzzle <pieces.size(); iPuzzle ++)
-    {
-      if (pieces[iPuzzle].busy) continue;
+        if (!m_bs[iPuzzle]) continue;
 
-      pieces[iPuzzle].busy = true;
+        m_bs[iPuzzle] = false;
 
-      Piece part = pieces[iPuzzle];
-      for (int i = 0; i < 6; i++)
-      {
-        if (i < 4)
+        PiecesSet& allPositions = m_piecesInAllPositions[iPuzzle];
+        const std::vector<BBox>& boxes = m_piecesBBoxes[iPuzzle];
+        for (unsigned i = 0; i < allPositions.size(); i++)
         {
-          part.rotate(RotateY);
-        }
-        else if (i == 4)
-        {
-          part.rotate(RotateX);
-        }else
-        {
-          part.rotate(RotateX);
-          part.rotate(RotateX);
-        }
-        Piece part2 = part;
-        for (int j = 0; j < 4; j++)
-        {
-          part2.rotate(RotateZ).centralize();
-          BBox boundaries;
-          part2.getBBox(boundaries);
-          int xmax = dimX - boundaries.maxV[0];
-          int ymax = dimY - boundaries.maxV[1];
-          int zmax = dimZ - boundaries.maxV[2];
+            Piece& curPiece = allPositions[i];
+            const BBox& boundaries = boxes[i];
 
-          if (xmax < 1 || ymax < 1 || zmax < 1 ) continue;
+            int xmax = m_dimX - boundaries.getXSize();
+            int ymax = m_dimY - boundaries.getYSize();
+            int zmax = m_dimZ - boundaries.getZSize();
 
-           if (numPlaced == 0)
-           {
-             xmax = min(xmax, xmax / 2 + 1);
-             ymax = min(ymax, ymax / 2 + 1);
-             zmax = min(zmax, zmax / 2 + 1);
-           }
-
-
-          for(int x = 1; x <= xmax;x++)
-          {
-            for(int y = 1; y <= ymax;y++)
+            if (m_numPlaced == 0)
             {
-              for(int z = 1; z <= zmax;z++)
-              {
-                if (!continueToSolve)
-                {
-                    return;
-                }
-                Piece part3 = part2;
-                part3.shift(Vector(x,y,z));
-                if (tryToPlace(part3))
-                {
-                  solution.pieces.push_back(part3);
-                  solve();
-                  remove(part3);
-                  solution.pieces.pop_back();
-
-                }
-              }
+                xmax = std::min(xmax, xmax / 2 + 1);
+                ymax = std::min(ymax, ymax / 2 + 1);
+                zmax = std::min(zmax, zmax / 2 + 1);
             }
-          }
+
+            for (int x = 1; x <= xmax; x++)
+            {
+                for (int y = 1; y <= ymax; y++)
+                {
+                    for (int z = 1; z <= zmax; z++)
+                    {
+                        if (!m_continueToSolve)
+                        {
+                            return;
+                        }
+
+                        Vector s(x, y, z);
+                        curPiece.shift(s);
+
+                        if (tryToPlace(curPiece))
+                        {
+                            m_solution.pieces.push_back(curPiece);
+                            recursiveSolve();
+                            remove(curPiece);
+                            m_solution.pieces.pop_back();
+                        }
+                        curPiece.shift(-s);
+                    }
+                }
+            }
         }
-      }
-      pieces[iPuzzle].busy = false;
-      if (numPlaced == 0)
-      {
-        return; //we should find all solutions only for one first figure
-      }
-      if (numPlaced == 1)
-      {
-        cout <<++progress<<endl;
-      }
+        m_bs[iPuzzle] = true;
+
+        if (m_numPlaced == 0)
+        {
+            return; //we should find all solutions only for one first figure
+        }
+
+        if (m_numPlaced == 1)
+        {
+            std::cout << "Progress:" << (float(++m_progress) / m_allPositionsNumber / m_pieces.size()) << std::endl;
+            std::cout << "Elapsed time:" << m_timer.asString() << std::endl;
+        }
     }
-  }
+}
 }

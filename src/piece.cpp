@@ -3,68 +3,73 @@
 
 namespace Geometry
 {
-  Piece& Piece::rotate(RotType rot)
-  {
-    for (vector<VolPart>::iterator it = parts.begin(); it != parts.end(); it++)
+Piece& Piece::rotate(RotType rot)
+{
+    for(auto& part: parts)
     {
-      (*it).rotate(rot);
+        part.rotate(rot);
     }
     return *this;
-  }
-  Piece& Piece::rotate(Mat rot)
-  {
-    for (vector<VolPart>::iterator it = parts.begin(); it != parts.end(); it++)
+}
+Piece& Piece::rotate(Mat rot)
+{
+    for(auto& part: parts)
     {
-      (*it).rotate(rot);
+        part.rotate(rot);
     }
     return *this;
-  }
-  bool Piece::operator == (const Piece& part) const
-  {
+}
+bool Piece::operator == (const Piece& part) const
+{
     return parts == part.parts;
-  }
-  void Piece::getBBox(BBox& box) const 
-  {
-    for (vector<VolPart>::const_iterator it = parts.begin(); it != parts.end(); it++)
+}
+Piece& Piece::shift(const Vector& shift)
+{
+    for(auto& part: parts)
     {
-      box.merge((*it).getCoords());
-    }
-    return;
-  }
-  Piece& Piece::shift(const Vector& shift)
-  {
-    for (vector<VolPart>::iterator it = parts.begin(); it != parts.end(); it++)
-    {
-      (*it).shift(shift);
+        part.shift(shift);
     }
     return *this;
-  }
-  Mat Piece::getLCS() const
-  {
+}
+Mat Piece::getLCS() const
+{
     Vector x = parts[1].getCoords() - parts[0].getCoords();
     Vector y = parts[2].getCoords() - parts[0].getCoords();
-    return Mat(x,y,x.cross(y));
-  }
+    return Mat(x, y, x.cross(y));
+}
 
-  Vector Piece::getZero() const
-  {
+Vector Piece::getZero() const
+{
     return parts[0].getCoords();
-  }
+}
 
-  Piece& Piece::centralize()
-  {
+void Piece::addToBBox(BBox& bbox) const
+{
+    for(auto& part: parts)
+    {
+        bbox.merge(part.getCoords());
+    }
+}
+BBox Piece::getBBox() const
+{
     BBox box;
-    getBBox(box);
+    addToBBox(box);
+    return box;
+}
+
+Piece& Piece::centralize()
+{
+    BBox box(getBBox());
     shift(-box.minV);
     return *this;
-  }
-  Piece Piece::copy() const
-  {
+}
+Piece Piece::copy() const
+{
     return Piece(*this);
-  }
+}
 
-  Mat Piece::getRotationMatrix(const Piece& part) const
-  {
+Mat Piece::getRotationMatrix(const Piece& part) const
+{
     Mat rot1 = getLCS();
     Mat rot2 = part.getLCS();
 
@@ -72,14 +77,15 @@ namespace Geometry
     Mat res = rot2 * invRot1;
     BREAK_ON_LINE(res.det() == 1);
     return res;
-  }
+}
 
-  bool PiecesSet::operator == (const PiecesSet& set) const
-  {
+
+bool PiecesSet::operator == (const PiecesSet& set) const
+{
     if (pieces.size() != set.pieces.size()) return false;
-    for(unsigned i=0;i<pieces.size();i++)
+    for (unsigned i = 0; i < pieces.size(); i++)
     {
-      if (pieces[i].number != set.pieces[i].number) return false;
+        if (pieces[i].number != set.pieces[i].number) return false;
     }
 
     Mat res = pieces[0].getRotationMatrix(set.pieces[0]);
@@ -89,42 +95,44 @@ namespace Geometry
 
     bool theSame = true;
 
-    for(unsigned i=0;i<set.pieces.size();i++)
+    for (unsigned i = 0; i < set.pieces.size(); i++)
     {
-      Piece p = pieces[i];
+        Piece p = pieces[i];
 
-      p.shift(prevShift);
-      p.rotate(res);
-      p.shift(shift);
-      theSame = p == set.pieces[i];
-      if (!theSame) break;
+        p.shift(prevShift);
+        p.rotate(res);
+        p.shift(shift);
+        theSame = p == set.pieces[i];
+        if (!theSame) break;
     }
 
     return theSame;
-  }
+}
 
-  void PiecesSet::rotate(Mat rot)
-  {
-    for (vector<Piece>::iterator it = pieces.begin(); it != pieces.end(); it++)
+void PiecesSet::rotate(Mat rot)
+{
+    for (std::vector<Piece>::iterator it = pieces.begin(); it != pieces.end(); ++it)
     {
-      (*it).rotate(rot);
+        (*it).rotate(rot);
     }
-  }
+}
 
-  bool compNumbers (Piece i,Piece j) { return i.number < j.number; }
+bool compNumbers (Piece i, Piece j)
+{
+    return i.number < j.number;
+}
 
-  void PiecesSet::order()
-  {
-    int maxn = 0;
+void PiecesSet::order()
+{
     std::sort(pieces.begin(), pieces.end(), compNumbers);
-  }
+}
 
-  void PiecesSet::shift(Vector v)
-  {
-    for (vector<Piece>::iterator it = pieces.begin(); it != pieces.end(); it++)
+void PiecesSet::shift(Vector v)
+{
+    for (std::vector<Piece>::iterator it = pieces.begin(); it != pieces.end(); ++it)
     {
-      (*it).shift(v);
+        (*it).shift(v);
     }
-  }
+}
 
 }

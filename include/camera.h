@@ -3,21 +3,23 @@
 #include "geometry.h"
 #include "object3d.h"
 
+namespace Geometry
+{
 class Camera
 {
 public:
-  Camera();
+    Camera();
 
-  void setViewport(int w, int h);
+    void setViewport(int w, int h);
 
-  void setScale(float s);
+    void rotate(float angleX, float angleY);
 
-  void zoom(float z);
+    void zoom(float z);
 
-  void setPosition(Vector dir, Vector center, Vector up);
-
-  void render();
+    void render();
 private:
-  Vector dir, up, c;
-  float w, h, z, scale;
+    Vector eye, up, center;
+    int width, height;
+    float scale;
 };
+}

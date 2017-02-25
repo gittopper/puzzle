@@ -2,6 +2,8 @@
 #include "utils.h"
 #include <sstream>
 
+using namespace Geometry;
+
 QTSolutionsList::QTSolutionsList(QWidget *parent) :
     QListWidget(parent)
 {
@@ -13,27 +15,27 @@ void QTSolutionsList::refreshSolutions(VolumePuzzle* puzzle)
     int i = puzzle->numFoundSolutions();
     clear();
 
-    if (i>1)
+    if (i > 1)
     {
-        cout << "Solution number " << i << ":" << endl;
+        std::cout << "Solution number " << i << ":" << std::endl;
         PiecesSet sol;
         puzzle->getSolution(sol, i);
         printLastSolution(sol, puzzle->getEmptyBox());
     }
 
-    for(int k = 1; k <= i; k++)
+    for (int k = 1; k <= i; k++)
     {
         PiecesSet p;
         puzzle->getSolution(p, k);
 
-        stringstream ss;
+        std::stringstream ss;
         if (k == 1)
         {
             ss << "initial puzzles";
         }
         else
         {
-            ss<< "solution" << k << "(";
+            ss << "solution" << k << "(";
 
             for (int k = 0; k < p.size(); k++)
             {

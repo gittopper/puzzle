@@ -8,11 +8,14 @@
 
 namespace Geometry
 {
-  class Piece
-  {
-  public:
+
+using Bitset = std::vector<bool>;
+
+class Piece
+{
+public:
     Piece(int n):
-    number(n),busy(false){}
+        number(n) {}
 
     Piece& rotate(RotType rot);
 
@@ -20,11 +23,13 @@ namespace Geometry
 
     bool operator == (const Piece& part) const;
 
-    void getBBox(BBox& box) const;
-
     Piece& shift(const Vector& shift);
 
-  Mat getRotationMatrix(const Piece& part) const;
+    Mat getRotationMatrix(const Piece& part) const;
+
+    void addToBBox(BBox& bbox) const;
+
+    BBox getBBox() const;
 
     Mat getLCS() const;
 
@@ -35,22 +40,31 @@ namespace Geometry
     Piece copy() const;
 
 
-    bool busy;
     int number;
-    vector<VolPart> parts;
-  };
+    std::vector<VolPart> parts;
+};
 
-  class PiecesSet
-  {
-  public:
-    Piece& operator[](int i){ return pieces[i];}
-    const Piece& operator[](int i) const { return pieces[i];}
-    unsigned size() const { return pieces.size();}
+class PiecesSet
+{
+public:
+    Piece& operator[](int i)
+    {
+        return pieces[i];
+    }
+    const Piece& operator[](int i) const
+    {
+        return pieces[i];
+    }
+    unsigned size() const
+    {
+        return pieces.size();
+    }
+
     bool operator == (const PiecesSet& vec2) const;
     void rotate(Mat rot);
     void shift(Vector v);
     void order();
-    vector<Piece> pieces;
-  };
+    std::vector<Piece> pieces;
+};
 
 }

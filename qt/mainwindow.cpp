@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+using namespace Geometry;
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -8,10 +10,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 }
 
-void MainWindow::setPuzzleToRender(QTVolumePuzzle& puzzleToRender)
+void MainWindow::setPuzzleToRender(Geometry::QTVolumePuzzle& puzzleToRender)
 {
     ui->GLView->setPuzzleToRender(puzzleToRender);
-    connect(&puzzleToRender, SIGNAL(foundSolution(VolumePuzzle*)), ui->solutions, SLOT(refreshSolutions(VolumePuzzle*)));
+    connect(&puzzleToRender, &QTVolumePuzzle::foundSolution, ui->solutions, &QTSolutionsList::refreshSolutions);
     connect(ui->solutions, SIGNAL(solutionSwitched(int)), ui->GLView, SLOT(renderSolution(int)));
     connect(ui->solutions, SIGNAL(currentRowChanged(int)), ui->solutions, SLOT(showSolution(int)));
     puzzleToRender.addedSolution();

@@ -1,4 +1,5 @@
 #include "qtpuzzlerenderer.h"
+#include <QDebug>
 
 QTPuzzleRenderer::QTPuzzleRenderer(QWidget *parent) :
     QGLWidget(parent)
@@ -20,12 +21,13 @@ void QTPuzzleRenderer::paintGL()
 void QTPuzzleRenderer::resizeGL(int w, int h)
 {
     GLRenderer::resize(w, h);
+    qDebug() << "size: " << w << ", " << h;
 }
 
 void QTPuzzleRenderer::mousePressEvent(QMouseEvent* me)
 {
     QPoint p = me->pos();
-    switch(me->button())
+    switch (me->button())
     {
     case Qt::LeftButton:
         mouseLButtonDown(p.x(), p.y());
@@ -43,7 +45,7 @@ void QTPuzzleRenderer::wheelEvent(QWheelEvent *we)
 {
     //setZoom(we->delta());
     QPoint p = we->pos();
-    if (we->delta()>0)
+    if (we->delta() > 0)
     {
         wheelUp(p.x(), p.y());
     }

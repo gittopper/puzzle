@@ -6,18 +6,18 @@
 
 namespace Geometry
 {
-  class VolPart
-  {
-  public:
-    enum VolType
+class VolPart
+{
+public:
+    enum class VolType
     {
-      Empty,
-      Full,
-      Angle
+        Empty,
+        Full,
+        Angle
     };
 
-    VolPart(VolType t, Vector coord, Vector iniDir = Vector(0,0,0), bool w = false):
-      fillInfo(t),xyz(coord),dir(iniDir),wall(w){}
+    VolPart(VolType t, Vector coord, Vector iniDir = Vector(0, 0, 0)):
+        fillInfo(t), xyz(coord), dir(iniDir) {}
 
     bool operator==(const VolPart& vol) const;
 
@@ -25,9 +25,9 @@ namespace Geometry
 
     VolPart& operator+=(const VolPart& v);
 
-  VolPart& shift(const Vector& shift);
+    VolPart& shift(const Vector& shift);
 
-  VolPart& rotate(RotType rot);
+    VolPart& rotate(RotType rot);
 
     VolPart& rotate(const Mat& m);
 
@@ -37,18 +37,35 @@ namespace Geometry
 
     bool shareOneOfSides(const VolPart& another) const;
 
-    const Vector& getCoords() const { return xyz;}
-    void setCoords(const Vector& coords) { xyz = coords;}
+    const Vector& getCoords() const
+    {
+        return xyz;
+    }
+    void setCoords(const Vector& coords)
+    {
+        xyz = coords;
+    }
 
-    const Vector& getDir() const { return dir;}
-    void setDir(const Vector& d) { dir = d;}
+    const Vector& getDir() const
+    {
+        return dir;
+    }
+    void setDir(const Vector& d)
+    {
+        dir = d;
+    }
 
-    VolType type() const { return fillInfo;}
-    void setType(VolType t) { fillInfo = t;}
-  private:
+    VolType type() const
+    {
+        return fillInfo;
+    }
+    void setType(VolType t)
+    {
+        fillInfo = t;
+    }
+private:
 
     VolType fillInfo;
     Vector xyz, dir;
-    bool wall;
-  };
+};
 }

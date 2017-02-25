@@ -4,17 +4,17 @@
 
 namespace Geometry
 {
-  enum RotType
-  {
+enum RotType
+{
     None,
     RotateX,
     RotateY,
     RotateZ
-  };
+};
 
-  class Vector
-  {
-  public:
+class Vector
+{
+public:
     Vector(float i = 0, float j = 0, float k = 0);
 
     Vector cross(const Vector v);
@@ -23,12 +23,12 @@ namespace Geometry
 
     const float& operator[](int i) const
     {
-      return vec[i];
+        return vec[i];
     }
 
     float& operator[](int i)
     {
-      return vec[i];
+        return vec[i];
     }
 
     Vector operator*(float f) const;
@@ -46,12 +46,14 @@ namespace Geometry
     Vector normalized() const;
     Vector ortogonal(Vector v) const;
     float len() const;
-  private:
+private:
     float vec[3];
-  };
+};
 
 
-  float dot(const Vector& v1, const Vector& v2);
+extern const Vector XSHIFT, YSHIFT, ZSHIFT;
 
-  Vector operator*(float f, Vector& v);
+float dot(const Vector& v1, const Vector& v2);
+
+Vector operator*(float f, Vector& v);
 }

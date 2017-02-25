@@ -3,41 +3,43 @@
 
 #include "piece.h"
 #include <mutex>
-//#include "mutex.h"
 
-using namespace Geometry;
+namespace Geometry
+{
 
 class VolumePuzzle
 {
 public:
-  VolumePuzzle(int xDim, int yDim, int zDim, const PiecesSet pieces);
+    VolumePuzzle(int xDim, int yDim, int zDim, const PiecesSet pieces);
 
-  int getXDim() const;
-  int getYDim() const;
-  int getZDim() const;
+    int getXDim() const;
+    int getYDim() const;
+    int getZDim() const;
 
-  Box getEmptyBox() const;
-  const PiecesSet& getPieces() const;
+    Box getEmptyBox() const;
+    const PiecesSet& getPieces() const;
 
-  //true - new solution
-  //false - there already exists the same solution
-  bool addSolution(const PiecesSet& sol);
-  int numFoundSolutions() const;
-  void getSolution(PiecesSet& sol, int i) const;
+    //true - new solution
+    //false - there already exists the same solution
+    bool addSolution(const PiecesSet& sol);
+    int numFoundSolutions() const;
+    void getSolution(PiecesSet& sol, int i) const;
 
-  virtual ~VolumePuzzle(){}
+    virtual ~VolumePuzzle() {}
 
-  virtual void addedSolution(){}
+    virtual void addedSolution() {}
 protected:
 
-  vector<PiecesSet> solutions;
-  vector<PiecesSet> normalizedSolutions;
-  int dimX, dimY, dimZ;
-  mutable std::mutex  lock;
+    std::vector<PiecesSet> solutions;
+    std::vector<PiecesSet> normalizedSolutions;
+    int dimX, dimY, dimZ;
+    mutable std::mutex  lock;
 //  mutable examples::MutexLock  lock;
-  PiecesSet pieces;
+    PiecesSet pieces;
 private:
-  VolumePuzzle(const VolumePuzzle&);
+    VolumePuzzle(const VolumePuzzle&);
 };
+
+}
 
 #endif // volumepuzzle_h__

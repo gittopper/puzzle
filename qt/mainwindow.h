@@ -4,7 +4,8 @@
 #include <QMainWindow>
 #include "qtvolumepuzzle.h"
 
-namespace Ui {
+namespace Ui
+{
 class MainWindow;
 }
 
@@ -15,7 +16,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
 
-    void setPuzzleToRender(QTVolumePuzzle& puzzleToRender);
+    void setPuzzleToRender(Geometry::QTVolumePuzzle& puzzleToRender);
 
     ~MainWindow();
 

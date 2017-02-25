@@ -15,7 +15,7 @@ signals:
     void solutionSwitched(int i);
 public slots:
     void showSolution(int i);
-    void refreshSolutions(VolumePuzzle* puzzle);
+    void refreshSolutions(Geometry::VolumePuzzle* puzzle);
 private:
     int curItem;
 };

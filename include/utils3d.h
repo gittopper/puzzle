@@ -3,9 +3,9 @@
 #include "object3d.h"
 #include "piece.h"
 
-class GLPiecesSet :public Object3D
+class GLPiecesSet : public Object3D
 {
 public:
-  GLPiecesSet()
+    GLPiecesSet()
 
 };

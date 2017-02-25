@@ -4,16 +4,19 @@
 #include "volumepuzzle.h"
 #include <QObject>
 
-class QTVolumePuzzle:public QObject, public VolumePuzzle
+namespace Geometry
 {
-  Q_OBJECT
+class QTVolumePuzzle: public QObject, public VolumePuzzle
+{
+    Q_OBJECT
 public:
-  QTVolumePuzzle(int xDim, int yDim, int zDim, const PiecesSet pieces):
-    VolumePuzzle(xDim, yDim, zDim, pieces)
-  {}
-  void addedSolution();
+    QTVolumePuzzle(int xDim, int yDim, int zDim, const PiecesSet pieces):
+        VolumePuzzle(xDim, yDim, zDim, pieces)
+    {}
+    void addedSolution();
 signals:
     void foundSolution(VolumePuzzle* puzzle);
 };
 
+}
 #endif // QTVOLUMEPUZZLE_H

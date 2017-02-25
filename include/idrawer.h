@@ -4,8 +4,8 @@
 class IDrawer
 {
 public:
-	virtual void draw() = 0;
-	~IDrawer(){}
+    virtual void draw() = 0;
+    ~IDrawer() {}
 };
 
 #endif // idrawer_h__

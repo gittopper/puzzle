@@ -6,7 +6,7 @@
 #include "glrenderer.h"
 #include <QWheelEvent>
 
-class QTPuzzleRenderer : public QGLWidget, public GLRenderer
+class QTPuzzleRenderer : public QGLWidget, public Geometry::GLRenderer
 {
     Q_OBJECT
 public:
