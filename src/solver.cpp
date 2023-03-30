@@ -182,12 +182,6 @@ bool Solver::verifyAlgorithm() {
 
 bool Solver::foundNewSolution() {
     if (m_puzzle.addSolution(m_solution)) {
-        auto empty_box = m_puzzle.getEmptyBox();
-        PiecesSet sol;
-        m_puzzle.getSolution(sol, m_puzzle.numFoundSolutions());
-        for (unsigned i = 0; i < sol.size(); i++) {
-            empty_box.add(sol[i].parts);
-        }
         m_maxSol = m_numPlaced;
         return true;
     }
