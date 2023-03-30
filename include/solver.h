@@ -1,23 +1,21 @@
 #pragma once
 
 #include "geometry.h"
-
-#include "volumepuzzle.h"
 #include "timer.h"
+#include "volumepuzzle.h"
 
-namespace Geometry
-{
+namespace Geometry {
 
-class Solver
-{
-public:
+class Solver {
+  public:
     Solver(VolumePuzzle& puzzle);
 
     void solve();
 
     void multithread(bool ml = false);
     void stopSolving();
-private:
+
+  private:
     Timer m_timer;
     VolumePuzzle& m_puzzle;
     int m_dimX, m_dimY, m_dimZ;
@@ -28,7 +26,6 @@ private:
     PiecesSet m_pieces;
     unsigned m_allPositionsNumber;
     std::vector<PiecesSet> m_piecesInAllPositions;
-    std::vector<std::vector<BBox> > m_piecesBBoxes;
     Bitset m_bs;
     int m_progress;
     bool m_searchAllSollutions;
@@ -46,4 +43,4 @@ private:
     bool foundNewSolution();
     void recursiveSolve();
 };
-}
+}  // namespace Geometry

@@ -24,7 +24,7 @@ ${Qt5OpenGL_INCLUDE_DIRS}
 
 
 set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)  
+set(CMAKE_AUTOUIC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(COMMON_HEADERS
@@ -79,7 +79,7 @@ qt/qtvolumepuzzle.h
 qt/qtpuzzlerenderer.h
 qt/qtsolutionslist.h
 qt/mainwindow.h
-qt/mainwindow.ui 
+qt/mainwindow.ui
 qt/mainwindow.cpp
 qt/qt_main.cpp
 qt/qtvolumepuzzle.cpp
@@ -92,5 +92,6 @@ set(GLUT_LIBS GL glut GLU)
 add_executable(qtSolver ${COMMON_HEADERS} ${COMMON_SOURCES} ${QT_SOURCES})
 
 qt5_use_modules(qtSolver Core Gui Widgets OpenGL)
+find_package(OpenMP REQUIRED)
 
-target_link_libraries(qtSolver ${GLUT_LIBS} ${QT_LIBRARIES})
+target_link_libraries(qtSolver ${GLUT_LIBS} ${QT_LIBRARIES} OpenMP::OpenMP_CXX)
