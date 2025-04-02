@@ -1,7 +1,6 @@
 #pragma once
 
 #include "geometry.h"
-#include "object3d.h"
 
 namespace Geometry
 {

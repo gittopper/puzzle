@@ -1,8 +1,8 @@
-#include "pieceshower.h"
-#include "glrenderer.h"
-#include "print.h"
-#include "GL/gl.h"
-#include "GL/glut.h"
+#include <pieceshower.h>
+#include <glrenderer.h>
+#include <print.h>
+#include <GL/gl.h>
+#include <GL/glut.h>
 #include <cstdlib>
 #include <time.h>
 

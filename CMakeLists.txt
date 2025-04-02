@@ -1,80 +1,86 @@
-cmake_minimum_required (VERSION 2.8.7)
+cmake_minimum_required (VERSION 3.18)
 
 project (PuzzleSolver)
 
 enable_language(CXX)
 
+option(ANDROID_REGIME "android regime" OFF)
+
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fPIC -pthread")
 
-find_package(Qt5Core REQUIRED)
-find_package(Qt5Gui REQUIRED)
-find_package(Qt5Widgets REQUIRED)
-find_package(Qt5OpenGL REQUIRED)
-
-include_directories(
-include
-3rdParty/glm/
-src
-qt
-${Qt5Widgets_INCLUDE_DIRS}
-${Qt5Gui_INCLUDE_DIRS}
-${Qt5Widgets_INCLUDE_DIRS}
-${Qt5OpenGL_INCLUDE_DIRS}
-)
-
-
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
 set(COMMON_HEADERS
-include/base.h
-include/camera.h
-include/bbox.h
-include/box.h
-include/geometry.h
-include/mat.h
-include/print.h
-include/timer.h
-include/logger.hpp
-include/puzzle55.h
-include/solver.h
-include/utils.h
-include/volpart.h
+src/base.h
+src/bbox.h
+src/box.h
+src/geometry.h
+src/mat.h
+src/print.h
+src/timer.h
+src/logger.hpp
+src/puzzle55.h
+src/solver.h
+src/utils.h
+src/volpart.h
 
-include/idrawer.h
-include/tests.h
-include/volumepuzzle.h
-include/glrenderer.h
-include/camera.h
-include/object3d.h
-include/piece.h
-include/pieceshower.h
-include/utils3d.h
-include/vector.h
+src/idrawer.h
+src/volumepuzzle.h
+src/piece.h
+src/utils3d.h
+src/vector.h
 )
 
 set(COMMON_SOURCES
-src/camera.cpp
 src/box.cpp
 src/mat.cpp
 src/print.cpp
 src/solver.cpp
 src/utils.cpp
 src/volpart.cpp
-src/tests.cpp
 src/volumepuzzle.cpp
-src/glrenderer.cpp
-src/camera.cpp
-src/object3d.cpp
 src/piece.cpp
-src/pieceshower.cpp
 src/utils3d.cpp
 src/vector.cpp
-
 )
 
+if (ANDROID_REGIME)
+
+set(ANDROID_SOURCES
+        src/android/camera.cpp
+        src/android/Matrix.cpp
+        src/android/Native.cpp
+        src/android/renderer.cpp
+        src/android/pieceshower.cpp
+        )
+set(TARGET Native)
+add_library(${TARGET} SHARED ${COMMON_SOURCES} ${ANDROID_SOURCES})
+target_include_directories(${TARGET} PUBLIC
+    src
+    src/android
+)
+target_link_libraries(${TARGET} PUBLIC log android EGL GLESv2 OpenSLES  dl  GLESv1_CM)
+set_target_properties(${TARGET} PROPERTIES LIBRARY_OUTPUT_NAME ${TARGET})
+
+else()
+
+find_package(Qt5Core REQUIRED)
+find_package(Qt5Gui REQUIRED)
+find_package(Qt5Widgets REQUIRED)
+find_package(Qt5OpenGL REQUIRED)
+
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
 set(QT_SOURCES
+src/desktop/camera.h
+src/desktop/glrenderer.h
+#src/desktop/glutrenderer.h
+src/desktop/pieceshower.h
+src/desktop/camera.cpp
+src/desktop/glrenderer.cpp
+#src/desktop/glutrenderer.cpp
+src/desktop/pieceshower.cpp
 qt/qtvolumepuzzle.h
 qt/qtpuzzlerenderer.h
 qt/qtsolutionslist.h
@@ -87,11 +93,16 @@ qt/qtpuzzlerenderer.cpp
 qt/qtsolutionslist.cpp
 )
 
-set(GLUT_LIBS GL glut GLU)
-
 add_executable(qtSolver ${COMMON_HEADERS} ${COMMON_SOURCES} ${QT_SOURCES})
 
-qt5_use_modules(qtSolver Core Gui Widgets OpenGL)
+target_include_directories(qtSolver PUBLIC
+src
+src/desktop
+qt
+)
+
 find_package(OpenMP REQUIRED)
 
-target_link_libraries(qtSolver ${GLUT_LIBS} ${QT_LIBRARIES} OpenMP::OpenMP_CXX)
+target_link_libraries(qtSolver GL glut GLU Qt5::Widgets Qt5::Gui Qt5::OpenGL OpenMP::OpenMP_CXX)
+
+endif()

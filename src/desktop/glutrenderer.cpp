@@ -1,5 +1,5 @@
-#include "glutrenderer.h"
-#include "glut.h"
+#include <glutrenderer.h>
+#include <GL/freeglut.h>
 #include <sstream>
 
 namespace {

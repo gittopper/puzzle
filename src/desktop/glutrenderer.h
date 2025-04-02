@@ -1,8 +1,8 @@
 #pragma once
 
-#include "glrenderer.h"
+#include <glrenderer.h>
 
-class GlutRenderer : public GLRenderer
+class GlutRenderer : public Geometry::GLRenderer
 {
 public:
   void init(int argc, char ** argv);
