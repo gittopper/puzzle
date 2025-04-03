@@ -16,9 +16,10 @@ public:
     void zoom(float z);
 
     void render();
+    std::vector<Vector> overlayPoints();
+    int width, height;
 private:
     Vector eye, up, center;
-    int width, height;
     float scale;
 };
 }

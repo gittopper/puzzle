@@ -1,5 +1,7 @@
 #include <camera.h>
 
+#include <Matrix.h>
+
 Camera::Camera(){
     matrixIdentityFunction(modelViewMatrixLast);
 }

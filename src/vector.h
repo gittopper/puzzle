@@ -12,6 +12,8 @@ enum RotType
     RotateZ
 };
 
+#pragma pack(push, 1)
+
 class Vector
 {
 public:
@@ -50,6 +52,7 @@ private:
     float vec[3];
 };
 
+#pragma pack(pop)
 
 extern const Vector XSHIFT, YSHIFT, ZSHIFT;
 

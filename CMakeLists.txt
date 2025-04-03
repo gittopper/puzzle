@@ -6,7 +6,7 @@ enable_language(CXX)
 
 option(ANDROID_REGIME "android regime" OFF)
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fPIC -pthread")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -fPIC -pthread")
 
 set(COMMON_HEADERS
 src/base.h
@@ -21,7 +21,7 @@ src/puzzle55.h
 src/solver.h
 src/utils.h
 src/volpart.h
-
+src/resourceloader.h
 src/idrawer.h
 src/volumepuzzle.h
 src/piece.h
@@ -35,12 +35,15 @@ src/mat.cpp
 src/print.cpp
 src/solver.cpp
 src/utils.cpp
+src/pngreader.cpp
 src/volpart.cpp
 src/volumepuzzle.cpp
 src/piece.cpp
 src/utils3d.cpp
 src/vector.cpp
 )
+
+add_subdirectory(src/3rd_party)
 
 if (ANDROID_REGIME)
 
@@ -77,10 +80,12 @@ src/desktop/camera.h
 src/desktop/glrenderer.h
 #src/desktop/glutrenderer.h
 src/desktop/pieceshower.h
+src/desktop/fileresourceloader.h
 src/desktop/camera.cpp
 src/desktop/glrenderer.cpp
 #src/desktop/glutrenderer.cpp
 src/desktop/pieceshower.cpp
+src/desktop/fileresourceloader.cpp
 qt/qtvolumepuzzle.h
 qt/qtpuzzlerenderer.h
 qt/qtsolutionslist.h
@@ -100,9 +105,16 @@ src
 src/desktop
 qt
 )
+file(COPY src/assets DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+target_compile_definitions(qtSolver PUBLIC
+    GLM_ENABLE_EXPERIMENTAL=ON)
 
 find_package(OpenMP REQUIRED)
 
-target_link_libraries(qtSolver GL glut GLU Qt5::Widgets Qt5::Gui Qt5::OpenGL OpenMP::OpenMP_CXX)
+target_link_libraries(qtSolver GL glut GLU Qt5::Widgets Qt5::Gui
+    Qt5::OpenGL OpenMP::OpenMP_CXX glm::glm-header-only
+     png_static zlibstatic
+     )
 
 endif()

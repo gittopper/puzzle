@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/matrix_inverse.hpp>
 
 namespace Geometry
 {
@@ -64,6 +65,36 @@ void Camera::render()
 
 }
 
+std::vector<Vector>  Camera::overlayPoints() {
+    glm::mat4 view       = glm::lookAt(
+        glm::vec3(eye[0], eye[1], eye[2]),
+        glm::vec3(center[0], center[1], center[2]),
+        glm::vec3(up[0], up[1], up[2])
+    );
+    auto z_before = 0.1f;
+    float ratio = float(height) / width;
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1 / ratio, z_before, 100.0f);
+    auto pv = projection * view;
+    auto pv_inv = glm::affineInverse(pv);
+    auto z_overlay = 10.0f;
+    auto coef = 1 + 2. * (z_overlay - 1) * std::tan(glm::radians(45.0f) / 2);
+    glm::vec4 lt{-1/ratio*coef, 1/ratio*coef, z_overlay, 1};
+    glm::vec4 rt{1/ratio*coef, 1/ratio*coef, z_overlay, 1};
+    glm::vec4 rb{1/ratio*coef, -1/ratio*coef, z_overlay, 1};
+    glm::vec4 lb{-1/ratio*coef, -1/ratio*coef, z_overlay, 1};
+    auto v0 = pv_inv * lt;
+    auto a0 = glm::vec3(v0) / v0.w;
+    auto v1 = pv_inv * rt;
+    auto a1 = glm::vec3(v1) / v1.w;
+    auto v2 = pv_inv * rb;
+    auto a2 = glm::vec3(v2) / v2.w;
+    auto v3 = pv_inv * lb;
+    auto a3 = glm::vec3(v3) / v3.w;
+    return {Vector{a0.x, a0.y, a0.z},
+    Vector{a1.x, a1.y, a1.z},
+    Vector{a2.x, a2.y, a2.z},
+    Vector{a3.x, a3.y, a3.z}};
+}
 
 void Camera::zoom(float zz)
 {

@@ -5,6 +5,9 @@
 #include <GL/glut.h>
 #include <cstdlib>
 #include <time.h>
+#include <desktop/fileresourceloader.h>
+#include <QApplication>
+#include <pngreader.h>
 
 using namespace Visualization;
 namespace Geometry
@@ -33,11 +36,75 @@ void GLRenderer::initOpenGL()
 
     curSol = 0;
     maxSol = 0;
+
+    FileResourceLoader frl;
+    auto path = QApplication::applicationDirPath().toStdString() + "/assets/daco2.png";
+    auto daco2 = frl.readFile(path);
+    PngReader png_reader;
+    sprite_ = png_reader.read(daco2, false);
 }
 
 void GLRenderer::showSolution(int sol)
 {
     curSol = sol;
+}
+
+void GLRenderer::drawOverlay(const Sprite& sprite) {
+    assert(sprite.type() == Sprite::RGBA);
+    glEnable(GL_TEXTURE_2D);
+    glActiveTexture(GL_TEXTURE0);
+    GLuint overlay_id;
+    glDeleteTextures(1, &overlay_id);
+    glGenTextures(1, &overlay_id);
+    glBindTexture(GL_TEXTURE_2D, overlay_id);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sprite.glWidth(), sprite.glHeight(), 0,
+            GL_RGBA, GL_UNSIGNED_BYTE, sprite.data());
+
+    glColor4f(1., 1., 1., 0.5);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    //glGenerateMipmap(GL_TEXTURE_2D);
+    auto overlay_points = camera.overlayPoints();
+
+    GLfloat texCoords[] = {
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+    };
+    GLuint indices3[] = {
+        0, 1, 2, 3
+    };
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glEnableClientState(GL_INDEX_ARRAY);
+
+//    glEnable(GL_COLOR_MATERIAL);
+//    const GLfloat emi[4] = {1.0f, 1.0f, 1.0f, 0.5f};
+//    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emi);
+
+    glDisable(GL_LIGHTING);
+    //glDisable(GL_LIGHT0);
+
+    glVertexPointer  (3, GL_FLOAT, 0, overlay_points.data());
+    glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDrawElements(GL_TRIANGLE_FAN, 4, GL_UNSIGNED_INT, indices3);
+
+    glEnable(GL_LIGHTING);
+    //glEnable(GL_LIGHT0);
+    //glDisable(GL_COLOR_MATERIAL);
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glDisableClientState(GL_INDEX_ARRAY);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    //glDisable(GL_TEXTURE_2D);
 }
 
 void GLRenderer::display()
@@ -98,6 +165,8 @@ void GLRenderer::display()
         }
         partDrawer.draw(p);
     }
+
+    drawOverlay(sprite_.value());
 
     glPopMatrix();
     glFlush();
