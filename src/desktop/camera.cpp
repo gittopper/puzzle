@@ -4,7 +4,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/matrix_inverse.hpp>
 
 namespace Geometry
 {
@@ -13,7 +12,8 @@ Camera::Camera():
     scale(10),
     eye{0, 0, 10},
     center{0, 0, 0},
-    up{0, 1, 0}
+    up{0, 1, 0},
+    fov_{55.}
 {
 
 }
@@ -58,7 +58,7 @@ void Camera::render()
 
     float ratio = float(height) / width;
 
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1 / ratio, 0.1f, 100.0f);
+    glm::mat4 projection = glm::perspective(glm::radians(fov_), 1 / ratio, 0.1f, 100.0f);
     glMultMatrixf(&projection[0][0]);
 
     //glOrtho(-scale, scale, -scale * ratio, scale * ratio, 10 * scale, -10 * scale);
@@ -73,15 +73,15 @@ std::vector<Vector>  Camera::overlayPoints() {
     );
     auto z_before = 0.1f;
     float ratio = float(height) / width;
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1 / ratio, z_before, 100.0f);
+    glm::mat4 projection = glm::perspective(glm::radians(fov_), 1 / ratio, z_before, 100.0f);
     auto pv = projection * view;
-    auto pv_inv = glm::affineInverse(pv);
-    auto z_overlay = 10.0f;
-    auto coef = 1 + 2. * (z_overlay - 1) * std::tan(glm::radians(45.0f) / 2);
-    glm::vec4 lt{-1/ratio*coef, 1/ratio*coef, z_overlay, 1};
-    glm::vec4 rt{1/ratio*coef, 1/ratio*coef, z_overlay, 1};
-    glm::vec4 rb{1/ratio*coef, -1/ratio*coef, z_overlay, 1};
-    glm::vec4 lb{-1/ratio*coef, -1/ratio*coef, z_overlay, 1};
+    auto pv_inv = glm::inverse(pv);
+    auto z_overlay = 0.2f;
+    auto coef = 1.;
+    glm::vec4 lt{-1, 1, z_overlay, 1};
+    glm::vec4 rt{1, 1, z_overlay, 1};
+    glm::vec4 rb{1, -1, z_overlay, 1};
+    glm::vec4 lb{-1, -1, z_overlay, 1};
     auto v0 = pv_inv * lt;
     auto a0 = glm::vec3(v0) / v0.w;
     auto v1 = pv_inv * rt;

@@ -21,5 +21,6 @@ public:
 private:
     Vector eye, up, center;
     float scale;
+    float fov_;
 };
 }

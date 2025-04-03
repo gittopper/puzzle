@@ -32,8 +32,6 @@ void GLRenderer::initOpenGL()
     glShadeModel(GL_SMOOTH);
     glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 
-    srand(time(NULL));
-
     curSol = 0;
     maxSol = 0;
 
