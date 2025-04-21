@@ -7,10 +7,6 @@
 
 using namespace Geometry;
 
-void solvePuzzle(Solver* solver)
-{
-    solver->solve();
-}
 
 int main(int argc, char *argv[])
 {
@@ -25,7 +21,9 @@ int main(int argc, char *argv[])
   //   Solver VolumePuzzle(3,3,3,generateSomaPuzzles());
 
     Solver solver(dynamic_cast<VolumePuzzle&>(puzzle));
-    std::thread solvingThread(solvePuzzle, &solver);
+    std::thread solving_thread([&solver](){
+        solver.solve();
+    });
 
     MainWindow w;
     w.setPuzzleToRender(puzzle);
@@ -33,6 +31,6 @@ int main(int argc, char *argv[])
 
     int result = a.exec();
     solver.stopSolving();
-    solvingThread.join();
+    solving_thread.join();
     return result;
 }

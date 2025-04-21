@@ -3,6 +3,7 @@
 #include "geometry.h"
 #include "timer.h"
 #include "volumepuzzle.h"
+#include <atomic>
 
 namespace Geometry {
 
@@ -10,7 +11,7 @@ struct Data {
     Data(const Geometry::Box& box) : m_box(box) {}
     Bitset m_bs;
     Box m_box;
-    unsigned m_numPlaced;
+    unsigned m_numPlaced = 0;
     PiecesSet m_solution;
 };
 class Solver {
@@ -23,16 +24,18 @@ class Solver {
     void stopSolving();
 
    private:
+    void solveForPiece(int i_puzzle);
     Timer m_timer;
     VolumePuzzle& m_puzzle;
     int m_dimX, m_dimY, m_dimZ;
-    bool m_continueToSolve;
+    bool m_continue_to_solve;
     PiecesSet m_pieces;
-    unsigned m_allPositionsNumber;
-    std::vector<PiecesSet> m_piecesInAllPositions;
+    unsigned m_piece_all_positions_number;
+    std::vector<PiecesSet> m_pieces_in_all_positions;
     int m_progress;
-    bool m_searchAllSollutions;
-    unsigned m_maxSol;
+    bool m_search_all_solutions;
+    std::mutex mutex_;
+    std::atomic<int> m_max_sol;
 
     void remove(Data& data, const Piece& part);
     void place(Data& data, const Piece& part);

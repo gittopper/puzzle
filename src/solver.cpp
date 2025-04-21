@@ -2,25 +2,25 @@
 
 #include <thread>
 
-#include "pieceshower.h"
+#include "volpartrenderer.h"
 #include "utils.h"
 
 namespace Geometry {
 Solver::Solver(VolumePuzzle& puzzleInstance)
-    : m_continueToSolve(true),
-      m_maxSol(0),
+    : m_continue_to_solve(true),
+      m_max_sol(0),
       m_progress(0),
-      m_searchAllSollutions(true),
+      m_search_all_solutions(true),
       m_puzzle(puzzleInstance),
       m_dimX(m_puzzle.getXDim()),
       m_dimY(m_puzzle.getYDim()),
       m_dimZ(m_puzzle.getZDim()) {
     m_pieces = m_puzzle.getPieces();
     for (unsigned pn = 0; pn < m_pieces.size(); pn++) {
-        m_allPositionsNumber = 0;
+        m_piece_all_positions_number = 0;
         const Piece& piece = m_pieces[pn];
         Piece copy0 = piece;
-        PiecesSet pieceInAllPositions;
+        PiecesSet one_piece_all_positions;
         std::vector<BBox> piecesBoxes;
         for (int k = 0; k < 4; k++) {
             copy0.rotate(RotateX);
@@ -38,16 +38,16 @@ Solver::Solver(VolumePuzzle& puzzleInstance)
                         m_dimZ - box.getZSize() < 1)
                         continue;
 
-                    for (const Piece& p : pieceInAllPositions.pieces) {
+                    for (const Piece& p : one_piece_all_positions) {
                         if (p == copy2) continue;
                     }
-                    pieceInAllPositions.pieces.push_back(copy2);
+                    one_piece_all_positions.push_back(copy2);
                     piecesBoxes.push_back(box);
                 }
             }
         }
-        m_allPositionsNumber += pieceInAllPositions.size();
-        m_piecesInAllPositions.push_back(pieceInAllPositions);
+        m_piece_all_positions_number += one_piece_all_positions.size();
+        m_pieces_in_all_positions.push_back(one_piece_all_positions);
     }
 }
 
@@ -175,8 +175,9 @@ bool Solver::verifyAlgorithm(Data& data) {
 }
 
 bool Solver::foundNewSolution(Data& data) {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (m_puzzle.addSolution(data.m_solution)) {
-        m_maxSol = data.m_numPlaced;
+        m_max_sol = data.m_numPlaced;
         return true;
     }
 
@@ -185,69 +186,67 @@ bool Solver::foundNewSolution(Data& data) {
 
 void Solver::multithread(bool ml) {}
 
-void Solver::stopSolving() { m_continueToSolve = false; }
+void Solver::stopSolving() { m_continue_to_solve = false; }
+
+void Solver::solveForPiece(int i_puzzle) {
+    Data data(m_puzzle.getEmptyBox());
+    data.m_bs.resize(m_pieces.size(), true);
+    data.m_bs[i_puzzle] = false;
+
+    const PiecesSet& piece_all_positions = m_pieces_in_all_positions[i_puzzle];
+    for (unsigned i = 0; i < piece_all_positions.size(); i++) {
+        Piece curPiece = piece_all_positions[i];
+        const BBox boundaries = curPiece.getBBox();
+
+        int xmax = m_dimX - boundaries.getXSize();
+        int ymax = m_dimY - boundaries.getYSize();
+        int zmax = m_dimZ - boundaries.getZSize();
+
+        if (data.m_numPlaced == 0) {
+            xmax = std::min(xmax, xmax / 2 + 1);
+            ymax = std::min(ymax, ymax / 2 + 1);
+            zmax = std::min(zmax, zmax / 2 + 1);
+        }
+
+        for (int x = 1; x <= xmax; x++) {
+            for (int y = 1; y <= ymax; y++) {
+                for (int z = 1; z <= zmax; z++) {
+                    if (!m_continue_to_solve) {
+                        return;
+                    }
+
+                    Vector s(x, y, z);
+                    curPiece.shift(s);
+
+                    if (tryToPlace(data, curPiece)) {
+                        data.m_solution.push_back(curPiece);
+                        recursiveSolve(data);
+                        remove(data, curPiece);
+                        data.m_solution.pop_back();
+                    }
+                    curPiece.shift(-s);
+                }
+            }
+        }
+        std::cout << "Progress:"
+                  << (float(++m_progress) / m_piece_all_positions_number)
+                  << std::endl;
+        std::cout << "Elapsed time:" << m_timer.asString() << std::endl;
+    }
+    data.m_bs[i_puzzle] = true;
+}
 
 void Solver::solve() {
     std::cout << "starting to solve puzzle" << std::endl;
     m_timer.start();
     std::vector<std::thread> threads;
-    for (unsigned iPuzzle = 0; iPuzzle < m_pieces.size(); iPuzzle++) {
-        threads.push_back(std::thread([this, iPuzzle]() {
-            Data data(m_puzzle.getEmptyBox());
-            data.m_bs.resize(m_pieces.size(), true);
-            data.m_bs[iPuzzle] = false;
-
-            PiecesSet& allPositions = m_piecesInAllPositions[iPuzzle];
-            for (unsigned i = 0; i < allPositions.size(); i++) {
-                Piece curPiece = allPositions[i];
-                const BBox boundaries = curPiece.getBBox();
-
-                int xmax = m_dimX - boundaries.getXSize();
-                int ymax = m_dimY - boundaries.getYSize();
-                int zmax = m_dimZ - boundaries.getZSize();
-
-                if (data.m_numPlaced == 0) {
-                    xmax = std::min(xmax, xmax / 2 + 1);
-                    ymax = std::min(ymax, ymax / 2 + 1);
-                    zmax = std::min(zmax, zmax / 2 + 1);
-                }
-
-                for (int x = 1; x <= xmax; x++) {
-                    for (int y = 1; y <= ymax; y++) {
-                        for (int z = 1; z <= zmax; z++) {
-                            if (!m_continueToSolve) {
-                                return;
-                            }
-
-                            Vector s(x, y, z);
-                            curPiece.shift(s);
-
-                            if (tryToPlace(data, curPiece)) {
-                                data.m_solution.pieces.push_back(curPiece);
-                                recursiveSolve(data);
-                                remove(data, curPiece);
-                                data.m_solution.pieces.pop_back();
-                            }
-                            curPiece.shift(-s);
-                        }
-                    }
-                }
-            }
-            data.m_bs[iPuzzle] = true;
-
-            if (data.m_numPlaced == 0) {
-                return;  // we should find all solutions only for one first
-                         // figure
-            }
-
-            if (data.m_numPlaced == 1) {
-                std::cout << "Progress:"
-                          << (float(++m_progress) / m_allPositionsNumber /
-                              m_pieces.size())
-                          << std::endl;
-                std::cout << "Elapsed time:" << m_timer.asString() << std::endl;
-            }
-        }));
+    auto num_threads = m_pieces.size() / 2;
+    for (auto i_thread = 0UL; i_thread < num_threads; ++i_thread) {
+        std::cout << "starting " << i_thread << " thread" << std::endl;
+//        threads.push_back(std::thread([this, i_thread](){
+        solveForPiece(2* i_thread);
+        solveForPiece(2* i_thread + 1);
+        //}));
     }
     for (auto& t : threads) {
         t.join();
@@ -260,15 +259,13 @@ void Solver::solve() {
 void Solver::recursiveSolve(Data& data) {
     BREAK_ON_LINE(verifyAlgorithm(data));
 
-    if (m_maxSol < data.m_numPlaced) {
+    if (m_max_sol < data.m_numPlaced) {
         foundNewSolution(data);
     }
 
     if (data.m_numPlaced == m_pieces.size()) {
         foundNewSolution(data);
-        if (!m_searchAllSollutions) {
-            return;
-        }
+        return;
     }
     for (unsigned iPuzzle = 0; iPuzzle < m_pieces.size(); iPuzzle++) {
         if (!data.m_bs[iPuzzle]) {
@@ -277,9 +274,9 @@ void Solver::recursiveSolve(Data& data) {
 
         data.m_bs[iPuzzle] = false;
 
-        PiecesSet& allPositions = m_piecesInAllPositions[iPuzzle];
-        for (unsigned i = 0; i < allPositions.size(); i++) {
-            Piece curPiece = allPositions[i];
+        PiecesSet& piece_all_positions = m_pieces_in_all_positions[iPuzzle];
+        for (unsigned i = 0; i < piece_all_positions.size(); i++) {
+            Piece curPiece = piece_all_positions[i];
             const BBox boundaries = curPiece.getBBox();
 
             int xmax = m_dimX - boundaries.getXSize();
@@ -295,7 +292,7 @@ void Solver::recursiveSolve(Data& data) {
             for (int x = 1; x <= xmax; x++) {
                 for (int y = 1; y <= ymax; y++) {
                     for (int z = 1; z <= zmax; z++) {
-                        if (!m_continueToSolve) {
+                        if (!m_continue_to_solve) {
                             return;
                         }
 
@@ -303,10 +300,10 @@ void Solver::recursiveSolve(Data& data) {
                         curPiece.shift(s);
 
                         if (tryToPlace(data, curPiece)) {
-                            data.m_solution.pieces.push_back(curPiece);
+                            data.m_solution.push_back(curPiece);
                             recursiveSolve(data);
                             remove(data, curPiece);
-                            data.m_solution.pieces.pop_back();
+                            data.m_solution.pop_back();
                         }
                         curPiece.shift(-s);
                     }
@@ -314,18 +311,6 @@ void Solver::recursiveSolve(Data& data) {
             }
         }
         data.m_bs[iPuzzle] = true;
-
-        if (data.m_numPlaced == 0) {
-            return;  // we should find all solutions only for one first figure
-        }
-
-        if (data.m_numPlaced == 1) {
-            std::cout << "Progress:"
-                      << (float(++m_progress) / m_allPositionsNumber /
-                          m_pieces.size())
-                      << std::endl;
-            std::cout << "Elapsed time:" << m_timer.asString() << std::endl;
-        }
     }
 }
 }  // namespace Geometry

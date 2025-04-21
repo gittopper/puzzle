@@ -32,7 +32,7 @@ void QTSolutionsList::refreshSolutions(VolumePuzzle* puzzle) {
       ss << "solution" << k << "(";
 
       for (int k = 0; k < p.size(); k++) {
-        ss << p.pieces[k].id;
+        ss << p[k].id;
       }
       ss << ")";
     }

@@ -10,6 +10,7 @@
 
 
 #include "camera.h"
+#include <memory>
 
 class Renderer {
 public:
@@ -30,3 +31,5 @@ private:
     GLuint modelViewLocation;
     Camera camera_;
 };
+
+using RendererPtr = std::shared_ptr<Renderer>;

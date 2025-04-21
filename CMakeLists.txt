@@ -22,9 +22,11 @@ src/solver.h
 src/utils.h
 src/volpart.h
 src/resourceloader.h
+src/piecessetrenderer.h
 src/idrawer.h
 src/volumepuzzle.h
 src/piece.h
+src/ivolpartrenderer.h
 src/utils3d.h
 src/vector.h
 )
@@ -39,6 +41,8 @@ src/pngreader.cpp
 src/volpart.cpp
 src/volumepuzzle.cpp
 src/piece.cpp
+src/ivolpartrenderer.cpp
+src/piecessetrenderer.cpp
 src/utils3d.cpp
 src/vector.cpp
 )
@@ -52,7 +56,7 @@ set(ANDROID_SOURCES
         src/android/Matrix.cpp
         src/android/Native.cpp
         src/android/renderer.cpp
-        src/android/pieceshower.cpp
+        src/android/volpartrenderer.cpp
         )
 set(TARGET Native)
 add_library(${TARGET} SHARED ${COMMON_SOURCES} ${ANDROID_SOURCES})
@@ -62,6 +66,11 @@ target_include_directories(${TARGET} PUBLIC
 )
 target_link_libraries(${TARGET} PUBLIC log android EGL GLESv2 OpenSLES  dl  GLESv1_CM)
 set_target_properties(${TARGET} PROPERTIES LIBRARY_OUTPUT_NAME ${TARGET})
+find_package(OpenMP REQUIRED)
+
+target_link_libraries(${TARGET} PUBLIC OpenMP::OpenMP_CXX glm::glm-header-only
+     png_static zlibstatic
+     )
 
 else()
 
@@ -79,12 +88,12 @@ set(QT_SOURCES
 src/desktop/camera.h
 src/desktop/glrenderer.h
 #src/desktop/glutrenderer.h
-src/desktop/pieceshower.h
+src/desktop/volpartrenderer.h
 src/desktop/fileresourceloader.h
 src/desktop/camera.cpp
 src/desktop/glrenderer.cpp
 #src/desktop/glutrenderer.cpp
-src/desktop/pieceshower.cpp
+src/desktop/volpartrenderer.cpp
 src/desktop/fileresourceloader.cpp
 qt/qtvolumepuzzle.h
 qt/qtpuzzlerenderer.h

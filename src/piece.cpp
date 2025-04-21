@@ -15,7 +15,7 @@ Piece& Piece::rotate(Mat rot) {
   }
   return *this;
 }
-bool Piece::operator==(const Piece& part) const { return parts == part.parts; }
+bool Piece::operator==(const Piece& part) const { return id == part.id && parts == part.parts; }
 Piece& Piece::shift(const Vector& shift) {
   for (auto& part : parts) {
     part.shift(shift);
@@ -59,25 +59,29 @@ Mat Piece::getRotationMatrix(const Piece& part) const {
 }
 
 bool PiecesSet::operator==(const PiecesSet& set) const {
-  if (pieces.size() != set.pieces.size()) return false;
-  for (unsigned i = 0; i < pieces.size(); i++) {
-    if (pieces[i].id != set.pieces[i].id) return false;
+  if (size() != set.size()) {
+      return false;
+  }
+  for (unsigned i = 0; i < size(); i++) {
+    if ((*this)[i].id != set[i].id) {
+        return false;
+    }
   }
 
-  Mat res = pieces[0].getRotationMatrix(set.pieces[0]);
+  Mat res = (*this)[0].getRotationMatrix(set[0]);
 
-  Vector prevShift = -pieces[0].getZero();
-  Vector shift = set.pieces[0].getZero();
+  Vector prevShift = -(*this)[0].getZero();
+  Vector shift = set[0].getZero();
 
   bool theSame = true;
 
-  for (unsigned i = 0; i < set.pieces.size(); i++) {
-    Piece p = pieces[i];
+  for (unsigned i = 0; i < set.size(); i++) {
+    Piece p = (*this)[i];
 
     p.shift(prevShift);
     p.rotate(res);
     p.shift(shift);
-    theSame = p == set.pieces[i];
+    theSame = p == set[i];
     if (!theSame) break;
   }
 
@@ -85,7 +89,7 @@ bool PiecesSet::operator==(const PiecesSet& set) const {
 }
 
 void PiecesSet::rotate(Mat rot) {
-  for (std::vector<Piece>::iterator it = pieces.begin(); it != pieces.end();
+  for (std::vector<Piece>::iterator it = begin(); it != end();
        ++it) {
     (*it).rotate(rot);
   }
@@ -94,11 +98,11 @@ void PiecesSet::rotate(Mat rot) {
 bool compNumbers(Piece i, Piece j) { return i.id < j.id; }
 
 void PiecesSet::order() {
-  std::sort(pieces.begin(), pieces.end(), compNumbers);
+  std::sort(begin(), end(), compNumbers);
 }
 
 void PiecesSet::shift(Vector v) {
-  for (std::vector<Piece>::iterator it = pieces.begin(); it != pieces.end();
+  for (std::vector<Piece>::iterator it = begin(); it != end();
        ++it) {
     (*it).shift(v);
   }

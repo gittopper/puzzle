@@ -6,12 +6,14 @@
 #include "camera.h"
 #include <sprite.h>
 #include <optional>
+#include <piecessetrenderer.h>
 
 namespace Geometry
 {
 class GLRenderer
 {
 public:
+    GLRenderer();
     void setPuzzleToRender(VolumePuzzle& puzzleToRender);
     virtual ~GLRenderer() {}
 protected:
@@ -32,11 +34,14 @@ protected:
     void wheelDown(int x, int y);
 
     void showSolution(int sol);
-    int curSol, maxSol;
+private:
+    int cur_sol_;
+    int max_sol_;
+    PiecesSetRenderer renderer_;
     virtual void addMenuEntry(int i) {}
 
     void drawOverlay(const Sprite& sprite);
-    const VolumePuzzle* puzzle;
+    const VolumePuzzle* puzzle_;
 
     int lastX, lastY;
     std::vector<Vector> colors;

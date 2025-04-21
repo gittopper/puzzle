@@ -45,7 +45,7 @@ inline std::string getLogString(Types... args)
 
 #else
 
-#ifdef m__ANDROID_API__
+#ifdef __ANDROID_API__
 
 
 #include <android/log.h>

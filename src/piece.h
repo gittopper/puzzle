@@ -40,31 +40,21 @@ public:
     Piece copy() const;
 
 
-    int id;
+    std::size_t id;
     std::vector<VolPart> parts;
 };
 
-class PiecesSet
+class PiecesSet: public std::vector<Piece>
 {
 public:
-    Piece& operator[](int i)
-    {
-        return pieces[i];
-    }
-    const Piece& operator[](int i) const
-    {
-        return pieces[i];
-    }
-    unsigned size() const
-    {
-        return pieces.size();
-    }
-
-    bool operator == (const PiecesSet& vec2) const;
+    template<typename ...Args>
+    PiecesSet(Args&&... args):
+             std::vector<Piece>{std::forward<Args>(args)...}
+    {}
+    bool operator==(const PiecesSet& set) const;
     void rotate(Mat rot);
     void shift(Vector v);
     void order();
-    std::vector<Piece> pieces;
 };
 
 }

@@ -1,4 +1,4 @@
-#include <pieceshower.h>
+#include "volpartrenderer.h"
 #include <glrenderer.h>
 #include <print.h>
 #include <GL/gl.h>
@@ -9,9 +9,13 @@
 #include <QApplication>
 #include <pngreader.h>
 
-using namespace Visualization;
 namespace Geometry
 {
+
+GLRenderer::GLRenderer():
+renderer_(std::make_shared<VolPartRenderer>())
+{}
+
 void GLRenderer::initOpenGL()
 {
     glFrontFace(GL_CCW);
@@ -32,8 +36,8 @@ void GLRenderer::initOpenGL()
     glShadeModel(GL_SMOOTH);
     glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 
-    curSol = 0;
-    maxSol = 0;
+    cur_sol_ = 0;
+    max_sol_ = 0;
 
     FileResourceLoader frl;
     auto path = QApplication::applicationDirPath().toStdString() + "/assets/daco2.png";
@@ -44,7 +48,7 @@ void GLRenderer::initOpenGL()
 
 void GLRenderer::showSolution(int sol)
 {
-    curSol = sol;
+    cur_sol_ = sol;
 }
 
 void GLRenderer::drawOverlay(const Sprite& sprite) {
@@ -52,7 +56,6 @@ void GLRenderer::drawOverlay(const Sprite& sprite) {
     glEnable(GL_TEXTURE_2D);
     glActiveTexture(GL_TEXTURE0);
     GLuint overlay_id;
-    glDeleteTextures(1, &overlay_id);
     glGenTextures(1, &overlay_id);
     glBindTexture(GL_TEXTURE_2D, overlay_id);
 
@@ -101,6 +104,7 @@ void GLRenderer::drawOverlay(const Sprite& sprite) {
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisableClientState(GL_INDEX_ARRAY);
+    glDeleteTextures(1, &overlay_id);
     glBindTexture(GL_TEXTURE_2D, 0);
     //glDisable(GL_TEXTURE_2D);
 }
@@ -119,50 +123,21 @@ void GLRenderer::display()
     glColor3f(0.2f, 0.0f, 0.0f);
 
     PiecesSet sol;
-    int ns = puzzle->numFoundSolutions();
-    int i = curSol > 0 ? curSol : ns;
-    puzzle->getSolution(sol, i);
-    sol.shift(Vector(-5 / 2., -6 / 2., -4 / 2.));
+    int ns = puzzle_->numFoundSolutions();
+    int i = cur_sol_ > 0 ? cur_sol_ : ns;
+    puzzle_->getSolution(sol, i);
 
-    if (ns > maxSol)
+    if (ns > max_sol_)
     {
-        for (int is = maxSol + 1; is <= ns; is++)
+        for (int is = max_sol_ + 1; is <= ns; is++)
         {
             addMenuEntry(is);
         }
-        maxSol = ns;
+        max_sol_ = ns;
     }
 
-    //drawer.draw(sol);
+    renderer_.render(sol);
 
-    PieceDrawer partDrawer;
-
-    Vector cm;
-    for (int i = 0; i < sol.pieces.size(); i++)
-    {
-        cm += sol.pieces[i].getZero();
-    }
-    cm = cm * (1.f / sol.pieces.size());
-
-    for (int i = 0; i < sol.pieces.size(); i++)
-    {
-        Piece p = sol.pieces[i];
-        if (colors.size() <= i)
-        {
-            colors.push_back(Vector((rand() % 256) / 256.f, (rand() % 256) / 256.f, (rand() % 256) / 256.f));
-        }
-
-        glColor3f(colors[i][0], colors[i][1], colors[i][2]);
-        if (true)
-        {
-            p.shift(-cm + (sol.pieces[i].getZero() - cm) * 0.2f);
-        }
-        else
-        {
-            p.shift(-cm);
-        }
-        partDrawer.draw(p);
-    }
 
     drawOverlay(sprite_.value());
 
@@ -200,7 +175,7 @@ void GLRenderer::drawLCS()
 
 void GLRenderer::setPuzzleToRender(VolumePuzzle& puzzleToRender)
 {
-    puzzle = &puzzleToRender;
+    puzzle_ = &puzzleToRender;
 }
 
 void GLRenderer::mouseLButtonDown(int x, int y)

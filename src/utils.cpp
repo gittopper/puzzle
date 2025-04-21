@@ -16,7 +16,7 @@ PiecesSet generateWoodPuzzles() {
       VolPart(VolPart::VolType::Angle, Vector(0, 1, 0), Vector(1, 1, 0)));
   p1.parts.push_back(
       VolPart(VolPart::VolType::Angle, Vector(0, 0, 1), Vector(0, -1, 1)));
-  pieces.pieces.push_back(p1);
+  pieces.push_back(p1);
 
   Piece p2(2);
   p2.parts.push_back(VolPart(VolPart::VolType::Full, Vector(0, 0, 0)));
@@ -25,7 +25,7 @@ PiecesSet generateWoodPuzzles() {
       VolPart(VolPart::VolType::Angle, Vector(0, 0, 1), Vector(1, 0, 1)));
   p2.parts.push_back(
       VolPart(VolPart::VolType::Angle, Vector(1, 1, 0), Vector(0, 1, 1)));
-  pieces.pieces.push_back(p2);
+  pieces.push_back(p2);
 
   Piece p3(3);
   p3.parts.push_back(VolPart(VolPart::VolType::Full, Vector(0, 0, 0)));
@@ -34,7 +34,7 @@ PiecesSet generateWoodPuzzles() {
       VolPart(VolPart::VolType::Angle, Vector(0, 0, 1), Vector(1, 0, 1)));
   p3.parts.push_back(
       VolPart(VolPart::VolType::Angle, Vector(0, 1, 0), Vector(-1, 0, -1)));
-  pieces.pieces.push_back(p3);
+  pieces.push_back(p3);
 
   Piece p4(4);
   p4.parts.push_back(VolPart(VolPart::VolType::Full, Vector(0, 1, 0)));
@@ -43,7 +43,7 @@ PiecesSet generateWoodPuzzles() {
       VolPart(VolPart::VolType::Angle, Vector(0, 0, 1), Vector(0, -1, -1)));
   p4.parts.push_back(
       VolPart(VolPart::VolType::Angle, Vector(0, 2, 0), Vector(-1, 1, 0)));
-  pieces.pieces.push_back(p4);
+  pieces.push_back(p4);
 
   Piece p5(5);
   p5.parts.push_back(VolPart(VolPart::VolType::Full, Vector(0, 0, 0)));
@@ -52,7 +52,7 @@ PiecesSet generateWoodPuzzles() {
       VolPart(VolPart::VolType::Angle, Vector(0, 0, 1), Vector(0, 1, 1)));
   p5.parts.push_back(
       VolPart(VolPart::VolType::Angle, Vector(0, 2, 0), Vector(-1, 1, 0)));
-  pieces.pieces.push_back(p5);
+  pieces.push_back(p5);
 
   Piece p6(6);
   p6.parts.push_back(VolPart(VolPart::VolType::Full, Vector(0, 0, 0)));
@@ -61,7 +61,7 @@ PiecesSet generateWoodPuzzles() {
       VolPart(VolPart::VolType::Angle, Vector(0, 0, 1), Vector(1, 0, 1)));
   p6.parts.push_back(
       VolPart(VolPart::VolType::Angle, Vector(0, 2, 0), Vector(0, 1, 1)));
-  pieces.pieces.push_back(p6);
+  pieces.push_back(p6);
 
   Piece p7(7);
   p7.parts.push_back(VolPart(VolPart::VolType::Full, Vector(1, 0, 0)));
@@ -70,7 +70,7 @@ PiecesSet generateWoodPuzzles() {
       VolPart(VolPart::VolType::Angle, Vector(0, 0, 1), Vector(-1, 0, -1)));
   p7.parts.push_back(
       VolPart(VolPart::VolType::Angle, Vector(1, 1, 0), Vector(0, 1, 1)));
-  pieces.pieces.push_back(p7);
+  pieces.push_back(p7);
 
   Piece p8(8);
   p8.parts.push_back(VolPart(VolPart::VolType::Full, Vector(0, 0, 0)));
@@ -79,7 +79,7 @@ PiecesSet generateWoodPuzzles() {
       VolPart(VolPart::VolType::Angle, Vector(0, 0, 1), Vector(1, 0, 1)));
   p8.parts.push_back(
       VolPart(VolPart::VolType::Angle, Vector(0, 1, 1), Vector(0, 1, 1)));
-  pieces.pieces.push_back(p8);
+  pieces.push_back(p8);
 
   return pieces;
 }
@@ -91,48 +91,48 @@ PiecesSet generateSomaPuzzles() {
   p1.parts.push_back(VolPart(VolPart::VolType::Full, Vector(0, 1, 0)));
   p1.parts.push_back(VolPart(VolPart::VolType::Full, Vector(1, 0, 0)));
   p1.parts.push_back(VolPart(VolPart::VolType::Full, Vector(1, 0, 1)));
-  pieces.pieces.push_back(p1);
+  pieces.push_back(p1);
 
   Piece p2(2);
   p2.parts.push_back(VolPart(VolPart::VolType::Full, Vector(1, 0, 0)));
   p2.parts.push_back(VolPart(VolPart::VolType::Full, Vector(1, 0, 1)));
   p2.parts.push_back(VolPart(VolPart::VolType::Full, Vector(1, 1, 0)));
   p2.parts.push_back(VolPart(VolPart::VolType::Full, Vector(0, 1, 0)));
-  pieces.pieces.push_back(p2);
+  pieces.push_back(p2);
 
   Piece p3(3);
   p3.parts.push_back(VolPart(VolPart::VolType::Full, Vector(0, 0, 0)));
   p3.parts.push_back(VolPart(VolPart::VolType::Full, Vector(1, 0, 0)));
   p3.parts.push_back(VolPart(VolPart::VolType::Full, Vector(1, 0, 1)));
   p3.parts.push_back(VolPart(VolPart::VolType::Full, Vector(1, 1, 0)));
-  pieces.pieces.push_back(p3);
+  pieces.push_back(p3);
 
   Piece p4(4);
   p4.parts.push_back(VolPart(VolPart::VolType::Full, Vector(1, 0, 0)));
   p4.parts.push_back(VolPart(VolPart::VolType::Full, Vector(1, 1, 0)));
   p4.parts.push_back(VolPart(VolPart::VolType::Full, Vector(2, 1, 0)));
   p4.parts.push_back(VolPart(VolPart::VolType::Full, Vector(0, 1, 0)));
-  pieces.pieces.push_back(p4);
+  pieces.push_back(p4);
 
   Piece p5(5);
   p5.parts.push_back(VolPart(VolPart::VolType::Full, Vector(1, 0, 0)));
   p5.parts.push_back(VolPart(VolPart::VolType::Full, Vector(1, 1, 0)));
   p5.parts.push_back(VolPart(VolPart::VolType::Full, Vector(0, 1, 0)));
   p5.parts.push_back(VolPart(VolPart::VolType::Full, Vector(0, 2, 0)));
-  pieces.pieces.push_back(p5);
+  pieces.push_back(p5);
 
   Piece p6(6);
   p6.parts.push_back(VolPart(VolPart::VolType::Full, Vector(2, 0, 0)));
   p6.parts.push_back(VolPart(VolPart::VolType::Full, Vector(0, 1, 0)));
   p6.parts.push_back(VolPart(VolPart::VolType::Full, Vector(1, 1, 0)));
   p6.parts.push_back(VolPart(VolPart::VolType::Full, Vector(2, 1, 0)));
-  pieces.pieces.push_back(p6);
+  pieces.push_back(p6);
 
   Piece p7(7);
   p7.parts.push_back(VolPart(VolPart::VolType::Full, Vector(1, 0, 0)));
   p7.parts.push_back(VolPart(VolPart::VolType::Full, Vector(0, 1, 0)));
   p7.parts.push_back(VolPart(VolPart::VolType::Full, Vector(1, 1, 0)));
-  pieces.pieces.push_back(p7);
+  pieces.push_back(p7);
 
   return pieces;
 }

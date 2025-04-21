@@ -76,7 +76,7 @@ std::vector<Vector>  Camera::overlayPoints() {
     glm::mat4 projection = glm::perspective(glm::radians(fov_), 1 / ratio, z_before, 100.0f);
     auto pv = projection * view;
     auto pv_inv = glm::inverse(pv);
-    auto z_overlay = 0.2f;
+    auto z_overlay = 0.01f;
     auto coef = 1.;
     glm::vec4 lt{-1, 1, z_overlay, 1};
     glm::vec4 rt{1, 1, z_overlay, 1};

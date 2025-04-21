@@ -46,6 +46,7 @@ int VolumePuzzle::numFoundSolutions() const {
 
 void VolumePuzzle::getSolution(PiecesSet& sol, int i) const {
     std::lock_guard<std::mutex> block(lock);
+    assert(i >=1 && i <= solutions.size());
     sol = solutions[i - 1];
 }
 
