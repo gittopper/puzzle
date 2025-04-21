@@ -48,5 +48,6 @@ class Solver {
     bool newSolution();
     bool foundNewSolution(Data& data);
     void recursiveSolve(Data& data);
+    void recursiveSolve(Data& data, std::size_t i_puzzle);
 };
 }  // namespace Geometry

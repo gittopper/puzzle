@@ -176,6 +176,9 @@ bool Solver::verifyAlgorithm(Data& data) {
 
 bool Solver::foundNewSolution(Data& data) {
     std::lock_guard<std::mutex> lock(mutex_);
+    if (m_max_sol >= data.m_numPlaced) {
+        return false;
+    }
     if (m_puzzle.addSolution(data.m_solution)) {
         m_max_sol = data.m_numPlaced;
         return true;
@@ -193,15 +196,44 @@ void Solver::solveForPiece(int i_puzzle) {
     data.m_bs.resize(m_pieces.size(), true);
     data.m_bs[i_puzzle] = false;
 
-    const PiecesSet& piece_all_positions = m_pieces_in_all_positions[i_puzzle];
+    recursiveSolve(data, i_puzzle);
+}
+
+void Solver::recursiveSolve(Data& data) {
+    BREAK_ON_LINE(verifyAlgorithm(data));
+
+    if (m_max_sol < data.m_numPlaced) {
+        foundNewSolution(data);
+    }
+
+    if (data.m_numPlaced == m_pieces.size()) {
+        foundNewSolution(data);
+        return;
+    }
+    if(data.m_numPlaced == 1) {
+        std::cout << "Progress:"
+                  << (float(++m_progress) / m_piece_all_positions_number)
+                  << std::endl;
+        std::cout << "Elapsed time:" << m_timer.asString() << std::endl;
+    }
+    for (unsigned i_puzzle = 0; i_puzzle < m_pieces.size(); i_puzzle++) {
+        if (!data.m_bs[i_puzzle]) {
+            continue;
+        }
+        recursiveSolve(data, i_puzzle);
+    }
+}
+
+void Solver::recursiveSolve(Data& data, std::size_t i_puzzle) {
+    data.m_bs[i_puzzle] = false;
+    PiecesSet& piece_all_positions = m_pieces_in_all_positions[i_puzzle];
     for (unsigned i = 0; i < piece_all_positions.size(); i++) {
-        Piece curPiece = piece_all_positions[i];
-        const BBox boundaries = curPiece.getBBox();
+        Piece cur_piece = piece_all_positions[i];
+        const BBox boundaries = cur_piece.getBBox();
 
         int xmax = m_dimX - boundaries.getXSize();
         int ymax = m_dimY - boundaries.getYSize();
         int zmax = m_dimZ - boundaries.getZSize();
-
         if (data.m_numPlaced == 0) {
             xmax = std::min(xmax, xmax / 2 + 1);
             ymax = std::min(ymax, ymax / 2 + 1);
@@ -216,22 +248,18 @@ void Solver::solveForPiece(int i_puzzle) {
                     }
 
                     Vector s(x, y, z);
-                    curPiece.shift(s);
+                    cur_piece.shift(s);
 
-                    if (tryToPlace(data, curPiece)) {
-                        data.m_solution.push_back(curPiece);
+                    if (tryToPlace(data, cur_piece)) {
+                        data.m_solution.push_back(cur_piece);
                         recursiveSolve(data);
-                        remove(data, curPiece);
+                        remove(data, cur_piece);
                         data.m_solution.pop_back();
                     }
-                    curPiece.shift(-s);
+                    cur_piece.shift(-s);
                 }
             }
         }
-        std::cout << "Progress:"
-                  << (float(++m_progress) / m_piece_all_positions_number)
-                  << std::endl;
-        std::cout << "Elapsed time:" << m_timer.asString() << std::endl;
     }
     data.m_bs[i_puzzle] = true;
 }
@@ -240,13 +268,12 @@ void Solver::solve() {
     std::cout << "starting to solve puzzle" << std::endl;
     m_timer.start();
     std::vector<std::thread> threads;
-    auto num_threads = m_pieces.size() / 2;
+    auto num_threads = m_pieces.size();
     for (auto i_thread = 0UL; i_thread < num_threads; ++i_thread) {
         std::cout << "starting " << i_thread << " thread" << std::endl;
 //        threads.push_back(std::thread([this, i_thread](){
-        solveForPiece(2* i_thread);
-        solveForPiece(2* i_thread + 1);
-        //}));
+        solveForPiece(i_thread);
+//        }));
     }
     for (auto& t : threads) {
         t.join();
@@ -256,61 +283,4 @@ void Solver::solve() {
     std::cout << getLogString("finish time: ", m_timer.time()) << std::endl;
 }
 
-void Solver::recursiveSolve(Data& data) {
-    BREAK_ON_LINE(verifyAlgorithm(data));
-
-    if (m_max_sol < data.m_numPlaced) {
-        foundNewSolution(data);
-    }
-
-    if (data.m_numPlaced == m_pieces.size()) {
-        foundNewSolution(data);
-        return;
-    }
-    for (unsigned iPuzzle = 0; iPuzzle < m_pieces.size(); iPuzzle++) {
-        if (!data.m_bs[iPuzzle]) {
-            continue;
-        }
-
-        data.m_bs[iPuzzle] = false;
-
-        PiecesSet& piece_all_positions = m_pieces_in_all_positions[iPuzzle];
-        for (unsigned i = 0; i < piece_all_positions.size(); i++) {
-            Piece curPiece = piece_all_positions[i];
-            const BBox boundaries = curPiece.getBBox();
-
-            int xmax = m_dimX - boundaries.getXSize();
-            int ymax = m_dimY - boundaries.getYSize();
-            int zmax = m_dimZ - boundaries.getZSize();
-
-            if (data.m_numPlaced == 0) {
-                xmax = std::min(xmax, xmax / 2 + 1);
-                ymax = std::min(ymax, ymax / 2 + 1);
-                zmax = std::min(zmax, zmax / 2 + 1);
-            }
-
-            for (int x = 1; x <= xmax; x++) {
-                for (int y = 1; y <= ymax; y++) {
-                    for (int z = 1; z <= zmax; z++) {
-                        if (!m_continue_to_solve) {
-                            return;
-                        }
-
-                        Vector s(x, y, z);
-                        curPiece.shift(s);
-
-                        if (tryToPlace(data, curPiece)) {
-                            data.m_solution.push_back(curPiece);
-                            recursiveSolve(data);
-                            remove(data, curPiece);
-                            data.m_solution.pop_back();
-                        }
-                        curPiece.shift(-s);
-                    }
-                }
-            }
-        }
-        data.m_bs[iPuzzle] = true;
-    }
-}
 }  // namespace Geometry
