@@ -1,5 +1,6 @@
 #include "renderer.h"
 
+
 static const char  glVertexShader[] = R"(
 attribute vec4 vertexPosition;
 attribute vec3 vertexColour;
@@ -177,13 +178,12 @@ void Renderer::setSize(int width, int height) {
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, width, height);
 
-    camera_.setup(width, height);
+    camera_.setViewport(width, height);
 }
 void Renderer::startFrame()
 {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-    camera_.render();
 }
 
 void Renderer::render(GLfloat* vertices, GLfloat*normals, GLfloat* colors, GLushort* indices, int size)
@@ -194,8 +194,8 @@ void Renderer::render(GLfloat* vertices, GLfloat*normals, GLfloat* colors, GLush
     glEnableVertexAttribArray(vertexColourLocation);
     glVertexAttribPointer(vertexNormalLocation, 3, GL_FLOAT, GL_FALSE, 0, normals);
     glEnableVertexAttribArray(vertexNormalLocation);
-    glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, camera_.projectionMatrix);
-    glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, camera_.modelViewMatrix);
+    glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, &(camera_.projMatrix())[0][0]);
+    glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, &(camera_.viewMatrix())[0][0]);
 
     glDrawElements(GL_TRIANGLES, size, GL_UNSIGNED_SHORT, indices);
 }

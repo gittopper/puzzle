@@ -43,7 +43,6 @@ private:
     void drawOverlay(const Sprite& sprite);
     const VolumePuzzle* puzzle_;
 
-    int lastX, lastY;
     std::vector<Vector> colors;
     Camera camera;
     std::optional<Sprite> sprite_;

@@ -50,9 +50,9 @@ inline std::string getLogString(Types... args)
 
 #include <android/log.h>
 
-#define  LOGE(...) m__android_log_print(ANDROID_LOG_ERROR,LOG_TAG, getLogString(m__VA_ARGS__).c_str() );
-#define  LOGI(...) m__android_log_print(ANDROID_LOG_INFO,LOG_TAG, getLogString(m__VA_ARGS__).c_str() );
-#define  LOGD(...) m__android_log_print(ANDROID_LOG_DEBUG,LOG_TAG, getLogString(m__VA_ARGS__).c_str() );
+#define  LOGE(...) __android_log_print(ANDROID_LOG_ERROR,LOG_TAG, "%s", getLogString(__VA_ARGS__).c_str() );
+#define  LOGI(...) __android_log_print(ANDROID_LOG_INFO,LOG_TAG, "%s", getLogString(__VA_ARGS__).c_str() );
+#define  LOGD(...) __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG, "%s", getLogString(__VA_ARGS__).c_str() );
 
 #else
 

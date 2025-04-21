@@ -271,9 +271,9 @@ void Solver::solve() {
     auto num_threads = m_pieces.size();
     for (auto i_thread = 0UL; i_thread < num_threads; ++i_thread) {
         std::cout << "starting " << i_thread << " thread" << std::endl;
-//        threads.push_back(std::thread([this, i_thread](){
-        solveForPiece(i_thread);
-//        }));
+        threads.push_back(std::thread([this, i_thread](){
+          solveForPiece(i_thread);
+        }));
     }
     for (auto& t : threads) {
         t.join();

@@ -32,6 +32,9 @@ void QTPuzzleRenderer::mousePressEvent(QMouseEvent* me)
     case Qt::LeftButton:
         mouseLButtonDown(p.x(), p.y());
         break;
+    case Qt::RightButton:
+        mouseRButtonDown(p.x(), p.y());
+        break;
     }
 }
 

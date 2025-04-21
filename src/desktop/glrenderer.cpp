@@ -113,7 +113,17 @@ void GLRenderer::display()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    camera.render();
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    const auto view = camera.viewMatrix();
+    glMultMatrixf(&view[0][0]);
+
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+
+    auto projection = camera.projMatrix();
+    glMultMatrixf(&projection[0][0]);
 
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
@@ -180,8 +190,7 @@ void GLRenderer::setPuzzleToRender(VolumePuzzle& puzzleToRender)
 
 void GLRenderer::mouseLButtonDown(int x, int y)
 {
-    lastX = x;
-    lastY = y;
+    camera.rotateStart(x, y);
 }
 
 void GLRenderer::mouseLButtonUp(int x, int y)
@@ -191,19 +200,12 @@ void GLRenderer::mouseLButtonUp(int x, int y)
 
 void GLRenderer::mouseRButtonDown(int x, int y)
 {
-    lastX = x;
-    lastY = y;
+    camera.shiftStart(x, y);
 }
 
 void GLRenderer::mouseMove(int x, int y)
 {
-    float speed = 0.01f;
-    float angleX = (x - lastX) * speed;
-    float angleY = -(y - lastY) * speed;
-    lastX = x;
-    lastY = y;
-
-    camera.rotate(angleX, angleY);
+    camera.drag(x, y);
 }
 
 void GLRenderer::mouseRButtonUp(int x, int y)

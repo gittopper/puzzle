@@ -12,6 +12,7 @@ set(COMMON_HEADERS
 src/base.h
 src/bbox.h
 src/box.h
+src/camera.h
 src/geometry.h
 src/mat.h
 src/print.h
@@ -33,6 +34,7 @@ src/vector.h
 
 set(COMMON_SOURCES
 src/box.cpp
+src/camera.cpp
 src/mat.cpp
 src/print.cpp
 src/solver.cpp
@@ -52,8 +54,6 @@ add_subdirectory(src/3rd_party)
 if (ANDROID_REGIME)
 
 set(ANDROID_SOURCES
-        src/android/camera.cpp
-        src/android/Matrix.cpp
         src/android/Native.cpp
         src/android/renderer.cpp
         src/android/volpartrenderer.cpp
@@ -85,12 +85,10 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(QT_SOURCES
-src/desktop/camera.h
 src/desktop/glrenderer.h
 #src/desktop/glutrenderer.h
 src/desktop/volpartrenderer.h
 src/desktop/fileresourceloader.h
-src/desktop/camera.cpp
 src/desktop/glrenderer.cpp
 #src/desktop/glutrenderer.cpp
 src/desktop/volpartrenderer.cpp

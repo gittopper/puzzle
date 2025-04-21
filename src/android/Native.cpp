@@ -103,36 +103,34 @@ JNIEXPORT void JNICALL Java_com_gittopper_puzzle_NativeLibrary_dragStart(
 {
     std::lock_guard<std::mutex> lock(m);
     lstart = std::sqrt((x2 - x1) * (x2 - x1)+ (y2 - y1) * (y2 - y1));
-    move_start_x = (x1 + x2) * 0.5;
-    move_start_y = (y1 + y2) * 0.5;
+    float x = (x1 + x2) * 0.5;
+    float y = (y1 + y2) * 0.5;
+    renderer->camera().shiftStart(x, y);
 }
 
 JNIEXPORT void JNICALL Java_com_gittopper_puzzle_NativeLibrary_dragStop(
         JNIEnv * env, jobject obj)
 {
-    std::lock_guard<std::mutex> lock(m);
-    renderer->camera().store();
 }
 JNIEXPORT void JNICALL Java_com_gittopper_puzzle_NativeLibrary_drag(
         JNIEnv * env, jobject obj, jint x1, jint y1, jint x2, jint y2)
 {
     std::lock_guard<std::mutex> lock(m);
     float l = std::sqrt((x2 - x1) * (x2 - x1)+ (y2 - y1) * (y2 - y1));
-    renderer->camera().zoom((l - lstart) / 100);
+    renderer->camera().zoom(1 - (l - lstart)/lstart/ 10.);
     float x = (x1 + x2) * 0.5;
     float y = (y1 + y2) * 0.5;
-    renderer->camera().setShift((x - move_start_x) / 100, (move_start_y - y) / 100);
+    renderer->camera().shiftDrag(x, y);
 }
 
 
 JNIEXPORT void JNICALL Java_com_gittopper_puzzle_NativeLibrary_moveStart(
         JNIEnv * env, jobject obj, jint x, jint y) {
     std::lock_guard<std::mutex> lock(m);
-    move_start_x = x;
-    move_start_y = y;
+    renderer->camera().rotateStart(x, y);
 }
 JNIEXPORT void JNICALL Java_com_gittopper_puzzle_NativeLibrary_move(
         JNIEnv * env, jobject obj, jint x, jint y) {
     std::lock_guard<std::mutex> lock(m);
-    renderer->camera().setAngles((y - move_start_y) / 10,(x - move_start_x) / 10);
+    renderer->camera().rotateDrag(x, y);
 }
