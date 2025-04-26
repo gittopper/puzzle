@@ -1,36 +1,34 @@
-#include "volpartrenderer.h"
+#include <QApplication>
+
+#include <desktop/fileresourceloader.h>
+
+#include <cstdlib>
 #include <glrenderer.h>
+#include <pngreader.h>
 #include <print.h>
+#include <time.h>
+
+#include "volpartrenderer.h"
 #include <GL/gl.h>
 #include <GL/glut.h>
-#include <cstdlib>
-#include <time.h>
-#include <desktop/fileresourceloader.h>
-#include <QApplication>
-#include <pngreader.h>
 
-namespace Geometry
-{
+namespace Geometry {
 
-GLRenderer::GLRenderer():
-renderer_(std::make_shared<VolPartRenderer>())
-{}
+GLRenderer::GLRenderer() : renderer_(std::make_shared<VolPartRenderer>()) {}
 
-void GLRenderer::initOpenGL()
-{
+void GLRenderer::initOpenGL() {
     glFrontFace(GL_CCW);
-    //glMatrixMode(GL_PROJECTION);
+    // glMatrixMode(GL_PROJECTION);
     glEnable(GL_COLOR_MATERIAL);
     glClearColor(0.5, 0.5, 0.5, 1.0);
     glEnable(GL_LIGHTING);
     glEnable(GL_DEPTH_TEST);
 
-    GLfloat diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat diffuse[] = {1.0, 1.0, 1.0, 1.0};
     glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
     glEnable(GL_LIGHT0);
 
-
-    GLfloat pos[] = { 2.0, 3.0, 15.0, 0.0 };
+    GLfloat pos[] = {2.0, 3.0, 15.0, 0.0};
     glLightfv(GL_LIGHT0, GL_POSITION, pos);
 
     glShadeModel(GL_SMOOTH);
@@ -40,14 +38,14 @@ void GLRenderer::initOpenGL()
     max_sol_ = 0;
 
     FileResourceLoader frl;
-    auto path = QApplication::applicationDirPath().toStdString() + "/assets/daco2.png";
+    auto path =
+        QApplication::applicationDirPath().toStdString() + "/assets/daco2.png";
     auto daco2 = frl.readFile(path);
     PngReader png_reader;
     sprite_ = png_reader.read(daco2, false);
 }
 
-void GLRenderer::showSolution(int sol)
-{
+void GLRenderer::showSolution(int sol) {
     cur_sol_ = sol;
 }
 
@@ -59,8 +57,8 @@ void GLRenderer::drawOverlay(const Sprite& sprite) {
     glGenTextures(1, &overlay_id);
     glBindTexture(GL_TEXTURE_2D, overlay_id);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sprite.glWidth(), sprite.glHeight(), 0,
-            GL_RGBA, GL_UNSIGNED_BYTE, sprite.data());
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sprite.glWidth(), sprite.glHeight(),
+                 0, GL_RGBA, GL_UNSIGNED_BYTE, sprite.data());
 
     glColor4f(1., 1., 1., 0.5);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -68,56 +66,49 @@ void GLRenderer::drawOverlay(const Sprite& sprite) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    //glGenerateMipmap(GL_TEXTURE_2D);
+    // glGenerateMipmap(GL_TEXTURE_2D);
     auto overlay_points = camera.overlayPoints();
 
     GLfloat texCoords[] = {
-        0.0f, 0.0f,
-        1.0f, 0.0f,
-        1.0f, 1.0f,
-        0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f,
     };
-    GLuint indices3[] = {
-        0, 1, 2, 3
-    };
+    GLuint indices3[] = {0, 1, 2, 3};
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glEnableClientState(GL_INDEX_ARRAY);
 
-//    glEnable(GL_COLOR_MATERIAL);
-//    const GLfloat emi[4] = {1.0f, 1.0f, 1.0f, 0.5f};
-//    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emi);
+    //    glEnable(GL_COLOR_MATERIAL);
+    //    const GLfloat emi[4] = {1.0f, 1.0f, 1.0f, 0.5f};
+    //    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emi);
 
     glDisable(GL_LIGHTING);
-    //glDisable(GL_LIGHT0);
+    // glDisable(GL_LIGHT0);
 
-    glVertexPointer  (3, GL_FLOAT, 0, overlay_points.data());
+    glVertexPointer(3, GL_FLOAT, 0, overlay_points.data());
     glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDrawElements(GL_TRIANGLE_FAN, 4, GL_UNSIGNED_INT, indices3);
 
     glEnable(GL_LIGHTING);
-    //glEnable(GL_LIGHT0);
-    //glDisable(GL_COLOR_MATERIAL);
+    // glEnable(GL_LIGHT0);
+    // glDisable(GL_COLOR_MATERIAL);
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisableClientState(GL_INDEX_ARRAY);
     glDeleteTextures(1, &overlay_id);
     glBindTexture(GL_TEXTURE_2D, 0);
-    //glDisable(GL_TEXTURE_2D);
+    // glDisable(GL_TEXTURE_2D);
 }
 
-void GLRenderer::display()
-{
+void GLRenderer::display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     const auto view = camera.viewMatrix();
     glMultMatrixf(&view[0][0]);
-
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -137,10 +128,8 @@ void GLRenderer::display()
     int i = cur_sol_ > 0 ? cur_sol_ : ns;
     puzzle_->getSolution(sol, i);
 
-    if (ns > max_sol_)
-    {
-        for (int is = max_sol_ + 1; is <= ns; is++)
-        {
+    if (ns > max_sol_) {
+        for (int is = max_sol_ + 1; is <= ns; is++) {
             addMenuEntry(is);
         }
         max_sol_ = ns;
@@ -148,21 +137,18 @@ void GLRenderer::display()
 
     renderer_.render(sol);
 
-
     drawOverlay(sprite_.value());
 
     glPopMatrix();
     glFlush();
 }
 
-void GLRenderer::resize(int width, int height)
-{
+void GLRenderer::resize(int width, int height) {
     camera.setViewport(width, height);
+    glViewport(0, 0, width, height);
 }
 
-
-void GLRenderer::drawLCS()
-{
+void GLRenderer::drawLCS() {
     glLineWidth(2.0);
     glColor3f(1.0, 0.0, 0.0);
     glBegin(GL_LINES);
@@ -183,43 +169,39 @@ void GLRenderer::drawLCS()
     glEnd();
 }
 
-void GLRenderer::setPuzzleToRender(VolumePuzzle& puzzleToRender)
-{
+void GLRenderer::setPuzzleToRender(VolumePuzzle& puzzleToRender) {
     puzzle_ = &puzzleToRender;
 }
 
-void GLRenderer::mouseLButtonDown(int x, int y)
-{
+void GLRenderer::mouseLButtonDown(int x, int y) {
     camera.rotateStart(x, y);
 }
 
-void GLRenderer::mouseLButtonUp(int x, int y)
-{
-
+void GLRenderer::mouseLButtonUp(int x, int y) {
+    camera.store();
 }
 
-void GLRenderer::mouseRButtonDown(int x, int y)
-{
+void GLRenderer::mouseRButtonDown(int x, int y) {
     camera.shiftStart(x, y);
 }
 
-void GLRenderer::mouseMove(int x, int y)
-{
+void GLRenderer::mouseMove(int x, int y) {
     camera.drag(x, y);
 }
 
-void GLRenderer::mouseRButtonUp(int x, int y)
-{
-
+void GLRenderer::mouseRButtonUp(int x, int y) {
+    camera.store();
 }
 
-void GLRenderer::wheelUp(int x, int y)
-{
+void GLRenderer::wheelUp(int x, int y) {
     camera.zoom(1.1);
+    camera.zoomDrag();
+    camera.store();
 }
 
-void GLRenderer::wheelDown(int x, int y)
-{
+void GLRenderer::wheelDown(int x, int y) {
     camera.zoom(0.9);
+    camera.zoomDrag();
+    camera.store();
 }
-}
+}  // namespace Geometry

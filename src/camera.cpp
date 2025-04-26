@@ -12,22 +12,14 @@
 #endif
 #include <glm/gtc/matrix_transform.hpp>
 
-
-Camera::Camera():
-    scale(10),
-    eye{0, 0, 10},
-    center{0, 0, 0},
-    up{0, 1, 0},
-    fov_{55.}
-{
-
+Camera::Camera(float fov) :
+    eye_{0, 0, 10}, center_{0, 0, 0}, up_{0, 1, 0}, fov_{fov}, zoom_{1.} {
+    store();
 }
 
-void Camera::setViewport(int w, int h)
-{
-    width = w;
-    height = h;
-    glViewport(0, 0, width, height);
+void Camera::setViewport(int w, int h) {
+    width_ = w;
+    height_ = h;
 }
 
 void Camera::shiftStart(int x, int y) {
@@ -38,28 +30,48 @@ void Camera::shiftStart(int x, int y) {
 
 void Camera::shiftDrag(int x, int y) {
     shift((x - move_start_x_) / 100., (move_start_y_ - y) / 100.);
-    move_start_x_ = x;
-    move_start_y_ = y;
 }
 void Camera::shift(float dx, float dy) {
-    Geometry::Vector x = up.cross(eye - center).normalized();
-    auto shift = -x * dx - up * dy;
-    eye += shift;
-    center += shift;
+    Geometry::Vector x =
+        up_stored_.cross(eye_stored_ - center_stored_).normalized();
+    auto shift = -x * dx - up_stored_ * dy;
+    eye_ = eye_stored_ + shift;
+    center_ = center_stored_ + shift;
 }
 
 void Camera::rotateStart(int x, int y) {
-    last_x_ = x;
-    last_y_ = y;
+    move_start_x_ = x;
+    move_start_y_ = y;
     drug_regime_ = DrugRegime::ROTATE;
 }
 void Camera::rotateDrag(int x, int y) {
     float speed = 0.01f;
-    float angleX = (x - last_x_) * speed;
-    float angleY = -(y - last_y_) * speed;
-    last_x_ = x;
-    last_y_ = y;
+    float angleX = (x - move_start_x_) * speed;
+    float angleY = -(y - move_start_y_) * speed;
     rotate(angleX, angleY);
+}
+
+void Camera::rotate(float angleX, float angleY) {
+    Geometry::Mat rot(Geometry::Mat(cos(angleX), 0, sin(angleX), 0, 1, 0,
+                                    -sin(angleX), 0, cos(angleX)) *
+                      Geometry::Mat(1, 0, 0, 0, cos(angleY), sin(angleY), 0,
+                                    -sin(angleY), cos(angleY)));
+
+    Geometry::Vector x =
+        up_stored_.cross(eye_stored_ - center_stored_).normalized();
+    Geometry::Vector z = -x.cross(up_stored_);
+    Geometry::Mat m = Geometry::Mat(x, up_stored_, z);
+    Geometry::Mat tr = m * rot * m.inverse();
+    eye_ = tr * (eye_stored_ - center_stored_) + center_stored_;
+    up_ = tr * up_stored_;
+}
+
+void Camera::zoom(float z) {
+    zoom_ *= z;
+}
+
+void Camera::zoomDrag() {
+    eye_ += (eye_ - center_) * (zoom_ - 1);
 }
 
 void Camera::drag(int x, int y) {
@@ -68,37 +80,31 @@ void Camera::drag(int x, int y) {
     } else {
         rotateDrag(x, y);
     }
+    if (zoom_ != 1.) {
+        zoomDrag();
+    }
 }
 
-void Camera::rotate(float angleX, float angleY)
-{
-    Geometry::Mat rot(Geometry::Mat(cos(angleX), 0, sin(angleX), 0, 1, 0, -sin(angleX), 0, cos(angleX)) *
-                      Geometry::Mat(1, 0, 0, 0, cos(angleY), sin(angleY), 0, -sin(angleY), cos(angleY)));
-
-    Geometry::Vector x = up.cross(eye - center).normalized();
-    Geometry::Vector z = -x.cross(up);
-    Geometry::Mat m = Geometry::Mat(x, up, z);
-    Geometry::Mat tr = m * rot * m.inverse();
-    eye = tr * (eye - center) + center;
-    up = tr * up;
+void Camera::store() {
+    eye_stored_ = eye_;
+    up_stored_ = up_;
+    center_stored_ = center_;
+    zoom_ = 1.;
 }
 
 glm::mat4 Camera::projMatrix() const {
-    float ratio = float(height) / width;
+    float ratio = float(height_) / width_;
 
     return glm::perspective(glm::radians(fov_), 1 / ratio, 0.1f, 100.0f);
-
 }
 
 glm::mat4 Camera::viewMatrix() const {
-    return glm::lookAt(
-        glm::vec3(eye[0], eye[1], eye[2]),
-        glm::vec3(center[0], center[1], center[2]),
-        glm::vec3(up[0], up[1], up[2])
-    );
+    return glm::lookAt(glm::vec3(eye_[0], eye_[1], eye_[2]),
+                       glm::vec3(center_[0], center_[1], center_[2]),
+                       glm::vec3(up_[0], up_[1], up_[2]));
 }
 
-std::vector<Geometry::Vector>  Camera::overlayPoints() {
+std::vector<Geometry::Vector> Camera::overlayPoints() {
     const auto view = viewMatrix();
     auto z_before = 0.1f;
     auto projection = projMatrix();
@@ -118,14 +124,7 @@ std::vector<Geometry::Vector>  Camera::overlayPoints() {
     auto a2 = glm::vec3(v2) / v2.w;
     auto v3 = pv_inv * lb;
     auto a3 = glm::vec3(v3) / v3.w;
-    return {Geometry::Vector{a0.x, a0.y, a0.z},
-    Geometry::Vector{a1.x, a1.y, a1.z},
-    Geometry::Vector{a2.x, a2.y, a2.z},
-    Geometry::Vector{a3.x, a3.y, a3.z}};
+    return {
+        Geometry::Vector{a0.x, a0.y, a0.z}, Geometry::Vector{a1.x, a1.y, a1.z},
+        Geometry::Vector{a2.x, a2.y, a2.z}, Geometry::Vector{a3.x, a3.y, a3.z}};
 }
-
-void Camera::zoom(float zz)
-{
-    eye += (eye - center) * (zz - 1);
-}
-

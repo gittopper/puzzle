@@ -3,25 +3,27 @@
 
 #include <QGLWidget>
 #include <QTimer>
-#include "glrenderer.h"
 #include <QWheelEvent>
 
-class QTPuzzleRenderer : public QGLWidget, public Geometry::GLRenderer
-{
-    Q_OBJECT
-public:
-    explicit QTPuzzleRenderer(QWidget *parent = 0);
+#include "glrenderer.h"
 
-    void initializeGL();
-    void paintGL();
-    void resizeGL(int w, int h);
-    void wheelEvent(QWheelEvent* we);
-    void mousePressEvent(QMouseEvent* me);
-    void mouseMoveEvent(QMouseEvent* me);
-public slots:
+class QTPuzzleRenderer : public QGLWidget, public Geometry::GLRenderer {
+    Q_OBJECT
+  public:
+    explicit QTPuzzleRenderer(QWidget* parent = 0);
+
+    void initializeGL() override;
+    void paintGL() override;
+    void resizeGL(int w, int h) override;
+    void wheelEvent(QWheelEvent* we) override;
+    void mousePressEvent(QMouseEvent* me) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
+    void mouseMoveEvent(QMouseEvent* me) override;
+  public slots:
     void renderSolution(int i);
-private:
+
+  private:
     QTimer timer;
 };
 
-#endif // QTPUZZLERENDERER_H
+#endif  // QTPUZZLERENDERER_H
