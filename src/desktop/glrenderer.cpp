@@ -9,8 +9,6 @@
 #include "volpartrenderer.h"
 #include <GL/gl.h>
 
-namespace Geometry {
-
 GLRenderer::GLRenderer() : renderer_(std::make_shared<VolPartRenderer>()) {}
 
 void GLRenderer::initOpenGL() {
@@ -40,7 +38,7 @@ void GLRenderer::initOpenGL() {
     sprite_ = png_reader.read(daco2, false);
 }
 
-void GLRenderer::showSolution(int sol) {
+void GLRenderer::showSolution(std::size_t sol) {
     cur_sol_ = sol;
 }
 
@@ -109,7 +107,7 @@ void GLRenderer::display() {
 
     glColor3f(0.2f, 0.0f, 0.0f);
 
-    PiecesSet sol;
+    Geometry::PiecesSet sol;
     int ns = puzzle_->numFoundSolutions();
     int i = cur_sol_ > 0 ? cur_sol_ : ns;
     puzzle_->getSolution(sol, i);
@@ -157,39 +155,6 @@ void GLRenderer::drawLCS() {
     glEnd();
 }
 
-void GLRenderer::setPuzzleToRender(VolumePuzzle& puzzleToRender) {
+void GLRenderer::setPuzzleToRender(Geometry::VolumePuzzle& puzzleToRender) {
     puzzle_ = &puzzleToRender;
 }
-
-void GLRenderer::mouseLButtonDown(int x, int y) {
-    camera_.rotateStart(x, y);
-}
-
-void GLRenderer::mouseLButtonUp(int x, int y) {
-    camera_.store();
-}
-
-void GLRenderer::mouseRButtonDown(int x, int y) {
-    camera_.shiftStart(x, y);
-}
-
-void GLRenderer::mouseMove(int x, int y) {
-    camera_.drag(x, y);
-}
-
-void GLRenderer::mouseRButtonUp(int x, int y) {
-    camera_.store();
-}
-
-void GLRenderer::wheelUp(int x, int y) {
-    camera_.zoom(1.1);
-    camera_.zoomDrag();
-    camera_.store();
-}
-
-void GLRenderer::wheelDown(int x, int y) {
-    camera_.zoom(0.9);
-    camera_.zoomDrag();
-    camera_.store();
-}
-}  // namespace Geometry

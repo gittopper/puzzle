@@ -30,7 +30,7 @@ SOURCES +=\
     ../src/volumepuzzle.cpp \
     ../src/glrenderer.cpp \
     qtvolumepuzzle.cpp \
-    qtpuzzlerenderer.cpp \
+    qtpuzzleview.cpp \
     ../src/camera.cpp \
     ../src/object3d.cpp \
     ../src/piece.cpp \
@@ -57,7 +57,7 @@ HEADERS  += mainwindow.h \
     ../include/volumepuzzle.h \
     ../include/glrenderer.h \
     qtvolumepuzzle.h \
-    qtpuzzlerenderer.h \
+    qtpuzzleview.h \
     ../include/camera.h \
     ../include/object3d.h \
     ../include/piece.h \

@@ -13,6 +13,7 @@ src/base.h
 src/bbox.h
 src/box.h
 src/camera.h
+src/engine.h
 src/geometry.h
 src/mat.h
 src/print.h
@@ -38,6 +39,7 @@ src/camera.cpp
 src/mat.cpp
 src/print.cpp
 src/solver.cpp
+src/engine.cpp
 src/utils.cpp
 src/pngreader.cpp
 src/volpart.cpp
@@ -96,14 +98,14 @@ src/desktop/fileresourceloader.cpp
 )
 set(QT_SOURCES
 qt/qtvolumepuzzle.h
-qt/qtpuzzlerenderer.h
+qt/qtpuzzleview.h
 qt/qtsolutionslist.h
 qt/mainwindow.h
 qt/mainwindow.ui
 qt/mainwindow.cpp
 qt/qt_main.cpp
 qt/qtvolumepuzzle.cpp
-qt/qtpuzzlerenderer.cpp
+qt/qtpuzzleview.cpp
 qt/qtsolutionslist.cpp
 )
 

@@ -12,48 +12,44 @@ GlutRenderer* glutRenderer;
 class GlutBootstrap {
   public:
     static void render() {
-        glutRenderer->display();
+        glutRenderer->render();
     }
     static void resize(int w, int h) {
-        glutRenderer->resize(w, h);
+        glutRenderer->engine().resize(w, h);
     }
 
     static void mouseLButtonDown(int x, int y) {
-        glutRenderer->mouseLButtonDown(x, y);
+        glutRenderer->engine().rotateStart(x, y);
     }
     static void mouseLButtonUp(int x, int y) {
-        glutRenderer->mouseLButtonUp(x, y);
+        glutRenderer->engine().dragStop();
     }
 
     static void mouseRButtonDown(int x, int y) {
-        glutRenderer->mouseRButtonDown(x, y);
+        glutRenderer->engine().shiftStart(x, y);
     }
     static void mouseRButtonUp(int x, int y) {
-        glutRenderer->mouseRButtonUp(x, y);
+        glutRenderer->engine().dragStop();
     }
 
     static void wheelUp(int x, int y) {
-        glutRenderer->wheelUp(x, y);
+        glutRenderer->engine().zoom(1.1);
+        glutRenderer->engine().zoomDrag();
+        glutRenderer->engine().dragStop();
     }
 
     static void wheelDown(int x, int y) {
-        glutRenderer->wheelDown(x, y);
+        glutRenderer->engine().zoom(0.9);
+        glutRenderer->engine().zoomDrag();
+        glutRenderer->engine().dragStop();
     }
 
-    //    static void rotateX(float x) {
-    //        glutRenderer->rotateX(x);
-    //    }
-
-    //    static void rotateY(float y) {
-    //        glutRenderer->rotateY(y);
-    //    }
-
     static void mouseMove(int x, int y) {
-        glutRenderer->mouseMove(x, y);
+        glutRenderer->engine().drag(x, y);
     }
 
     static void showSolution(int i) {
-        glutRenderer->showSolution(i);
+        glutRenderer->engine().showSolution(i);
     }
 };
 
@@ -93,10 +89,21 @@ void menu(int item) {
     GlutBootstrap::showSolution(item);
 }
 
-void GlutRenderer::addMenuEntry(int i) {
-    std::stringstream s;
-    s << i;
-    glutAddMenuEntry(s.str().c_str(), i);
+void GlutRenderer::render() {
+    engine_.display();
+    auto& puzzle = engine_.puzzle();
+    while (puzzle.numFoundSolutions() > num_solutions_) {
+        ++num_solutions_;
+        Geometry::PiecesSet solution;
+        puzzle.getSolution(solution, num_solutions_);
+        std::stringstream s;
+        s << num_solutions_ << "(";
+        for (auto& piece : solution) {
+            s << piece.id;
+        }
+        s << ")";
+        glutAddMenuEntry(s.str().c_str(), num_solutions_);
+    }
 }
 
 void mouse(int button, int state, int x, int y) {
@@ -127,7 +134,7 @@ void mousemove(int x, int y) {
 void GlutRenderer::init(int argc, char** argv) {
     glutInit(&argc, argv);
 
-    resize(800, 800);
+    engine_.resize(800, 800);
 
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
     glutInitWindowSize(800, 800);
@@ -137,7 +144,7 @@ void GlutRenderer::init(int argc, char** argv) {
     glutCreateMenu(menu);
     glutAttachMenu(GLUT_RIGHT_BUTTON);
 
-    initOpenGL();
+    engine_.setup();
 
     glutRenderer = this;
     glutDisplayFunc(glutDisplayImpl);

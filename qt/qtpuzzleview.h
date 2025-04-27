@@ -1,16 +1,16 @@
-#ifndef QTPUZZLERENDERER_H
-#define QTPUZZLERENDERER_H
+#pragma once
 
 #include <QGLWidget>
 #include <QTimer>
 #include <QWheelEvent>
 
-#include "glrenderer.h"
+#include <engine.h>
+#include <qtvolumepuzzle.h>
 
-class QTPuzzleRenderer : public QGLWidget, public Geometry::GLRenderer {
+class QTPuzzleView : public QGLWidget {
     Q_OBJECT
   public:
-    explicit QTPuzzleRenderer(QWidget* parent = 0);
+    explicit QTPuzzleView(QWidget* parent = 0);
 
     void initializeGL() override;
     void paintGL() override;
@@ -19,11 +19,15 @@ class QTPuzzleRenderer : public QGLWidget, public Geometry::GLRenderer {
     void mousePressEvent(QMouseEvent* me) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* me) override;
+
+    QTVolumePuzzle& puzzle() {
+        return puzzle_;
+    }
   public slots:
     void renderSolution(int i);
 
   private:
+    QTVolumePuzzle puzzle_;
+    Engine engine_;
     QTimer timer;
 };
-
-#endif  // QTPUZZLERENDERER_H

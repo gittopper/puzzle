@@ -1,13 +1,24 @@
 #pragma once
 
-#include <desktop/glrenderer.h>
+#include <engine.h>
 
-class GlutRenderer : public Geometry::GLRenderer {
+class GlutRenderer {
   public:
+    GlutRenderer() :
+        puzzle_(3, 4, 2, generateWoodPuzzles()),
+        // puzzle_(2,2,2,generateTestPuzzles()),
+        // puzzle_(3,3,3,generateSomaPuzzles()),
+        engine_(puzzle_) {}
     void init(int argc, char** argv);
     void run();
 
-    virtual void addMenuEntry(int i);
+    Engine& engine() {
+        return engine_;
+    }
+    void render();
 
-    friend class GlutBootstrap;
+  private:
+    Geometry::VolumePuzzle puzzle_;
+    Engine engine_;
+    std::size_t num_solutions_ = 0;
 };

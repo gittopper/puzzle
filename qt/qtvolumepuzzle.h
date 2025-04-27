@@ -1,22 +1,18 @@
-#ifndef QTVOLUMEPUZZLE_H
-#define QTVOLUMEPUZZLE_H
+#pragma once
 
-#include "volumepuzzle.h"
 #include <QObject>
 
-namespace Geometry
-{
-class QTVolumePuzzle: public QObject, public VolumePuzzle
-{
+#include "volumepuzzle.h"
+
+class QTVolumePuzzle : public QObject, public Geometry::VolumePuzzle {
     Q_OBJECT
-public:
-    QTVolumePuzzle(int xDim, int yDim, int zDim, const PiecesSet pieces):
-        VolumePuzzle(xDim, yDim, zDim, pieces)
-    {}
+  public:
+    QTVolumePuzzle(int dim_x,
+                   int dim_y,
+                   int dim_z,
+                   const Geometry::PiecesSet pieces) :
+        VolumePuzzle(dim_x, dim_y, dim_z, pieces) {}
     void addedSolution();
-signals:
+  signals:
     void foundSolution(VolumePuzzle* puzzle);
 };
-
-}
-#endif // QTVOLUMEPUZZLE_H

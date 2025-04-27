@@ -2,26 +2,25 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+
 #include "qtvolumepuzzle.h"
 
-namespace Ui
-{
+namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
     Q_OBJECT
 
-public:
-    explicit MainWindow(QWidget *parent = 0);
+  public:
+    explicit MainWindow(QWidget* parent = 0);
 
-    void setPuzzleToRender(Geometry::QTVolumePuzzle& puzzleToRender);
+    void setupSignals();
 
     ~MainWindow();
 
-private:
-    Ui::MainWindow *ui;
+  private:
+    Ui::MainWindow* ui;
 };
 
-#endif // MAINWINDOW_H
+#endif  // MAINWINDOW_H
