@@ -1,4 +1,4 @@
-#include "renderer.h"
+#include <android/glesrenderer.h>
 
 static const char glVertexShader[] = R"(
 attribute vec4 vertexPosition;
@@ -105,7 +105,7 @@ void main()
 }
 )";
 
-GLuint Renderer::loadShader(GLenum shaderType, const char* shaderSource) {
+GLuint GLESRenderer::loadShader(GLenum shaderType, const char* shaderSource) {
     GLuint shader = glCreateShader(shaderType);
     if (shader != 0) {
         glShaderSource(shader, 1, &shaderSource, NULL);
@@ -136,8 +136,8 @@ GLuint Renderer::loadShader(GLenum shaderType, const char* shaderSource) {
     return shader;
 }
 
-GLuint Renderer::createProgram(const char* vertexSource,
-                               const char* fragmentSource) {
+GLuint GLESRenderer::createProgram(const char* vertexSource,
+                                   const char* fragmentSource) {
     GLuint vertexShader = loadShader(GL_VERTEX_SHADER, vertexSource);
     if (vertexShader == 0) {
         return 0;
@@ -176,7 +176,7 @@ GLuint Renderer::createProgram(const char* vertexSource,
     return program;
 }
 
-void Renderer::setup() {
+void GLESRenderer::setup() {
     volume_part_program_ = createProgram(glVertexShader, glFragmentShader);
 
     if (volume_part_program_ == 0) {
@@ -210,25 +210,21 @@ void Renderer::setup() {
         glGetUniformLocation(overlay_program_, "u_mvpMatrix");  // texture
 }
 
-void Renderer::resize(int width, int height) {
+void GLESRenderer::resize(int width, int height) {
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, width, height);
 
     camera_.setViewport(width, height);
 }
-void Renderer::startFrame() {
+void GLESRenderer::startFrame() {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     glUseProgram(volume_part_program_);
 }
 
-void Renderer::finishFrame() {
-    if (sprite_.has_value()) {
-        drawOverlay(sprite_.value());
-    }
-}
+void GLESRenderer::finishFrame() {}
 
-void Renderer::drawOverlay(const Sprite& sprite) {
+void GLESRenderer::drawOverlay(const Sprite& sprite) {
     GLuint texture_id;
     glGenTextures(1, &texture_id);
     glActiveTexture(GL_TEXTURE0);
@@ -268,11 +264,11 @@ void Renderer::drawOverlay(const Sprite& sprite) {
     glDeleteTextures(1, &texture_id);
 }
 
-void Renderer::render(GLfloat* vertices,
-                      GLfloat* normals,
-                      GLfloat* colors,
-                      GLushort* indices,
-                      int size) {
+void GLESRenderer::render(GLfloat* vertices,
+                          GLfloat* normals,
+                          GLfloat* colors,
+                          GLushort* indices,
+                          int size) const {
     glVertexAttribPointer(vertex_location_, 3, GL_FLOAT, GL_FALSE, 0, vertices);
     glEnableVertexAttribArray(vertex_location_);
     glVertexAttribPointer(vertex_color_location_, 3, GL_FLOAT, GL_FALSE, 0,
@@ -287,4 +283,61 @@ void Renderer::render(GLfloat* vertices,
                        &(camera_.viewMatrix())[0][0]);
 
     glDrawElements(GL_TRIANGLES, size, GL_UNSIGNED_SHORT, indices);
+}
+
+void GLESRenderer::drawSquare(const Geometry::Vector& shift,
+                              const Geometry::Vector& v1,
+                              const Geometry::Vector& v2,
+                              const Geometry::Vector& v3,
+                              const Geometry::Vector& v4,
+                              const Geometry::Vector& n) const {
+    std::vector<Geometry::Vector> vertices;
+    vertices.push_back(
+        Geometry::Vector(shift[0] + v1[0], shift[1] + v1[1], shift[2] + v1[2]));
+    vertices.push_back(
+        Geometry::Vector(shift[0] + v2[0], shift[1] + v2[1], shift[2] + v2[2]));
+    vertices.push_back(
+        Geometry::Vector(shift[0] + v3[0], shift[1] + v3[1], shift[2] + v3[2]));
+    vertices.push_back(
+        Geometry::Vector(shift[0] + v4[0], shift[1] + v4[1], shift[2] + v4[2]));
+    std::vector<Geometry::Vector> normals;
+    normals.push_back(n);
+    normals.push_back(n);
+    normals.push_back(n);
+    normals.push_back(n);
+    std::vector<std::uint16_t> indices{0, 1, 2, 0, 2, 3};
+    std::vector<Geometry::Vector> colors = {cur_color_, cur_color_, cur_color_,
+                                            cur_color_};
+    render(reinterpret_cast<GLfloat*>(vertices.data()),
+           reinterpret_cast<GLfloat*>(normals.data()),
+           reinterpret_cast<GLfloat*>(colors.data()),
+           reinterpret_cast<GLushort*>(indices.data()), 6);
+}
+
+void GLESRenderer::drawTriangle(const Geometry::Vector& shift,
+                                const Geometry::Vector& v1,
+                                const Geometry::Vector& v2,
+                                const Geometry::Vector& v3,
+                                const Geometry::Vector& n) const {
+    std::vector<Geometry::Vector> vertices;
+    vertices.push_back(
+        Geometry::Vector(shift[0] + v1[0], shift[1] + v1[1], shift[2] + v1[2]));
+    vertices.push_back(
+        Geometry::Vector(shift[0] + v2[0], shift[1] + v2[1], shift[2] + v2[2]));
+    vertices.push_back(
+        Geometry::Vector(shift[0] + v3[0], shift[1] + v3[1], shift[2] + v3[2]));
+    std::vector<Geometry::Vector> normals;
+    normals.push_back(n);
+    normals.push_back(n);
+    normals.push_back(n);
+    std::vector<std::uint16_t> indices{0, 1, 2};
+    std::vector<Geometry::Vector> colors = {cur_color_, cur_color_, cur_color_};
+    render(reinterpret_cast<GLfloat*>(vertices.data()),
+           reinterpret_cast<GLfloat*>(normals.data()),
+           reinterpret_cast<GLfloat*>(colors.data()),
+           reinterpret_cast<GLushort*>(indices.data()), 3);
+}
+
+void GLESRenderer::setColor(const Geometry::Vector& color) const {
+    cur_color_ = color;
 }

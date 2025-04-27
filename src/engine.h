@@ -4,6 +4,7 @@
 
 #include <optional>
 #include <piecessetrenderer.h>
+#include <resourceloader.h>
 #include <solver.h>
 #include <sprite.h>
 #include <thread>
@@ -11,7 +12,9 @@
 
 class Engine {
   public:
-    Engine(Geometry::VolumePuzzle& puzzle, IRendererPtr renderer);
+    Engine(Geometry::VolumePuzzle& puzzle,
+           IRendererPtr renderer,
+           ResourceLoaderPtr resource_loader);
     ~Engine();
     void setup();
     void display();

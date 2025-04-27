@@ -57,8 +57,7 @@ if (ANDROID_REGIME)
 
 set(ANDROID_SOURCES
         src/android/Native.cpp
-        src/android/renderer.cpp
-        src/android/volpartrenderer.cpp
+        src/android/glesrenderer.cpp
         src/android/androidresourceloader.cpp
         )
 set(TARGET Native)

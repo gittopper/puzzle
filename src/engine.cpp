@@ -4,7 +4,9 @@
 
 #include <pngreader.h>
 
-Engine::Engine(Geometry::VolumePuzzle& puzzle, IRendererPtr renderer) :
+Engine::Engine(Geometry::VolumePuzzle& puzzle,
+               IRendererPtr renderer,
+               ResourceLoaderPtr resource_loader) :
     puzzle_(puzzle),
     renderer_(renderer),
     solver_(puzzle),
@@ -13,9 +15,7 @@ Engine::Engine(Geometry::VolumePuzzle& puzzle, IRendererPtr renderer) :
         solver_.solve();
     });
 
-    FileResourceLoader frl;
-    auto path = "./assets/daco2.png";
-    auto daco2 = frl.readFile(path);
+    auto daco2 = resource_loader->readFile("daco2.png");
     PngReader png_reader;
     sprite_ = png_reader.read(daco2, false);
 }

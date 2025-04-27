@@ -1,16 +1,25 @@
 #include <QDebug>
 
+#include <desktop/fileresourceloader.h>
 #include <desktop/glrenderer.h>
 
 #include <qtpuzzleview.h>
 #include <utils.h>
+
+namespace {
+ResourceLoaderPtr getResourceLoader() {
+    auto res_loader = std::make_shared<FileResourceLoader>();
+    res_loader->setResourcesPath("./assets/");
+    return res_loader;
+}
+}  // namespace
 
 QTPuzzleView::QTPuzzleView(QWidget* parent) :
     QGLWidget(parent),
     puzzle_(3, 4, 2, generateWoodPuzzles()),
     //   puzzle_(2,2,2,generateTestPuzzles()),
     //   puzzle_(3,3,3,generateSomaPuzzles()),
-    engine_(puzzle_, std::make_shared<GLRenderer>()) {
+    engine_(puzzle_, std::make_shared<GLRenderer>(), getResourceLoader()) {
     connect(&timer, SIGNAL(timeout()), this, SLOT(updateGL()));
     timer.start(16);
 }

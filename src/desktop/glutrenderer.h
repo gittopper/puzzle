@@ -7,11 +7,7 @@
 
 class GlutRenderer {
   public:
-    GlutRenderer() :
-        puzzle_(3, 4, 2, generateWoodPuzzles()),
-        // puzzle_(2,2,2,generateTestPuzzles()),
-        // puzzle_(3,3,3,generateSomaPuzzles()),
-        engine_(puzzle_, std::make_shared<GLRenderer>()) {}
+    GlutRenderer();
     void init(int argc, char** argv);
     void run();
 

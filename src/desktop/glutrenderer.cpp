@@ -1,3 +1,4 @@
+#include <desktop/fileresourceloader.h>
 #include <desktop/glutrenderer.h>
 
 #include <sstream>
@@ -7,7 +8,19 @@
 namespace {
 
 GlutRenderer* glutRenderer;
+
+ResourceLoaderPtr getResourceLoader() {
+    auto res_loader = std::make_shared<FileResourceLoader>();
+    res_loader->setResourcesPath("./assets/");
+    return res_loader;
 }
+}  // namespace
+
+GlutRenderer::GlutRenderer() :
+    puzzle_(3, 4, 2, generateWoodPuzzles()),
+    // puzzle_(2,2,2,generateTestPuzzles()),
+    // puzzle_(3,3,3,generateSomaPuzzles()),
+    engine_(puzzle_, std::make_shared<GLRenderer>(), getResourceLoader()) {}
 
 class GlutBootstrap {
   public:
