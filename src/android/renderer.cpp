@@ -210,7 +210,7 @@ void Renderer::setup() {
         glGetUniformLocation(overlay_program_, "u_mvpMatrix");  // texture
 }
 
-void Renderer::setSize(int width, int height) {
+void Renderer::resize(int width, int height) {
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, width, height);
 

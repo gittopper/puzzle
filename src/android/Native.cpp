@@ -82,7 +82,7 @@ JNIEXPORT void JNICALL
                                                  jobject javaAssetManager) {
     std::lock_guard<std::mutex> lock(m);
     renderer->setup();
-    renderer->setSize(width, height);
+    renderer->resize(width, height);
     AndroidResourceLoader res(AAssetManager_fromJava(env, javaAssetManager));
     auto daco2_png = res.readFile("daco2.png");
     Sprite sprite = PngReader::read(daco2_png, false);

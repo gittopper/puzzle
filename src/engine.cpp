@@ -1,11 +1,14 @@
 #include "engine.h"
 
+#include <desktop/volpartrenderer.h>
+
 Engine::Engine(Geometry::VolumePuzzle& puzzle) :
-    puzzle_(puzzle), solver_(puzzle) {
+    puzzle_(puzzle),
+    solver_(puzzle),
+    piecesset_renderer_(std::make_shared<VolPartRenderer>()) {
     solving_thread_ = std::thread([this]() {
         solver_.solve();
     });
-    renderer_.setPuzzleToRender(puzzle_);
 }
 
 Engine::~Engine() {
@@ -14,11 +17,19 @@ Engine::~Engine() {
 }
 
 void Engine::setup() {
-    renderer_.initOpenGL();
+    renderer_.setup();
 }
 
 void Engine::display() {
-    renderer_.display();
+    renderer_.startFrame();
+    Geometry::PiecesSet sol;
+    int ns = puzzle_.numFoundSolutions();
+    int i = cur_sol_ > 0 ? cur_sol_ : ns;
+    puzzle_.getSolution(sol, i);
+
+    piecesset_renderer_.render(sol);
+
+    renderer_.finishFrame();
 }
 
 void Engine::resize(int width, int height) {
@@ -50,5 +61,5 @@ void Engine::zoomDrag() {
 }
 
 void Engine::showSolution(std::size_t i) {
-    renderer_.showSolution(i);
+    cur_sol_ = i;
 }

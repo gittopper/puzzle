@@ -16,7 +16,7 @@
 class Renderer {
   public:
     void setup();
-    void setSize(int width, int height);
+    void resize(int width, int height);
     void startFrame();
     void finishFrame();
     Camera& camera() {

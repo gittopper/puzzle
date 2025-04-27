@@ -9,9 +9,9 @@
 #include "volpartrenderer.h"
 #include <GL/gl.h>
 
-GLRenderer::GLRenderer() : renderer_(std::make_shared<VolPartRenderer>()) {}
+GLRenderer::GLRenderer() {}
 
-void GLRenderer::initOpenGL() {
+void GLRenderer::setup() {
     glFrontFace(GL_CCW);
     glEnable(GL_COLOR_MATERIAL);
     glClearColor(0.5, 0.5, 0.5, 1.0);
@@ -28,18 +28,11 @@ void GLRenderer::initOpenGL() {
     glShadeModel(GL_SMOOTH);
     glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 
-    cur_sol_ = 0;
-    max_sol_ = 0;
-
     FileResourceLoader frl;
     auto path = "./assets/daco2.png";
     auto daco2 = frl.readFile(path);
     PngReader png_reader;
     sprite_ = png_reader.read(daco2, false);
-}
-
-void GLRenderer::showSolution(std::size_t sol) {
-    cur_sol_ = sol;
 }
 
 void GLRenderer::drawOverlay(const Sprite& sprite) {
@@ -86,7 +79,7 @@ void GLRenderer::drawOverlay(const Sprite& sprite) {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void GLRenderer::display() {
+void GLRenderer::startFrame() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glMatrixMode(GL_MODELVIEW);
@@ -106,21 +99,9 @@ void GLRenderer::display() {
     drawLCS();
 
     glColor3f(0.2f, 0.0f, 0.0f);
+}
 
-    Geometry::PiecesSet sol;
-    int ns = puzzle_->numFoundSolutions();
-    int i = cur_sol_ > 0 ? cur_sol_ : ns;
-    puzzle_->getSolution(sol, i);
-
-    if (ns > max_sol_) {
-        for (int is = max_sol_ + 1; is <= ns; is++) {
-            addMenuEntry(is);
-        }
-        max_sol_ = ns;
-    }
-
-    renderer_.render(sol);
-
+void GLRenderer::finishFrame() {
     if (sprite_.has_value()) {
         drawOverlay(sprite_.value());
     }
@@ -153,8 +134,4 @@ void GLRenderer::drawLCS() {
     glVertex3f(0.0, 0.0, 0.0);
     glVertex3f(0., 0, 2);
     glEnd();
-}
-
-void GLRenderer::setPuzzleToRender(Geometry::VolumePuzzle& puzzleToRender) {
-    puzzle_ = &puzzleToRender;
 }

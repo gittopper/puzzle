@@ -2,6 +2,7 @@
 
 #include <desktop/glrenderer.h>
 
+#include <piecessetrenderer.h>
 #include <solver.h>
 #include <thread>
 #include <volumepuzzle.h>
@@ -29,7 +30,9 @@ class Engine {
   private:
     Geometry::VolumePuzzle& puzzle_;
     GLRenderer renderer_;
+    PiecesSetRenderer piecesset_renderer_;
     Geometry::Solver solver_;
     std::thread solving_thread_;
-    std::function<void(Geometry::VolumePuzzle&)> on_new_solution_callback_;
+    std::size_t cur_sol_ = 0;
+    std::size_t max_sol_ = 0;
 };
