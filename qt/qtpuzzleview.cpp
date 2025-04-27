@@ -1,5 +1,7 @@
 #include <QDebug>
 
+#include <desktop/glrenderer.h>
+
 #include <qtpuzzleview.h>
 #include <utils.h>
 
@@ -8,7 +10,7 @@ QTPuzzleView::QTPuzzleView(QWidget* parent) :
     puzzle_(3, 4, 2, generateWoodPuzzles()),
     //   puzzle_(2,2,2,generateTestPuzzles()),
     //   puzzle_(3,3,3,generateSomaPuzzles()),
-    engine_(puzzle_) {
+    engine_(puzzle_, std::make_shared<GLRenderer>()) {
     connect(&timer, SIGNAL(timeout()), this, SLOT(updateGL()));
     timer.start(16);
 }

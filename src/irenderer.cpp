@@ -1,7 +1,7 @@
-#include "ivolpartrenderer.h"
+#include "irenderer.h"
 
-void IVolPartRenderer::render(const Geometry::VolPart& vol_part,
-                              const Geometry::Vector& color) {
+void IRenderer::render(const Geometry::VolPart& vol_part,
+                       const Geometry::Vector& color) {
     Geometry::Vector verts[8];
     verts[0] = Geometry::Vector(0, 0, 0);
     verts[1] = Geometry::Vector(1, 0, 0);

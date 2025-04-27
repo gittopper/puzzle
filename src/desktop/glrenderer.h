@@ -1,25 +1,29 @@
 #pragma once
-#include <sprite.h>
+#include <irenderer.h>
 
-#include "camera.h"
-
-class GLRenderer {
+class GLRenderer : public IRenderer {
   public:
-    GLRenderer();
+    void setup() override;
+    void resize(int w, int h) override;
 
-    void setup();
-    void resize(int w, int h);
+    void startFrame() override;
+    void finishFrame() override;
 
-    void startFrame();
-    void finishFrame();
+    void drawOverlay(const Sprite& sprite) override;
+    void drawSquare(const Geometry::Vector& shift,
+                    const Geometry::Vector& v1,
+                    const Geometry::Vector& v2,
+                    const Geometry::Vector& v3,
+                    const Geometry::Vector& v4,
+                    const Geometry::Vector& n) const override;
 
-    Camera& camera() {
-        return camera_;
-    }
-
-    void drawOverlay(const Sprite& sprite);
+    void drawTriangle(const Geometry::Vector& shift,
+                      const Geometry::Vector& v1,
+                      const Geometry::Vector& v2,
+                      const Geometry::Vector& v3,
+                      const Geometry::Vector& n) const override;
+    void setColor(const Geometry::Vector& color) const override;
 
   protected:
     void drawLCS();
-    Camera camera_;
 };

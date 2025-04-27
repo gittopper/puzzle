@@ -28,7 +28,7 @@ src/piecessetrenderer.h
 src/idrawer.h
 src/volumepuzzle.h
 src/piece.h
-src/ivolpartrenderer.h
+src/irenderer.h
 src/utils3d.h
 src/vector.h
 )
@@ -45,7 +45,7 @@ src/pngreader.cpp
 src/volpart.cpp
 src/volumepuzzle.cpp
 src/piece.cpp
-src/ivolpartrenderer.cpp
+src/irenderer.cpp
 src/piecessetrenderer.cpp
 src/utils3d.cpp
 src/vector.cpp
@@ -89,11 +89,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(DESKTOP_SOURCES
 src/desktop/glrenderer.h
-#src/desktop/glutrenderer.h
-src/desktop/volpartrenderer.h
 src/desktop/fileresourceloader.h
 src/desktop/glrenderer.cpp
-src/desktop/volpartrenderer.cpp
 src/desktop/fileresourceloader.cpp
 )
 set(QT_SOURCES

@@ -11,7 +11,7 @@
 
 class Engine {
   public:
-    Engine(Geometry::VolumePuzzle& puzzle);
+    Engine(Geometry::VolumePuzzle& puzzle, IRendererPtr renderer);
     ~Engine();
     void setup();
     void display();
@@ -31,7 +31,7 @@ class Engine {
 
   private:
     Geometry::VolumePuzzle& puzzle_;
-    GLRenderer renderer_;
+    IRendererPtr renderer_;
     PiecesSetRenderer piecesset_renderer_;
     Geometry::Solver solver_;
     std::thread solving_thread_;

@@ -1,5 +1,5 @@
 #pragma once
-#include <ivolpartrenderer.h>
+#include <irenderer.h>
 
 #include "renderer.h"
 #include "vector.h"

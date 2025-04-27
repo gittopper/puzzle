@@ -15,7 +15,7 @@ void PiecesSetRenderer::render(const Geometry::PiecesSet& pieces_set) {
 void PiecesSetRenderer::render(const Geometry::Piece& piece,
                                const Geometry::Vector& color) {
     for (auto& part : piece.parts) {
-        vol_part_renderer_->render(part, color);
+        vol_part_renderer_.render(part, color);
     }
 }
 

@@ -1,7 +1,5 @@
 #include "solver.h"
 
-#include <desktop/volpartrenderer.h>
-
 #include <thread>
 
 #include "utils.h"
