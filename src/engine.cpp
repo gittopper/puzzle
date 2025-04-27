@@ -1,6 +1,9 @@
 #include "engine.h"
 
+#include <desktop/fileresourceloader.h>
 #include <desktop/volpartrenderer.h>
+
+#include <pngreader.h>
 
 Engine::Engine(Geometry::VolumePuzzle& puzzle) :
     puzzle_(puzzle),
@@ -9,6 +12,12 @@ Engine::Engine(Geometry::VolumePuzzle& puzzle) :
     solving_thread_ = std::thread([this]() {
         solver_.solve();
     });
+
+    FileResourceLoader frl;
+    auto path = "./assets/daco2.png";
+    auto daco2 = frl.readFile(path);
+    PngReader png_reader;
+    sprite_ = png_reader.read(daco2, false);
 }
 
 Engine::~Engine() {
@@ -28,6 +37,10 @@ void Engine::display() {
     puzzle_.getSolution(sol, i);
 
     piecesset_renderer_.render(sol);
+
+    if (sprite_.has_value()) {
+        renderer_.drawOverlay(sprite_.value());
+    }
 
     renderer_.finishFrame();
 }

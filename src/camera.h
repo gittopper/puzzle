@@ -8,7 +8,7 @@ class Camera {
   public:
     Camera(float fov = 55.);
 
-    enum DrugRegime { SHIFT, ROTATE };
+    enum DragRegime { SHIFT, ROTATE };
 
     void setViewport(int w, int h);
 
@@ -41,7 +41,7 @@ class Camera {
     std::vector<Geometry::Vector> overlayPoints();
 
   private:
-    DrugRegime drug_regime_;
+    DragRegime drag_regime_;
     Geometry::Vector eye_stored_, up_stored_, center_stored_;
     Geometry::Vector eye_, up_, center_;
     double zoom_;

@@ -2,8 +2,10 @@
 
 #include <desktop/glrenderer.h>
 
+#include <optional>
 #include <piecessetrenderer.h>
 #include <solver.h>
+#include <sprite.h>
 #include <thread>
 #include <volumepuzzle.h>
 
@@ -35,4 +37,5 @@ class Engine {
     std::thread solving_thread_;
     std::size_t cur_sol_ = 0;
     std::size_t max_sol_ = 0;
+    std::optional<Sprite> sprite_;
 };

@@ -25,7 +25,7 @@ void Camera::setViewport(int w, int h) {
 void Camera::shiftStart(int x, int y) {
     move_start_x_ = x;
     move_start_y_ = y;
-    drug_regime_ = DrugRegime::SHIFT;
+    drag_regime_ = DragRegime::SHIFT;
 }
 
 void Camera::shiftDrag(int x, int y) {
@@ -42,7 +42,7 @@ void Camera::shift(float dx, float dy) {
 void Camera::rotateStart(int x, int y) {
     move_start_x_ = x;
     move_start_y_ = y;
-    drug_regime_ = DrugRegime::ROTATE;
+    drag_regime_ = DragRegime::ROTATE;
 }
 void Camera::rotateDrag(int x, int y) {
     float speed = 0.01f;
@@ -75,7 +75,7 @@ void Camera::zoomDrag() {
 }
 
 void Camera::drag(int x, int y) {
-    if (drug_regime_ == DrugRegime::SHIFT) {
+    if (drag_regime_ == DragRegime::SHIFT) {
         shiftDrag(x, y);
     } else {
         rotateDrag(x, y);

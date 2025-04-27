@@ -1,12 +1,5 @@
-#include <desktop/fileresourceloader.h>
 #include <desktop/glrenderer.h>
 
-#include <cstdlib>
-#include <pngreader.h>
-#include <print.h>
-#include <time.h>
-
-#include "volpartrenderer.h"
 #include <GL/gl.h>
 
 GLRenderer::GLRenderer() {}
@@ -27,12 +20,6 @@ void GLRenderer::setup() {
 
     glShadeModel(GL_SMOOTH);
     glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-
-    FileResourceLoader frl;
-    auto path = "./assets/daco2.png";
-    auto daco2 = frl.readFile(path);
-    PngReader png_reader;
-    sprite_ = png_reader.read(daco2, false);
 }
 
 void GLRenderer::drawOverlay(const Sprite& sprite) {
@@ -102,10 +89,6 @@ void GLRenderer::startFrame() {
 }
 
 void GLRenderer::finishFrame() {
-    if (sprite_.has_value()) {
-        drawOverlay(sprite_.value());
-    }
-
     glPopMatrix();
     glFlush();
 }

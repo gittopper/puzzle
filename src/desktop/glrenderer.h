@@ -1,13 +1,7 @@
 #pragma once
-#include <optional>
-#include <piecessetrenderer.h>
 #include <sprite.h>
 
-#include "base.h"
 #include "camera.h"
-#include "piece.h"
-#include "utils.h"
-#include "volumepuzzle.h"
 
 class GLRenderer {
   public:
@@ -23,12 +17,9 @@ class GLRenderer {
         return camera_;
     }
 
-  protected:
-    void drawLCS();
-
-  private:
     void drawOverlay(const Sprite& sprite);
 
+  protected:
+    void drawLCS();
     Camera camera_;
-    std::optional<Sprite> sprite_;
 };
