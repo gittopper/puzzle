@@ -13,7 +13,7 @@ bool VolumePuzzle::addSolution(const PiecesSet& sol) {
         PiecesSet normalizedSolution = orderedSolution;
 
         Piece part = normalizedSolution[0];
-        Piece p = pieces[part.id - 1];
+        Piece p = pieces_[part.id - 1];
         p.shift(-p.getZero());
 
         Mat rotation = part.getRotationMatrix(p);
@@ -25,12 +25,12 @@ bool VolumePuzzle::addSolution(const PiecesSet& sol) {
         part = normalizedSolution[0];
         BREAK_ON_LINE(part == p);
 
-        for (unsigned iSol = 0; iSol < normalizedSolutions.size(); iSol++) {
-            if (normalizedSolutions[iSol] == normalizedSolution) return false;
+        for (unsigned iSol = 0; iSol < normalized_solutions_.size(); iSol++) {
+            if (normalized_solutions_[iSol] == normalizedSolution) return false;
         }
 
-        solutions.push_back(orderedSolution);
-        normalizedSolutions.push_back(normalizedSolution);
+        solutions_.push_back(orderedSolution);
+        normalized_solutions_.push_back(normalizedSolution);
     }
     addedSolution();
     return true;
@@ -40,19 +40,21 @@ bool VolumePuzzle::addSolution(const PiecesSet& sol) {
 
 int VolumePuzzle::numFoundSolutions() const {
     std::lock_guard<std::mutex> block(lock);
-    int l = solutions.size();
+    int l = solutions_.size();
     return l;
 }
 
 void VolumePuzzle::getSolution(PiecesSet& sol, int i) const {
     std::lock_guard<std::mutex> block(lock);
-    assert(i >=1 && i <= solutions.size());
-    sol = solutions[i - 1];
+    assert(i >= 1 && i <= solutions_.size());
+    sol = solutions_[i - 1];
 }
 
-VolumePuzzle::VolumePuzzle(int xDim, int yDim, int zDim,
-                           const PiecesSet puzzlePieces)
-    : dimX(xDim), dimY(yDim), dimZ(zDim), pieces(puzzlePieces) {
+VolumePuzzle::VolumePuzzle(int xDim,
+                           int yDim,
+                           int zDim,
+                           const PiecesSet puzzlePieces) :
+    dim_x_(xDim), dim_y_(yDim), dim_z_(zDim), pieces_(puzzlePieces) {
     PiecesSet c = puzzlePieces;
     for (int i = 0; i < c.size(); i++) {
         c[i].shift(Vector(2 * i, 0, 0));
@@ -60,22 +62,30 @@ VolumePuzzle::VolumePuzzle(int xDim, int yDim, int zDim,
     addSolution(c);  // for debug
 }
 
-int VolumePuzzle::getXDim() const { return dimX; }
+int VolumePuzzle::getXDim() const {
+    return dim_x_;
+}
 
-int VolumePuzzle::getYDim() const { return dimY; }
+int VolumePuzzle::getYDim() const {
+    return dim_y_;
+}
 
-int VolumePuzzle::getZDim() const { return dimZ; }
+int VolumePuzzle::getZDim() const {
+    return dim_z_;
+}
 
-const Geometry::PiecesSet& VolumePuzzle::getPieces() const { return pieces; }
+const Geometry::PiecesSet& VolumePuzzle::getPieces() const {
+    return pieces_;
+}
 
 Geometry::Box VolumePuzzle::getEmptyBox() const {
-    Box cleanBox(dimX + 2, dimY + 2, dimZ + 2);
+    Box cleanBox(dim_x_ + 2, dim_y_ + 2, dim_z_ + 2);
 
-    for (int x = 0; x < dimX + 2; x++) {
-        for (int y = 0; y < dimY + 2; y++) {
-            for (int z = 0; z < dimZ + 2; z++) {
-                bool isWall =
-                    !(x % (dimX + 1)) || !(y % (dimY + 1)) || !(z % (dimZ + 1));
+    for (int x = 0; x < dim_x_ + 2; x++) {
+        for (int y = 0; y < dim_y_ + 2; y++) {
+            for (int z = 0; z < dim_z_ + 2; z++) {
+                bool isWall = !(x % (dim_x_ + 1)) || !(y % (dim_y_ + 1)) ||
+                              !(z % (dim_z_ + 1));
                 if (isWall) {
                     cleanBox.getVolPart(x, y, z) =
                         VolPart(isWall ? VolPart::VolType::Full

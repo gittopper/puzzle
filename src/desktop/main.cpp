@@ -6,13 +6,6 @@
 
 using namespace Geometry;
 
-namespace {
-void solve(VolumePuzzle* puzzle) {
-    Solver solver(*puzzle);
-    solver.solve();
-}
-}  // namespace
-
 int main(int argc, char** argv) {
     BREAK_ON_LINE(makeGeneralTests());
 
@@ -22,11 +15,10 @@ int main(int argc, char** argv) {
     //   Solver VolumePuzzle(2,2,2,generateTestPuzzles());
     //   Solver VolumePuzzle(3,3,3,generateSomaPuzzles());
 
-    std::thread st(solve, &puzzle);
-
-    //    std::auto_ptr<Task> solvingTask(new SolvingTask(puzzle));
-    //    std::auto_ptr<Thread> solvingThread(new Thread(solvingTask));
-    //    solvingThread->start();
+    std::thread st([&puzzle]() {
+        Solver solver(puzzle);
+        solver.solve();
+    });
 
     GlutRenderer glutRenderer;
 
@@ -34,7 +26,6 @@ int main(int argc, char** argv) {
     glutRenderer.setPuzzleToRender(puzzle);
     glutRenderer.run();
 
-    //  int result = reinterpret_cast<int>(solvingThread->join());
     st.join();
 
     std::cout << "Press any key to exit...";

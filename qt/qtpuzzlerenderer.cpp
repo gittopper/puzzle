@@ -17,7 +17,6 @@ void QTPuzzleRenderer::paintGL() {
 
 void QTPuzzleRenderer::resizeGL(int w, int h) {
     GLRenderer::resize(w, h);
-    //    qDebug() << "size: " << w << ", " << h;
 }
 
 void QTPuzzleRenderer::mousePressEvent(QMouseEvent* me) {

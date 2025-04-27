@@ -15,7 +15,6 @@ GLRenderer::GLRenderer() : renderer_(std::make_shared<VolPartRenderer>()) {}
 
 void GLRenderer::initOpenGL() {
     glFrontFace(GL_CCW);
-    // glMatrixMode(GL_PROJECTION);
     glEnable(GL_COLOR_MATERIAL);
     glClearColor(0.5, 0.5, 0.5, 1.0);
     glEnable(GL_LIGHTING);
@@ -62,7 +61,6 @@ void GLRenderer::drawOverlay(const Sprite& sprite) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    // glGenerateMipmap(GL_TEXTURE_2D);
     auto overlay_points = camera_.overlayPoints();
 
     GLfloat texCoords[] = {
@@ -73,12 +71,7 @@ void GLRenderer::drawOverlay(const Sprite& sprite) {
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glEnableClientState(GL_INDEX_ARRAY);
 
-    //    glEnable(GL_COLOR_MATERIAL);
-    //    const GLfloat emi[4] = {1.0f, 1.0f, 1.0f, 0.5f};
-    //    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emi);
-
     glDisable(GL_LIGHTING);
-    // glDisable(GL_LIGHT0);
 
     glVertexPointer(3, GL_FLOAT, 0, overlay_points.data());
     glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
@@ -87,15 +80,12 @@ void GLRenderer::drawOverlay(const Sprite& sprite) {
     glDrawElements(GL_TRIANGLE_FAN, 4, GL_UNSIGNED_INT, indices3);
 
     glEnable(GL_LIGHTING);
-    // glEnable(GL_LIGHT0);
-    // glDisable(GL_COLOR_MATERIAL);
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisableClientState(GL_INDEX_ARRAY);
     glDeleteTextures(1, &overlay_id);
     glBindTexture(GL_TEXTURE_2D, 0);
-    // glDisable(GL_TEXTURE_2D);
 }
 
 void GLRenderer::display() {
