@@ -21,6 +21,7 @@
 package com.gittopper.puzzle;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.opengl.GLSurfaceView;
 import android.view.MotionEvent;
 import android.util.Log;
@@ -33,22 +34,15 @@ import javax.microedition.khronos.opengles.GL10;
 
 class PuzzleView extends GLSurfaceView
 {
-    protected int redSize = 8;
-    protected int greenSize = 8;
-    protected int blueSize = 8 ;
-    protected int alphaSize = 8;
-    protected int depthSize = 16;
-    protected int sampleSize = 4;
-    protected int stencilSize = 0;
     protected int[] value = new int [1];
     public PuzzleView(Context context)
     {
         super(context);
         setEGLContextFactory(new ContextFactory());
-        //setEGLConfigChooser(new ConfigChooser());
         setEGLContextClientVersion(2);
         super.setEGLConfigChooser(8 , 8, 8, 8, 16, 0);
-        setRenderer(new Renderer());
+        AssetManager assetManager = context.getAssets();
+        setRenderer(new Renderer(assetManager));
     }
 
     private static class ContextFactory implements GLSurfaceView.EGLContextFactory
@@ -65,33 +59,6 @@ class PuzzleView extends GLSurfaceView
         {
             egl.eglDestroyContext(display,  context);
         }
-    }
-
-    protected class ConfigChooser implements GLSurfaceView.EGLConfigChooser
-    {
-        public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display)
-        {
-            final int EGL_OPENGL_ES2_BIT = 4;
-            int[] configAttributes =
-            {
-                EGL10.EGL_RED_SIZE, redSize,
-                EGL10.EGL_GREEN_SIZE, greenSize,
-                EGL10.EGL_BLUE_SIZE, blueSize,
-                EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-                EGL10.EGL_SAMPLES, sampleSize,
-                EGL10.EGL_DEPTH_SIZE, depthSize,
-                EGL10.EGL_STENCIL_SIZE, stencilSize,
-                EGL10.EGL_NONE
-            };
-
-            int[] num_config = new int[1];
-            egl.eglChooseConfig(display, configAttributes, null, 0, num_config);
-            int numConfigs = num_config[0];
-            EGLConfig[] configs = new EGLConfig[numConfigs];
-            egl.eglChooseConfig(display, configAttributes, configs, numConfigs, num_config);
-            return configs[0];
-        }
-
     }
 
     boolean moveStarted = false;
@@ -148,6 +115,10 @@ class PuzzleView extends GLSurfaceView
     }
         private static class Renderer implements GLSurfaceView.Renderer
         {
+            AssetManager asset_manager;
+            Renderer(AssetManager assetManager){
+                asset_manager = assetManager;
+            }
             public void onDrawFrame(GL10 gl)
             {
                 NativeLibrary.step();
@@ -155,7 +126,7 @@ class PuzzleView extends GLSurfaceView
 
             public void onSurfaceChanged(GL10 gl, int width, int height)
             {
-                NativeLibrary.init(width, height);
+                NativeLibrary.init(width, height, asset_manager);
             }
 
             public void onSurfaceCreated(GL10 gl, EGLConfig config)

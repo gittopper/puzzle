@@ -242,18 +242,15 @@ void Renderer::drawOverlay(const Sprite& sprite) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sprite.glWidth(), sprite.glHeight(),
                  0, GL_RGBA, GL_UNSIGNED_BYTE, sprite.data());
 
-    float aspect = static_cast<float>(camera_.width()) / camera_.height();
-    float pano_x = camera_.width();
-    float pano_y = aspect * pano_x;
-    float vertices[] = {
-        -pano_x / 2.f, pano_y / 2.f, 0.f, -pano_x / 2.f, -pano_y / 2.f, 0.f,
-        pano_x / 2.f,  pano_y / 2.f, 0.f, pano_x / 2.f,  -pano_y / 2.f, 0.f,
+    auto overlay_points = camera_.overlayPoints();
+
+    GLfloat texture[] = {
+        0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f,
     };
 
-    float texture[] = {0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f};
-
     glUseProgram(overlay_program_);
-    glVertexAttribPointer(overlay_vert_loc_, 3, GL_FLOAT, false, 0, vertices);
+    glVertexAttribPointer(overlay_vert_loc_, 3, GL_FLOAT, false, 0,
+                          &overlay_points[0]);
     glEnableVertexAttribArray(overlay_vert_loc_);
 
     glVertexAttribPointer(overlay_tex_loc_, 2, GL_FLOAT, false, 0, texture);
@@ -264,7 +261,7 @@ void Renderer::drawOverlay(const Sprite& sprite) {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     auto mvp = camera_.mvp();
     glUniformMatrix4fv(overlay_mat_loc_, 1, GL_FALSE, (GLfloat*)&mvp[0][0]);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     glDisable(GL_BLEND);
 
     glBindTexture(GL_TEXTURE_2D, 0);

@@ -57,6 +57,7 @@ set(ANDROID_SOURCES
         src/android/Native.cpp
         src/android/renderer.cpp
         src/android/volpartrenderer.cpp
+        src/android/androidresourceloader.cpp
         )
 set(TARGET Native)
 add_library(${TARGET} SHARED ${COMMON_SOURCES} ${ANDROID_SOURCES})

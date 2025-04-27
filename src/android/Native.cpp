@@ -22,11 +22,14 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <android/androidresourceloader.h>
+
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <jni.h>
 #include <piecessetrenderer.h>
+#include <pngreader.h>
 #include <solver.h>
 #include <thread>
 #include <utils.h>
@@ -35,8 +38,12 @@
 #include "renderer.h"
 
 extern "C" {
-JNIEXPORT void JNICALL Java_com_gittopper_puzzle_NativeLibrary_init(
-    JNIEnv* env, jobject obj, jint width, jint height);
+JNIEXPORT void JNICALL
+    Java_com_gittopper_puzzle_NativeLibrary_init(JNIEnv* env,
+                                                 jobject obj,
+                                                 jint width,
+                                                 jint height,
+                                                 jobject javaAssetManager);
 JNIEXPORT void JNICALL Java_com_gittopper_puzzle_NativeLibrary_dragStart(
     JNIEnv* env, jobject obj, jint x1, jint y1, jint x2, jint y2);
 JNIEXPORT void JNICALL Java_com_gittopper_puzzle_NativeLibrary_drag(
@@ -67,11 +74,19 @@ PiecesSetRenderer pieces_renderer(volpart_renderer);
 int found_solutions = 0;
 std::mutex m;
 
-JNIEXPORT void JNICALL Java_com_gittopper_puzzle_NativeLibrary_init(
-    JNIEnv* env, jobject obj, jint width, jint height) {
+JNIEXPORT void JNICALL
+    Java_com_gittopper_puzzle_NativeLibrary_init(JNIEnv* env,
+                                                 jobject obj,
+                                                 jint width,
+                                                 jint height,
+                                                 jobject javaAssetManager) {
     std::lock_guard<std::mutex> lock(m);
     renderer->setup();
     renderer->setSize(width, height);
+    AndroidResourceLoader res(AAssetManager_fromJava(env, javaAssetManager));
+    auto daco2_png = res.readFile("daco2.png");
+    Sprite sprite = PngReader::read(daco2_png, false);
+    renderer->setSprite(sprite);
 }
 
 JNIEXPORT void JNICALL
