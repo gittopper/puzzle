@@ -1,20 +1,21 @@
 #include "solver.h"
 
+#include <desktop/volpartrenderer.h>
+
 #include <thread>
 
-#include "volpartrenderer.h"
 #include "utils.h"
 
 namespace Geometry {
-Solver::Solver(VolumePuzzle& puzzleInstance)
-    : m_continue_to_solve(true),
-      m_max_sol(0),
-      m_progress(0),
-      m_search_all_solutions(true),
-      m_puzzle(puzzleInstance),
-      m_dimX(m_puzzle.getXDim()),
-      m_dimY(m_puzzle.getYDim()),
-      m_dimZ(m_puzzle.getZDim()) {
+Solver::Solver(VolumePuzzle& puzzleInstance) :
+    m_continue_to_solve(true),
+    m_max_sol(0),
+    m_progress(0),
+    m_search_all_solutions(true),
+    m_puzzle(puzzleInstance),
+    m_dimX(m_puzzle.getXDim()),
+    m_dimY(m_puzzle.getYDim()),
+    m_dimZ(m_puzzle.getZDim()) {
     m_pieces = m_puzzle.getPieces();
     for (unsigned pn = 0; pn < m_pieces.size(); pn++) {
         m_piece_all_positions_number = 0;
@@ -189,7 +190,9 @@ bool Solver::foundNewSolution(Data& data) {
 
 void Solver::multithread(bool ml) {}
 
-void Solver::stopSolving() { m_continue_to_solve = false; }
+void Solver::stopSolving() {
+    m_continue_to_solve = false;
+}
 
 void Solver::solveForPiece(int i_puzzle) {
     Data data(m_puzzle.getEmptyBox());
@@ -210,7 +213,7 @@ void Solver::recursiveSolve(Data& data) {
         foundNewSolution(data);
         return;
     }
-    if(data.m_numPlaced == 1) {
+    if (data.m_numPlaced == 1) {
         std::cout << "Progress:"
                   << (float(++m_progress) / m_piece_all_positions_number)
                   << std::endl;
@@ -271,8 +274,8 @@ void Solver::solve() {
     auto num_threads = m_pieces.size();
     for (auto i_thread = 0UL; i_thread < num_threads; ++i_thread) {
         std::cout << "starting " << i_thread << " thread" << std::endl;
-        threads.push_back(std::thread([this, i_thread](){
-          solveForPiece(i_thread);
+        threads.push_back(std::thread([this, i_thread]() {
+            solveForPiece(i_thread);
         }));
     }
     for (auto& t : threads) {

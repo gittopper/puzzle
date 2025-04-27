@@ -1,15 +1,13 @@
 #pragma once
 
-#include <glrenderer.h>
+#include <desktop/glrenderer.h>
 
-class GlutRenderer : public Geometry::GLRenderer
-{
-public:
-  void init(int argc, char ** argv);
-  void run();
+class GlutRenderer : public Geometry::GLRenderer {
+  public:
+    void init(int argc, char** argv);
+    void run();
 
-  virtual void addMenuEntry(int i);
+    virtual void addMenuEntry(int i);
 
-  friend class GlutBootstrap;
+    friend class GlutBootstrap;
 };
-

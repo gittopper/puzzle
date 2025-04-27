@@ -1,16 +1,13 @@
-#include <QApplication>
-
 #include <desktop/fileresourceloader.h>
+#include <desktop/glrenderer.h>
 
 #include <cstdlib>
-#include <glrenderer.h>
 #include <pngreader.h>
 #include <print.h>
 #include <time.h>
 
 #include "volpartrenderer.h"
 #include <GL/gl.h>
-#include <GL/glut.h>
 
 namespace Geometry {
 
@@ -38,8 +35,7 @@ void GLRenderer::initOpenGL() {
     max_sol_ = 0;
 
     FileResourceLoader frl;
-    auto path =
-        QApplication::applicationDirPath().toStdString() + "/assets/daco2.png";
+    auto path = "./assets/daco2.png";
     auto daco2 = frl.readFile(path);
     PngReader png_reader;
     sprite_ = png_reader.read(daco2, false);
@@ -67,7 +63,7 @@ void GLRenderer::drawOverlay(const Sprite& sprite) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
     // glGenerateMipmap(GL_TEXTURE_2D);
-    auto overlay_points = camera.overlayPoints();
+    auto overlay_points = camera_.overlayPoints();
 
     GLfloat texCoords[] = {
         0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f,
@@ -107,13 +103,13 @@ void GLRenderer::display() {
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    const auto view = camera.viewMatrix();
+    const auto view = camera_.viewMatrix();
     glMultMatrixf(&view[0][0]);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
-    auto projection = camera.projMatrix();
+    auto projection = camera_.projMatrix();
     glMultMatrixf(&projection[0][0]);
 
     glMatrixMode(GL_MODELVIEW);
@@ -137,14 +133,16 @@ void GLRenderer::display() {
 
     renderer_.render(sol);
 
-    drawOverlay(sprite_.value());
+    if (sprite_.has_value()) {
+        drawOverlay(sprite_.value());
+    }
 
     glPopMatrix();
     glFlush();
 }
 
 void GLRenderer::resize(int width, int height) {
-    camera.setViewport(width, height);
+    camera_.setViewport(width, height);
     glViewport(0, 0, width, height);
 }
 
@@ -174,34 +172,34 @@ void GLRenderer::setPuzzleToRender(VolumePuzzle& puzzleToRender) {
 }
 
 void GLRenderer::mouseLButtonDown(int x, int y) {
-    camera.rotateStart(x, y);
+    camera_.rotateStart(x, y);
 }
 
 void GLRenderer::mouseLButtonUp(int x, int y) {
-    camera.store();
+    camera_.store();
 }
 
 void GLRenderer::mouseRButtonDown(int x, int y) {
-    camera.shiftStart(x, y);
+    camera_.shiftStart(x, y);
 }
 
 void GLRenderer::mouseMove(int x, int y) {
-    camera.drag(x, y);
+    camera_.drag(x, y);
 }
 
 void GLRenderer::mouseRButtonUp(int x, int y) {
-    camera.store();
+    camera_.store();
 }
 
 void GLRenderer::wheelUp(int x, int y) {
-    camera.zoom(1.1);
-    camera.zoomDrag();
-    camera.store();
+    camera_.zoom(1.1);
+    camera_.zoomDrag();
+    camera_.store();
 }
 
 void GLRenderer::wheelDown(int x, int y) {
-    camera.zoom(0.9);
-    camera.zoomDrag();
-    camera.store();
+    camera_.zoom(0.9);
+    camera_.zoomDrag();
+    camera_.store();
 }
 }  // namespace Geometry

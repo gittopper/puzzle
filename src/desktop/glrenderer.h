@@ -1,22 +1,22 @@
 #pragma once
+#include <optional>
+#include <piecessetrenderer.h>
+#include <sprite.h>
+
 #include "base.h"
+#include "camera.h"
 #include "piece.h"
 #include "utils.h"
 #include "volumepuzzle.h"
-#include "camera.h"
-#include <sprite.h>
-#include <optional>
-#include <piecessetrenderer.h>
 
-namespace Geometry
-{
-class GLRenderer
-{
-public:
+namespace Geometry {
+class GLRenderer {
+  public:
     GLRenderer();
     void setPuzzleToRender(VolumePuzzle& puzzleToRender);
     virtual ~GLRenderer() {}
-protected:
+
+  protected:
     void initOpenGL();
     void display();
     void drawLCS();
@@ -34,7 +34,8 @@ protected:
     void wheelDown(int x, int y);
 
     void showSolution(int sol);
-private:
+
+  private:
     int cur_sol_;
     int max_sol_;
     PiecesSetRenderer renderer_;
@@ -43,9 +44,8 @@ private:
     void drawOverlay(const Sprite& sprite);
     const VolumePuzzle* puzzle_;
 
-    std::vector<Vector> colors;
-    Camera camera;
+    Camera camera_;
     std::optional<Sprite> sprite_;
 };
 
-}
+}  // namespace Geometry

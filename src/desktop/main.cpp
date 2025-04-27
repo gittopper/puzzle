@@ -1,46 +1,44 @@
+#include <thread>
+
 #include "geometry.h"
 #include "glutrenderer.h"
 #include "tests.h"
-#include <thread>
 
 using namespace Geometry;
 
-namespace
-{
-  void solve(VolumePuzzle* puzzle)
-  {
+namespace {
+void solve(VolumePuzzle* puzzle) {
     Solver solver(*puzzle);
     solver.solve();
-  }
 }
+}  // namespace
 
-int main(int argc, char ** argv)
-{
-  BREAK_ON_LINE(makeGeneralTests());
-  
-  //solve55();
+int main(int argc, char** argv) {
+    BREAK_ON_LINE(makeGeneralTests());
 
-  VolumePuzzle puzzle(3, 4, 2, generateWoodPuzzles());
-//   Solver VolumePuzzle(2,2,2,generateTestPuzzles());
-//   Solver VolumePuzzle(3,3,3,generateSomaPuzzles());
+    // solve55();
 
-  std::thread st(solve, &puzzle);
+    VolumePuzzle puzzle(3, 4, 2, generateWoodPuzzles());
+    //   Solver VolumePuzzle(2,2,2,generateTestPuzzles());
+    //   Solver VolumePuzzle(3,3,3,generateSomaPuzzles());
 
-//    std::auto_ptr<Task> solvingTask(new SolvingTask(puzzle));
-//    std::auto_ptr<Thread> solvingThread(new Thread(solvingTask));
-//    solvingThread->start();
+    std::thread st(solve, &puzzle);
 
-  GlutRenderer glutRenderer;
+    //    std::auto_ptr<Task> solvingTask(new SolvingTask(puzzle));
+    //    std::auto_ptr<Thread> solvingThread(new Thread(solvingTask));
+    //    solvingThread->start();
 
-  glutRenderer.init(argc, argv);
-  glutRenderer.setPuzzleToRender(puzzle);
-  glutRenderer.run();
+    GlutRenderer glutRenderer;
 
-//  int result = reinterpret_cast<int>(solvingThread->join());
-  st.join();
+    glutRenderer.init(argc, argv);
+    glutRenderer.setPuzzleToRender(puzzle);
+    glutRenderer.run();
 
-  cout << "Press any key to exit...";
-  cin.get();
+    //  int result = reinterpret_cast<int>(solvingThread->join());
+    st.join();
 
-  return 0;
+    std::cout << "Press any key to exit...";
+    std::cin.get();
+
+    return 0;
 }

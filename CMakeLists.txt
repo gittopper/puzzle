@@ -84,15 +84,16 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(QT_SOURCES
+set(DESKTOP_SOURCES
 src/desktop/glrenderer.h
 #src/desktop/glutrenderer.h
 src/desktop/volpartrenderer.h
 src/desktop/fileresourceloader.h
 src/desktop/glrenderer.cpp
-#src/desktop/glutrenderer.cpp
 src/desktop/volpartrenderer.cpp
 src/desktop/fileresourceloader.cpp
+)
+set(QT_SOURCES
 qt/qtvolumepuzzle.h
 qt/qtpuzzlerenderer.h
 qt/qtsolutionslist.h
@@ -105,23 +106,41 @@ qt/qtpuzzlerenderer.cpp
 qt/qtsolutionslist.cpp
 )
 
-add_executable(qtSolver ${COMMON_HEADERS} ${COMMON_SOURCES} ${QT_SOURCES})
+add_executable(qt_solver ${COMMON_HEADERS} ${COMMON_SOURCES} ${DESKTOP_SOURCES} ${QT_SOURCES})
 
-target_include_directories(qtSolver PUBLIC
+target_include_directories(qt_solver PUBLIC
 src
 src/desktop
 qt
 )
 file(COPY src/assets DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
-target_compile_definitions(qtSolver PUBLIC
-    GLM_ENABLE_EXPERIMENTAL=ON)
-
 find_package(OpenMP REQUIRED)
 
-target_link_libraries(qtSolver GL glut GLU Qt5::Widgets Qt5::Gui
+target_link_libraries(qt_solver GL GLU Qt5::Widgets Qt5::Gui
     Qt5::OpenGL OpenMP::OpenMP_CXX glm::glm-header-only
      png_static zlibstatic
      )
+
+
+add_executable(glut_solver
+     ${COMMON_HEADERS}
+     ${COMMON_SOURCES}
+     ${DESKTOP_SOURCES}
+     src/desktop/main.cpp
+     src/desktop/glutrenderer.cpp
+)
+
+ target_include_directories(glut_solver PUBLIC
+ src
+ )
+
+ find_package(OpenMP REQUIRED)
+
+ target_link_libraries(glut_solver GL glut GLU
+     OpenMP::OpenMP_CXX
+     glm::glm-header-only
+     png_static zlibstatic
+)
 
 endif()

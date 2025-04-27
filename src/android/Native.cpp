@@ -88,6 +88,7 @@ JNIEXPORT void JNICALL
     puzzle.getSolution(sol, ns);
 
     pieces_renderer.render(sol);
+    renderer->finishFrame();
 }
 
 float lstart;

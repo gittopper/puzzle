@@ -98,6 +98,12 @@ glm::mat4 Camera::projMatrix() const {
     return glm::perspective(glm::radians(fov_), 1 / ratio, 0.1f, 100.0f);
 }
 
+glm::mat4 Camera::mvp() const {
+    auto proj = projMatrix();
+    auto view = viewMatrix();
+    return proj * view;
+}
+
 glm::mat4 Camera::viewMatrix() const {
     return glm::lookAt(glm::vec3(eye_[0], eye_[1], eye_[2]),
                        glm::vec3(center_[0], center_[1], center_[2]),

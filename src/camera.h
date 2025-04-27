@@ -36,6 +36,8 @@ class Camera {
     glm::mat4 viewMatrix() const;
     glm::mat4 projMatrix() const;
 
+    glm::mat4 mvp() const;
+
     std::vector<Geometry::Vector> overlayPoints();
 
   private:
