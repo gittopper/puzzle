@@ -2,6 +2,13 @@
 
 #include <vector>
 
+struct Color {
+    unsigned char r;
+    unsigned char g;
+    unsigned char b;
+    unsigned char a = 255;
+};
+
 class Sprite {
   public:
     enum Type { RGBA, RGB };
@@ -32,18 +39,13 @@ class Sprite {
     const unsigned char* data() const {
         return data_.data();
     }
-    void setPixel(std::size_t x,
-                  std::size_t y,
-                  unsigned char r,
-                  unsigned char g,
-                  unsigned char b,
-                  unsigned char a = 255) {
+    void setPixel(std::size_t x, std::size_t y, const Color& color) {
         auto shift = (y * glWidth() + x) * (type_ == RGBA ? 4 : 3);
-        data_[shift] = r;
-        data_[shift + 1] = g;
-        data_[shift + 2] = b;
+        data_[shift] = color.r;
+        data_[shift + 1] = color.g;
+        data_[shift + 2] = color.b;
         if (type_ == RGBA) {
-            data_[shift + 3] = a;
+            data_[shift + 3] = color.a;
         }
     }
     Type type() const {

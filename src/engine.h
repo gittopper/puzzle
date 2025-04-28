@@ -2,6 +2,7 @@
 
 #include <desktop/glrenderer.h>
 
+#include <font.h>
 #include <optional>
 #include <piecessetrenderer.h>
 #include <resourceloader.h>
@@ -41,4 +42,5 @@ class Engine {
     std::size_t cur_sol_ = 0;
     std::size_t max_sol_ = 0;
     std::optional<Sprite> sprite_;
+    Font font_;
 };

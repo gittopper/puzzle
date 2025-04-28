@@ -29,6 +29,7 @@ src/volumepuzzle.h
 src/piece.h
 src/irenderer.h
 src/vector.h
+src/font.h
 )
 
 set(COMMON_SOURCES
@@ -36,6 +37,7 @@ src/box.cpp
 src/camera.cpp
 src/mat.cpp
 src/print.cpp
+src/font.cpp
 src/solver.cpp
 src/engine.cpp
 src/utils.cpp
