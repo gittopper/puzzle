@@ -54,7 +54,7 @@ add_subdirectory(src/3rd_party)
 if (ANDROID_REGIME)
 
 set(ANDROID_SOURCES
-        src/android/Native.cpp
+        src/android/native.cpp
         src/android/glesrenderer.cpp
         src/android/androidresourceloader.cpp
         )
