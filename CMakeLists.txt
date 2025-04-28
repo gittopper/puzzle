@@ -58,7 +58,7 @@ set(ANDROID_SOURCES
         src/android/glesrenderer.cpp
         src/android/androidresourceloader.cpp
         )
-set(TARGET Native)
+set(TARGET native)
 add_library(${TARGET} SHARED ${COMMON_SOURCES} ${ANDROID_SOURCES})
 target_include_directories(${TARGET} PUBLIC
     src

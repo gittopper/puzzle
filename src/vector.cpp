@@ -6,40 +6,40 @@ float dot(const Vector& v1, const Vector& v2) {
 }
 
 Vector::Vector(float i, float j, float k) {
-    vec[0] = i;
-    vec[1] = j;
-    vec[2] = k;
+    vec_[0] = i;
+    vec_[1] = j;
+    vec_[2] = k;
 }
 
 Vector Vector::cross(const Vector v) {
     Vector r;
-    r[0] = vec[1] * v.vec[2] - vec[2] * v.vec[1];
-    r[1] = vec[2] * v.vec[0] - vec[0] * v.vec[2];
-    r[2] = vec[0] * v.vec[1] - vec[1] * v.vec[0];
+    r[0] = vec_[1] * v.vec_[2] - vec_[2] * v.vec_[1];
+    r[1] = vec_[2] * v.vec_[0] - vec_[0] * v.vec_[2];
+    r[2] = vec_[0] * v.vec_[1] - vec_[1] * v.vec_[0];
     return r;
 }
 Vector& Vector::rotate(RotType rotation) {
-    float x = vec[0];
-    float y = vec[1];
-    float z = vec[2];
+    float x = vec_[0];
+    float y = vec_[1];
+    float z = vec_[2];
 
     switch (rotation) {
         case RotateX:
-            vec[1] = z;
-            vec[2] = -y;
+            vec_[1] = z;
+            vec_[2] = -y;
             break;
         case RotateY:
-            vec[0] = -z;
-            vec[2] = x;
+            vec_[0] = -z;
+            vec_[2] = x;
             break;
         case RotateZ:
-            vec[0] = y;
-            vec[1] = -x;
+            vec_[0] = y;
+            vec_[1] = -x;
     };
     return *this;
 }
 Vector Vector::operator-(const Vector& v) const {
-    return Vector(vec[0] - v[0], vec[1] - v[1], vec[2] - v[2]);
+    return Vector(vec_[0] - v[0], vec_[1] - v[1], vec_[2] - v[2]);
 }
 bool Vector::operator==(const Vector& v) const {
     //    return vec[0] == v[0] && vec[1] == v[1] && vec[2] == v[2];
@@ -47,22 +47,22 @@ bool Vector::operator==(const Vector& v) const {
     auto lens_prod = v.len() * len();
     return std::abs(dot_prod - lens_prod) < FLOAT_EPS;
 }
-Vector Vector::operator-() const { return Vector(-vec[0], -vec[1], -vec[2]); }
+Vector Vector::operator-() const { return Vector(-vec_[0], -vec_[1], -vec_[2]); }
 Vector Vector::operator+(const Vector& v) const {
-    return Vector(vec[0] + v[0], vec[1] + v[1], vec[2] + v[2]);
+    return Vector(vec_[0] + v[0], vec_[1] + v[1], vec_[2] + v[2]);
 }
 Vector Vector::operator+=(const Vector& v) {
-    vec[0] += v[0];
-    vec[1] += v[1];
-    vec[2] += v[2];
+    vec_[0] += v[0];
+    vec_[1] += v[1];
+    vec_[2] += v[2];
     return *this;
 }
 
 Vector Vector::operator*(float f) const {
     Vector res = *this;
-    res[0] = vec[0] * f;
-    res[1] = vec[1] * f;
-    res[2] = vec[2] * f;
+    res[0] = vec_[0] * f;
+    res[1] = vec_[1] * f;
+    res[2] = vec_[2] * f;
     return res;
 }
 
@@ -79,7 +79,7 @@ Vector Vector::ortogonal(Vector v) const {
 }
 
 float Vector::len() const {
-    return sqrtf(vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2]);
+    return sqrtf(vec_[0] * vec_[0] + vec_[1] * vec_[1] + vec_[2] * vec_[2]);
 }
 
 const Vector XSHIFT(1, 0, 0), YSHIFT(0, 1, 0), ZSHIFT(0, 0, 1);

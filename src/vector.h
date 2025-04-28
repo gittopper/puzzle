@@ -25,12 +25,12 @@ public:
 
     const float& operator[](int i) const
     {
-        return vec[i];
+        return vec_[i];
     }
 
     float& operator[](int i)
     {
-        return vec[i];
+        return vec_[i];
     }
 
     Vector operator*(float f) const;
@@ -49,7 +49,7 @@ public:
     Vector ortogonal(Vector v) const;
     float len() const;
 private:
-    float vec[3];
+    float vec_[3];
 };
 
 #pragma pack(pop)

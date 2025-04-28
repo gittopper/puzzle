@@ -25,7 +25,7 @@ public class NativeLibrary
 {
     static
     {
-        System.loadLibrary("Native");
+        System.loadLibrary("native");
     }
     public static native void init(int width, int height, AssetManager assetManager);
     public static native void dragStart(int x1, int y1, int x2, int y2);

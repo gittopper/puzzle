@@ -17,7 +17,7 @@ public:
     };
 
     VolPart(VolType t, Vector coord, Vector iniDir = Vector(0, 0, 0)):
-        fillInfo(t), xyz(coord), dir(iniDir) {}
+        fill_info_(t), xyz_(coord), dir_(iniDir) {}
 
     bool operator==(const VolPart& vol) const;
 
@@ -39,33 +39,33 @@ public:
 
     const Vector& getCoords() const
     {
-        return xyz;
+        return xyz_;
     }
     void setCoords(const Vector& coords)
     {
-        xyz = coords;
+        xyz_ = coords;
     }
 
     const Vector& getDir() const
     {
-        return dir;
+        return dir_;
     }
     void setDir(const Vector& d)
     {
-        dir = d;
+        dir_ = d;
     }
 
     VolType type() const
     {
-        return fillInfo;
+        return fill_info_;
     }
     void setType(VolType t)
     {
-        fillInfo = t;
+        fill_info_ = t;
     }
 private:
 
-    VolType fillInfo;
-    Vector xyz, dir;
+    VolType fill_info_;
+    Vector xyz_, dir_;
 };
 }

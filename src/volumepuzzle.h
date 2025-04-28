@@ -32,7 +32,7 @@ class VolumePuzzle {
     std::vector<PiecesSet> solutions_;
     std::vector<PiecesSet> normalized_solutions_;
     int dim_x_, dim_y_, dim_z_;
-    mutable std::mutex lock;
+    mutable std::mutex mutex_;
     PiecesSet pieces_;
 
   private:

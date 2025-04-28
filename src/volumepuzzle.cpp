@@ -4,7 +4,7 @@ using namespace Geometry;
 
 bool VolumePuzzle::addSolution(const PiecesSet& sol) {
     {
-        std::lock_guard<std::mutex> block(lock);
+        std::lock_guard<std::mutex> block(mutex_);
         PiecesSet orderedSolution = sol;
         orderedSolution.order();
 
@@ -39,13 +39,13 @@ bool VolumePuzzle::addSolution(const PiecesSet& sol) {
 // std::mutex VolumePuzzle::lock;
 
 int VolumePuzzle::numFoundSolutions() const {
-    std::lock_guard<std::mutex> block(lock);
+    std::lock_guard<std::mutex> block(mutex_);
     int l = solutions_.size();
     return l;
 }
 
 void VolumePuzzle::getSolution(PiecesSet& sol, int i) const {
-    std::lock_guard<std::mutex> block(lock);
+    std::lock_guard<std::mutex> block(mutex_);
     assert(i >= 1 && i <= solutions_.size());
     sol = solutions_[i - 1];
 }
