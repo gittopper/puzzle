@@ -70,6 +70,7 @@ find_package(OpenMP REQUIRED)
 
 target_link_libraries(${TARGET} PUBLIC OpenMP::OpenMP_CXX glm::glm-header-only
      png_static zlibstatic
+     freetype
      )
 
 else()
@@ -118,6 +119,7 @@ find_package(OpenMP REQUIRED)
 target_link_libraries(qt_solver GL GLU Qt5::Widgets Qt5::Gui
     Qt5::OpenGL OpenMP::OpenMP_CXX glm::glm-header-only
      png_static zlibstatic
+     freetype
      )
 
 
@@ -139,6 +141,7 @@ add_executable(glut_solver
      OpenMP::OpenMP_CXX
      glm::glm-header-only
      png_static zlibstatic
+     freetype
 )
 
 endif()

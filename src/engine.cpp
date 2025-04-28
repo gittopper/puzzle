@@ -1,6 +1,7 @@
 #include "engine.h"
 
 #include <desktop/fileresourceloader.h>
+#include <freetype/freetype.h>
 
 #include <pngreader.h>
 
@@ -18,6 +19,36 @@ Engine::Engine(Geometry::VolumePuzzle& puzzle,
     auto daco2 = resource_loader->readFile("daco2.png");
     PngReader png_reader;
     sprite_ = png_reader.read(daco2, false);
+
+    FT_Library library;
+
+    if (FT_Init_FreeType(&library)) {
+        throw std::runtime_error("FT_Init_FreeType failed");
+    }
+    auto font = resource_loader->readFile("XI20.ttf");
+    FT_Face face;
+    if (FT_New_Memory_Face(library, reinterpret_cast<FT_Byte*>(font.data()),
+                           font.size(), 0, &face)) {
+        throw std::runtime_error("FT_Init_FreeType failed");
+    }
+    int h = 50;
+    FT_Set_Char_Size(face, h << 6, h << 6, 96, 96);
+    FT_UInt glyph_index = FT_Get_Char_Index(face, U'Ж');
+    if (FT_Load_Glyph(face, glyph_index, FT_LOAD_RENDER)) {
+        throw std::runtime_error("FT_Load_Glyph failed");
+    }
+    FT_Bitmap* bitmap = &(face->glyph->bitmap);
+    auto x = 10 + face->glyph->bitmap_left;
+    auto y = 10 + face->glyph->bitmap_top;
+    for (auto c = 0; c < bitmap->width; c++) {
+        for (auto r = 0; r < bitmap->rows; r++) {
+            auto gray = bitmap->buffer[r * bitmap->pitch + c];
+            if (gray > 0) {
+                sprite_.value().setPixel(x + c, y + r, gray, gray, gray, 255);
+            }
+        }
+    }
+    x += (face->glyph->advance.x >> 6);
 }
 
 Engine::~Engine() {

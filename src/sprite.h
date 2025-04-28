@@ -3,21 +3,20 @@
 #include <vector>
 
 class Sprite {
-public:
-    enum Type {
-        RGBA,
-        RGB
-    };
-    Sprite(std::size_t width, std::size_t height,
-           std::size_t gl_width, std::size_t gl_height,
-           Type type, std::vector<char>&& data):
+  public:
+    enum Type { RGBA, RGB };
+    Sprite(std::size_t width,
+           std::size_t height,
+           std::size_t gl_width,
+           std::size_t gl_height,
+           Type type,
+           std::vector<unsigned char>&& data) :
         width_(width),
         height_(height),
         gl_width_(gl_width),
         gl_height_(gl_height),
         type_(type),
-        data_(std::move(data))
-    {}
+        data_(std::move(data)) {}
     std::size_t width() const {
         return width_;
     }
@@ -30,15 +29,32 @@ public:
     std::size_t glHeight() const {
         return gl_height_;
     }
-    const char* data() const {
+    const unsigned char* data() const {
         return data_.data();
     }
-    Type type() const {return type_;}
-private:
+    void setPixel(std::size_t x,
+                  std::size_t y,
+                  unsigned char r,
+                  unsigned char g,
+                  unsigned char b,
+                  unsigned char a = 255) {
+        auto shift = (y * glWidth() + x) * (type_ == RGBA ? 4 : 3);
+        data_[shift] = r;
+        data_[shift + 1] = g;
+        data_[shift + 2] = b;
+        if (type_ == RGBA) {
+            data_[shift + 3] = a;
+        }
+    }
+    Type type() const {
+        return type_;
+    }
+
+  private:
     std::size_t width_;
     std::size_t height_;
     std::size_t gl_width_;
     std::size_t gl_height_;
     Type type_;
-    std::vector<char> data_;
+    std::vector<unsigned char> data_;
 };
