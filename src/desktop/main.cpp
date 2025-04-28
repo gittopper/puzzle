@@ -1,10 +1,7 @@
+#include <desktop/glutrenderer.h>
+
+#include <tests.h>
 #include <thread>
-
-#include "geometry.h"
-#include "glutrenderer.h"
-#include "tests.h"
-
-using namespace Geometry;
 
 int main(int argc, char** argv) {
     BREAK_ON_LINE(makeGeneralTests());

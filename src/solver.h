@@ -1,21 +1,15 @@
 #pragma once
 
+#include <atomic>
+
 #include "geometry.h"
 #include "timer.h"
 #include "volumepuzzle.h"
-#include <atomic>
 
 namespace Geometry {
 
-struct Data {
-    Data(const Geometry::Box& box) : m_box(box) {}
-    Bitset m_bs;
-    Box m_box;
-    unsigned m_numPlaced = 0;
-    PiecesSet m_solution;
-};
 class Solver {
-   public:
+  public:
     Solver(VolumePuzzle& puzzle);
 
     void solve();
@@ -23,20 +17,15 @@ class Solver {
     void multithread(bool ml = false);
     void stopSolving();
 
-   private:
+  private:
     void solveForPiece(int i_puzzle);
-    Timer m_timer;
-    VolumePuzzle& m_puzzle;
-    int m_dimX, m_dimY, m_dimZ;
-    bool m_continue_to_solve;
-    PiecesSet m_pieces;
-    unsigned m_piece_all_positions_number;
-    std::vector<PiecesSet> m_pieces_in_all_positions;
-    int m_progress;
-    bool m_search_all_solutions;
-    std::mutex mutex_;
-    std::atomic<int> m_max_sol;
-
+    struct Data {
+        Data(const Geometry::Box& box) : bbox(box) {}
+        Bitset piece_is_placed;
+        Box bbox;
+        unsigned num_placed = 0;
+        PiecesSet solution;
+    };
     void remove(Data& data, const Piece& part);
     void place(Data& data, const Piece& part);
     bool couldPlace(Data& data, const Piece& part, bool& matched) const;
@@ -49,5 +38,18 @@ class Solver {
     bool foundNewSolution(Data& data);
     void recursiveSolve(Data& data);
     void recursiveSolve(Data& data, std::size_t i_puzzle);
+
+  private:
+    Timer timer_;
+    VolumePuzzle& puzzle_;
+    int dim_x_, dim_y_, dim_z_;
+    bool continue_to_solve_;
+    PiecesSet pieces_;
+    unsigned piece_all_positions_number_;
+    std::vector<PiecesSet> pieces_in_all_positions_;
+    int progress_;
+    bool search_all_solutions_;
+    std::mutex mutex_;
+    std::atomic<int> max_sol_;
 };
 }  // namespace Geometry

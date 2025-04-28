@@ -1,3 +1,4 @@
+#include <QApplication>
 #include <QDebug>
 
 #include <desktop/fileresourceloader.h>
@@ -9,7 +10,8 @@
 namespace {
 ResourceLoaderPtr getResourceLoader() {
     auto res_loader = std::make_shared<FileResourceLoader>();
-    res_loader->setResourcesPath("./assets/");
+    res_loader->setResourcesPath(
+        QApplication::applicationDirPath().toStdString() + "/assets/");
     return res_loader;
 }
 }  // namespace

@@ -1,42 +1,23 @@
+#include <android/androidresourceloader.h>
+
 #include <engine.h>
 #include <jni.h>
 #include <utils.h>
 
 #include "glesrenderer.h"
-#include <android/androidresourceloader.h>
 
 extern "C" {
-JNIEXPORT void JNICALL
-    Java_com_gittopper_puzzle_NativeLibrary_init(JNIEnv* env,
-                                                 jobject obj,
-                                                 jint width,
-                                                 jint height,
-                                                 jobject javaAssetManager);
-JNIEXPORT void JNICALL Java_com_gittopper_puzzle_NativeLibrary_dragStart(
-    JNIEnv* env, jobject obj, jint x1, jint y1, jint x2, jint y2);
-JNIEXPORT void JNICALL Java_com_gittopper_puzzle_NativeLibrary_drag(
-    JNIEnv* env, jobject obj, jint x1, jint y1, jint x2, jint y2);
-JNIEXPORT void JNICALL
-    Java_com_gittopper_puzzle_NativeLibrary_dragStop(JNIEnv* env, jobject obj);
-JNIEXPORT void JNICALL
-    Java_com_gittopper_puzzle_NativeLibrary_step(JNIEnv* env, jobject obj);
-JNIEXPORT void JNICALL Java_com_gittopper_puzzle_NativeLibrary_moveStart(
-    JNIEnv* env, jobject obj, jint x, jint y);
-JNIEXPORT void JNICALL Java_com_gittopper_puzzle_NativeLibrary_move(JNIEnv* env,
-                                                                    jobject obj,
-                                                                    jint x,
-                                                                    jint y);
-};
 
 namespace {
 void solve(Geometry::VolumePuzzle* puzzle) {
     Geometry::Solver solver(*puzzle);
     solver.solve();
-}
 }  // namespace
 Geometry::VolumePuzzle puzzle(3, 4, 2, generateWoodPuzzles());
 std::shared_ptr<Engine> engine;
 std::mutex m;
+float lstart;
+}  // namespace
 
 JNIEXPORT void JNICALL
     Java_com_gittopper_puzzle_NativeLibrary_init(JNIEnv* env,
@@ -53,14 +34,6 @@ JNIEXPORT void JNICALL
     engine->resize(width, height);
 }
 
-JNIEXPORT void JNICALL
-    Java_com_gittopper_puzzle_NativeLibrary_step(JNIEnv* env, jobject obj) {
-    std::lock_guard<std::mutex> lock(m);
-    engine->display();
-}
-
-float lstart;
-
 JNIEXPORT void JNICALL Java_com_gittopper_puzzle_NativeLibrary_dragStart(
     JNIEnv* env, jobject obj, jint x1, jint y1, jint x2, jint y2) {
     std::lock_guard<std::mutex> lock(m);
@@ -70,11 +43,6 @@ JNIEXPORT void JNICALL Java_com_gittopper_puzzle_NativeLibrary_dragStart(
     engine->shiftStart(x, y);
 }
 
-JNIEXPORT void JNICALL
-    Java_com_gittopper_puzzle_NativeLibrary_dragStop(JNIEnv* env, jobject obj) {
-    std::lock_guard<std::mutex> lock(m);
-    engine->dragStop();
-}
 JNIEXPORT void JNICALL Java_com_gittopper_puzzle_NativeLibrary_drag(
     JNIEnv* env, jobject obj, jint x1, jint y1, jint x2, jint y2) {
     std::lock_guard<std::mutex> lock(m);
@@ -85,11 +53,24 @@ JNIEXPORT void JNICALL Java_com_gittopper_puzzle_NativeLibrary_drag(
     engine->drag(x, y);
 }
 
+JNIEXPORT void JNICALL
+    Java_com_gittopper_puzzle_NativeLibrary_dragStop(JNIEnv* env, jobject obj) {
+    std::lock_guard<std::mutex> lock(m);
+    engine->dragStop();
+}
+
+JNIEXPORT void JNICALL
+    Java_com_gittopper_puzzle_NativeLibrary_step(JNIEnv* env, jobject obj) {
+    std::lock_guard<std::mutex> lock(m);
+    engine->display();
+}
+
 JNIEXPORT void JNICALL Java_com_gittopper_puzzle_NativeLibrary_moveStart(
     JNIEnv* env, jobject obj, jint x, jint y) {
     std::lock_guard<std::mutex> lock(m);
     engine->rotateStart(x, y);
 }
+
 JNIEXPORT void JNICALL Java_com_gittopper_puzzle_NativeLibrary_move(JNIEnv* env,
                                                                     jobject obj,
                                                                     jint x,
@@ -97,3 +78,5 @@ JNIEXPORT void JNICALL Java_com_gittopper_puzzle_NativeLibrary_move(JNIEnv* env,
     std::lock_guard<std::mutex> lock(m);
     engine->drag(x, y);
 }
+
+}  // namespace

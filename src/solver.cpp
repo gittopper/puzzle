@@ -6,18 +6,18 @@
 
 namespace Geometry {
 Solver::Solver(VolumePuzzle& puzzleInstance) :
-    m_continue_to_solve(true),
-    m_max_sol(0),
-    m_progress(0),
-    m_search_all_solutions(true),
-    m_puzzle(puzzleInstance),
-    m_dimX(m_puzzle.getXDim()),
-    m_dimY(m_puzzle.getYDim()),
-    m_dimZ(m_puzzle.getZDim()) {
-    m_pieces = m_puzzle.getPieces();
-    for (unsigned pn = 0; pn < m_pieces.size(); pn++) {
-        m_piece_all_positions_number = 0;
-        const Piece& piece = m_pieces[pn];
+    continue_to_solve_(true),
+    max_sol_(0),
+    progress_(0),
+    search_all_solutions_(true),
+    puzzle_(puzzleInstance),
+    dim_x_(puzzle_.getXDim()),
+    dim_y_(puzzle_.getYDim()),
+    dim_z_(puzzle_.getZDim()) {
+    pieces_ = puzzle_.getPieces();
+    for (unsigned pn = 0; pn < pieces_.size(); pn++) {
+        piece_all_positions_number_ = 0;
+        const Piece& piece = pieces_[pn];
         Piece copy0 = piece;
         PiecesSet one_piece_all_positions;
         std::vector<BBox> piecesBoxes;
@@ -30,11 +30,11 @@ Solver::Solver(VolumePuzzle& puzzleInstance) :
                 Piece copy2 = copy1;
                 for (int j = 0; j < 4; j++) {
                     BBox box = copy2.rotate(RotateZ).getBBox();
-                    copy2.shift(-box.minV);
+                    copy2.shift(-box.minV());
 
-                    if (m_dimX - box.getXSize() < 1 ||
-                        m_dimY - box.getYSize() < 1 ||
-                        m_dimZ - box.getZSize() < 1)
+                    if (dim_x_ - box.getXSize() < 1 ||
+                        dim_y_ - box.getYSize() < 1 ||
+                        dim_z_ - box.getZSize() < 1)
                         continue;
 
                     for (const Piece& p : one_piece_all_positions) {
@@ -45,19 +45,19 @@ Solver::Solver(VolumePuzzle& puzzleInstance) :
                 }
             }
         }
-        m_piece_all_positions_number += one_piece_all_positions.size();
-        m_pieces_in_all_positions.push_back(one_piece_all_positions);
+        piece_all_positions_number_ += one_piece_all_positions.size();
+        pieces_in_all_positions_.push_back(one_piece_all_positions);
     }
 }
 
 void Solver::remove(Data& data, const Piece& part) {
-    data.m_box.remove(part.parts);
-    data.m_numPlaced--;
+    data.bbox.remove(part.parts);
+    data.num_placed--;
 }
 
 void Solver::place(Data& data, const Piece& part) {
-    data.m_box.add(part.parts);
-    data.m_numPlaced++;
+    data.bbox.add(part.parts);
+    data.num_placed++;
     return;
 }
 
@@ -65,8 +65,8 @@ bool Solver::couldPlace(Data& data, const Piece& part, bool& matched) const {
     matched = true;
     for (unsigned i = 0; i < part.parts.size(); i++) {
         const VolPart& vol = part.parts[i];
-        if (!data.m_box.isInside(vol.getCoords()) ||
-            !data.m_box.getVolPart(vol.getCoords()).couldPlace(vol)) {
+        if (!data.bbox.isInside(vol.getCoords()) ||
+            !data.bbox.getVolPart(vol.getCoords()).couldPlace(vol)) {
             return false;
         }
 
@@ -76,43 +76,49 @@ bool Solver::couldPlace(Data& data, const Piece& part, bool& matched) const {
             continue;
         }
         matched = matched ||
-                  data.m_box.getVolPart(vol.getCoords()).shareOneOfSides(vol);
+                  data.bbox.getVolPart(vol.getCoords()).shareOneOfSides(vol);
         if (matched) {
             continue;
         }
 
-        matched = matched || data.m_box.getVolPart(vol.getCoords() - XSHIFT)
-                                 .shareOneOfSides(vol);
+        matched =
+            matched ||
+            data.bbox.getVolPart(vol.getCoords() - XSHIFT).shareOneOfSides(vol);
         if (matched) {
             continue;
         }
 
-        matched = matched || data.m_box.getVolPart(vol.getCoords() + XSHIFT)
-                                 .shareOneOfSides(vol);
+        matched =
+            matched ||
+            data.bbox.getVolPart(vol.getCoords() + XSHIFT).shareOneOfSides(vol);
         if (matched) {
             continue;
         }
 
-        matched = matched || data.m_box.getVolPart(vol.getCoords() - YSHIFT)
-                                 .shareOneOfSides(vol);
+        matched =
+            matched ||
+            data.bbox.getVolPart(vol.getCoords() - YSHIFT).shareOneOfSides(vol);
         if (matched) {
             continue;
         }
 
-        matched = matched || data.m_box.getVolPart(vol.getCoords() + YSHIFT)
-                                 .shareOneOfSides(vol);
+        matched =
+            matched ||
+            data.bbox.getVolPart(vol.getCoords() + YSHIFT).shareOneOfSides(vol);
         if (matched) {
             continue;
         }
 
-        matched = matched || data.m_box.getVolPart(vol.getCoords() - ZSHIFT)
-                                 .shareOneOfSides(vol);
+        matched =
+            matched ||
+            data.bbox.getVolPart(vol.getCoords() - ZSHIFT).shareOneOfSides(vol);
         if (matched) {
             continue;
         }
 
-        matched = matched || data.m_box.getVolPart(vol.getCoords() + ZSHIFT)
-                                 .shareOneOfSides(vol);
+        matched =
+            matched ||
+            data.bbox.getVolPart(vol.getCoords() + ZSHIFT).shareOneOfSides(vol);
     }
 
     return true;
@@ -124,15 +130,15 @@ bool Solver::hasSqueezed(Data& data, const Piece& part) const {
     part.addToBBox(bbox);
     bbox.grow();
 
-    for (int x = bbox.minV[0]; x <= bbox.maxV[0]; x++) {
-        for (int y = bbox.minV[1]; y <= bbox.maxV[1]; y++) {
-            for (int z = bbox.minV[2]; z <= bbox.maxV[2]; z++) {
+    for (int x = bbox.minV()[0]; x <= bbox.maxV()[0]; x++) {
+        for (int y = bbox.minV()[1]; y <= bbox.maxV()[1]; y++) {
+            for (int z = bbox.minV()[2]; z <= bbox.maxV()[2]; z++) {
                 //          if (isSqueezed(box.getVolPart(x, y, z])) return
                 //          true;
                 BREAK_ON_LINE(
-                    data.m_box.isSqueezed(data.m_box.getVolPart(x, y, z)) ==
-                    data.m_box.isSqueezedV2(data.m_box.getVolPart(x, y, z)));
-                if (data.m_box.isSqueezedV2(data.m_box.getVolPart(x, y, z))) {
+                    data.bbox.isSqueezed(data.bbox.getVolPart(x, y, z)) ==
+                    data.bbox.isSqueezedV2(data.bbox.getVolPart(x, y, z)));
+                if (data.bbox.isSqueezedV2(data.bbox.getVolPart(x, y, z))) {
                     return true;
                 }
             }
@@ -149,7 +155,7 @@ bool Solver::tryToPlace(Data& data, const Piece& part) {
         return false;
     }
 
-    if (data.m_numPlaced && !matched) {
+    if (data.num_placed && !matched) {
         return false;
     }
 
@@ -164,22 +170,22 @@ bool Solver::tryToPlace(Data& data, const Piece& part) {
 }
 
 bool Solver::verifyAlgorithm(Data& data) {
-    Box tt = m_puzzle.getEmptyBox();
+    Box tt = puzzle_.getEmptyBox();
 
-    for (unsigned i = 0; i < data.m_solution.size(); i++) {
-        tt.add(data.m_solution[i].parts);
+    for (unsigned i = 0; i < data.solution.size(); i++) {
+        tt.add(data.solution[i].parts);
     }
 
-    return tt == data.m_box;
+    return tt == data.bbox;
 }
 
 bool Solver::foundNewSolution(Data& data) {
     std::lock_guard<std::mutex> lock(mutex_);
-    if (m_max_sol >= data.m_numPlaced) {
+    if (max_sol_ >= data.num_placed) {
         return false;
     }
-    if (m_puzzle.addSolution(data.m_solution)) {
-        m_max_sol = data.m_numPlaced;
+    if (puzzle_.addSolution(data.solution)) {
+        max_sol_ = data.num_placed;
         return true;
     }
 
@@ -189,13 +195,13 @@ bool Solver::foundNewSolution(Data& data) {
 void Solver::multithread(bool ml) {}
 
 void Solver::stopSolving() {
-    m_continue_to_solve = false;
+    continue_to_solve_ = false;
 }
 
 void Solver::solveForPiece(int i_puzzle) {
-    Data data(m_puzzle.getEmptyBox());
-    data.m_bs.resize(m_pieces.size(), true);
-    data.m_bs[i_puzzle] = false;
+    Data data(puzzle_.getEmptyBox());
+    data.piece_is_placed.resize(pieces_.size(), true);
+    data.piece_is_placed[i_puzzle] = false;
 
     recursiveSolve(data, i_puzzle);
 }
@@ -203,22 +209,22 @@ void Solver::solveForPiece(int i_puzzle) {
 void Solver::recursiveSolve(Data& data) {
     BREAK_ON_LINE(verifyAlgorithm(data));
 
-    if (m_max_sol < data.m_numPlaced) {
+    if (max_sol_ < data.num_placed) {
         foundNewSolution(data);
     }
 
-    if (data.m_numPlaced == m_pieces.size()) {
+    if (data.num_placed == pieces_.size()) {
         foundNewSolution(data);
         return;
     }
-    if (data.m_numPlaced == 1) {
+    if (data.num_placed == 1) {
         std::cout << "Progress:"
-                  << (float(++m_progress) / m_piece_all_positions_number)
+                  << (float(++progress_) / piece_all_positions_number_)
                   << std::endl;
-        std::cout << "Elapsed time:" << m_timer.asString() << std::endl;
+        std::cout << "Elapsed time:" << timer_.asString() << std::endl;
     }
-    for (unsigned i_puzzle = 0; i_puzzle < m_pieces.size(); i_puzzle++) {
-        if (!data.m_bs[i_puzzle]) {
+    for (unsigned i_puzzle = 0; i_puzzle < pieces_.size(); i_puzzle++) {
+        if (!data.piece_is_placed[i_puzzle]) {
             continue;
         }
         recursiveSolve(data, i_puzzle);
@@ -226,16 +232,16 @@ void Solver::recursiveSolve(Data& data) {
 }
 
 void Solver::recursiveSolve(Data& data, std::size_t i_puzzle) {
-    data.m_bs[i_puzzle] = false;
-    PiecesSet& piece_all_positions = m_pieces_in_all_positions[i_puzzle];
+    data.piece_is_placed[i_puzzle] = false;
+    PiecesSet& piece_all_positions = pieces_in_all_positions_[i_puzzle];
     for (unsigned i = 0; i < piece_all_positions.size(); i++) {
         Piece cur_piece = piece_all_positions[i];
         const BBox boundaries = cur_piece.getBBox();
 
-        int xmax = m_dimX - boundaries.getXSize();
-        int ymax = m_dimY - boundaries.getYSize();
-        int zmax = m_dimZ - boundaries.getZSize();
-        if (data.m_numPlaced == 0) {
+        int xmax = dim_x_ - boundaries.getXSize();
+        int ymax = dim_y_ - boundaries.getYSize();
+        int zmax = dim_z_ - boundaries.getZSize();
+        if (data.num_placed == 0) {
             xmax = std::min(xmax, xmax / 2 + 1);
             ymax = std::min(ymax, ymax / 2 + 1);
             zmax = std::min(zmax, zmax / 2 + 1);
@@ -244,7 +250,7 @@ void Solver::recursiveSolve(Data& data, std::size_t i_puzzle) {
         for (int x = 1; x <= xmax; x++) {
             for (int y = 1; y <= ymax; y++) {
                 for (int z = 1; z <= zmax; z++) {
-                    if (!m_continue_to_solve) {
+                    if (!continue_to_solve_) {
                         return;
                     }
 
@@ -252,24 +258,24 @@ void Solver::recursiveSolve(Data& data, std::size_t i_puzzle) {
                     cur_piece.shift(s);
 
                     if (tryToPlace(data, cur_piece)) {
-                        data.m_solution.push_back(cur_piece);
+                        data.solution.push_back(cur_piece);
                         recursiveSolve(data);
                         remove(data, cur_piece);
-                        data.m_solution.pop_back();
+                        data.solution.pop_back();
                     }
                     cur_piece.shift(-s);
                 }
             }
         }
     }
-    data.m_bs[i_puzzle] = true;
+    data.piece_is_placed[i_puzzle] = true;
 }
 
 void Solver::solve() {
     std::cout << "starting to solve puzzle" << std::endl;
-    m_timer.start();
+    timer_.start();
     std::vector<std::thread> threads;
-    auto num_threads = m_pieces.size();
+    auto num_threads = pieces_.size();
     for (auto i_thread = 0UL; i_thread < num_threads; ++i_thread) {
         std::cout << "starting " << i_thread << " thread" << std::endl;
         threads.push_back(std::thread([this, i_thread]() {
@@ -279,9 +285,9 @@ void Solver::solve() {
     for (auto& t : threads) {
         t.join();
     }
-    m_timer.stop();
+    timer_.stop();
     std::cout << "solved" << std::endl;
-    std::cout << getLogString("finish time: ", m_timer.time()) << std::endl;
+    std::cout << getLogString("finish time: ", timer_.time()) << std::endl;
 }
 
 }  // namespace Geometry

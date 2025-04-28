@@ -25,11 +25,9 @@ src/utils.h
 src/volpart.h
 src/resourceloader.h
 src/piecessetrenderer.h
-src/idrawer.h
 src/volumepuzzle.h
 src/piece.h
 src/irenderer.h
-src/utils3d.h
 src/vector.h
 )
 
@@ -47,8 +45,8 @@ src/volumepuzzle.cpp
 src/piece.cpp
 src/irenderer.cpp
 src/piecessetrenderer.cpp
-src/utils3d.cpp
 src/vector.cpp
+src/tests.cpp
 )
 
 add_subdirectory(src/3rd_party)
@@ -112,6 +110,7 @@ src
 src/desktop
 qt
 )
+target_compile_definitions(qt_solver PUBLIC QT_ENV=ON)
 file(COPY src/assets DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 find_package(OpenMP REQUIRED)
