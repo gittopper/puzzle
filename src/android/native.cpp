@@ -46,7 +46,7 @@ JNIEXPORT void JNICALL Java_com_gittopper_puzzle_NativeLibrary_drag(
     JNIEnv* env, jobject obj, jint x1, jint y1, jint x2, jint y2) {
     std::lock_guard<std::mutex> lock(m);
     float l = std::sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
-    engine->zoom(1 - (l - lstart) / lstart / 10.);
+    engine->zoom(lstart / l );
     float x = (x1 + x2) * 0.5;
     float y = (y1 + y2) * 0.5;
     engine->drag(x, y);

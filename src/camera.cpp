@@ -67,7 +67,7 @@ void Camera::rotate(float angleX, float angleY) {
 }
 
 void Camera::zoom(float z) {
-    zoom_ *= z;
+    zoom_ = z;
 }
 
 void Camera::zoomDrag() {
