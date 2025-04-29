@@ -1,4 +1,5 @@
 #include <cassert>
+#include <cuchar>
 #include <font.h>
 #include <stdexcept>
 
@@ -47,11 +48,11 @@ void Font::renderText(Sprite& sprite,
         cur_x += (face_->glyph->advance.x >> 6);
     }
 }
-std::pair<int, int> Font::getTextWidthHeight(const UString& text) {
-    auto width = 0;
+Rect2D Font::getTextRect(const UString& text) {
+    Rect2D rect{};
     auto ascender = face_->size->metrics.ascender >> 6;
     auto descender = face_->size->metrics.descender >> 6;
-    auto height = ascender - descender;
+    rect.height = ascender - descender;
     for (auto& symbol : text) {
         FT_UInt glyph_index = FT_Get_Char_Index(face_, symbol);
         if (FT_Load_Glyph(face_, glyph_index, FT_LOAD_RENDER)) {
@@ -63,9 +64,19 @@ std::pair<int, int> Font::getTextWidthHeight(const UString& text) {
         auto glyph_advance = face_->glyph->advance.x >> 6;
         auto glyph_width = bitmap->width;
         auto glyph_height = bitmap->rows;
-        assert(height >= glyph_y + glyph_height);
-        //        assert(glyph_advance >= glyph_x + glyph_width);
-        width += (face_->glyph->advance.x >> 6);
+        assert(rect.height >= glyph_y + glyph_height);
+        assert(glyph_advance + 1 >= glyph_x + glyph_width);
+        rect.width += (face_->glyph->advance.x >> 6);
     }
-    return {width, height};
+    return rect;
+}
+UString Font::convertToUtf32(const std::string& text) {
+    UString result;
+    std::mbstate_t state{};
+    for (const auto& c : text) {
+        char32_t c32;
+        std::mbrtoc32(&c32, &c, 1, &state);
+        result.push_back(c32);
+    }
+    return result;
 }

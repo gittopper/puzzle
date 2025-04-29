@@ -30,6 +30,7 @@ src/piece.h
 src/irenderer.h
 src/vector.h
 src/font.h
+src/menu.h
 )
 
 set(COMMON_SOURCES
@@ -38,6 +39,7 @@ src/camera.cpp
 src/mat.cpp
 src/print.cpp
 src/font.cpp
+src/menu.cpp
 src/solver.cpp
 src/engine.cpp
 src/utils.cpp

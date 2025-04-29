@@ -12,7 +12,8 @@ Engine::Engine(Geometry::VolumePuzzle& puzzle,
     renderer_(renderer),
     solver_(puzzle),
     piecesset_renderer_(*renderer),
-    font_(resource_loader->readFile("XI20.ttf")) {
+    font_(std::make_shared<Font>(resource_loader->readFile("XI20.ttf"))),
+    menu_(font_) {
     solving_thread_ = std::thread([this]() {
         solver_.solve();
     });
@@ -20,13 +21,6 @@ Engine::Engine(Geometry::VolumePuzzle& puzzle,
     auto daco2 = resource_loader->readFile("daco2.png");
     PngReader png_reader;
     sprite_ = png_reader.read(daco2, false);
-
-    font_.setColor({255, 0, 255, 100});
-    font_.setFontSize(100);
-    auto text = U"Привет!:)";
-    auto [text_width, text_height] = font_.getTextWidthHeight(text);
-    sprite_.value().drawRect(10, 10, text_width, text_height, {0, 255, 0, 100});
-    font_.renderText(sprite_.value(), 10, 10, text);
 }
 
 Engine::~Engine() {
@@ -38,6 +32,25 @@ void Engine::setup() {
     renderer_->setup();
 }
 
+void Engine::renderOverlay() {
+    if (menu_.items().size() != puzzle_.numFoundSolutions() ||
+        sprite_.value().width() != renderer_->camera().width() ||
+        sprite_.value().height() != renderer_->camera().height()) {
+        sprite_ = Sprite(renderer_->camera().width(),
+                         renderer_->camera().height(), Sprite::RGBA);
+        Geometry::PiecesSet sol;
+        std::vector<UString> items;
+        for (auto i = 1UL; i <= puzzle_.numFoundSolutions(); ++i) {
+            puzzle_.getSolution(sol, i);
+            std::stringstream s;
+            s << i << "(" << sol.tag() << ")";
+            items.push_back(Font::convertToUtf32(s.str()));
+        }
+        menu_.setItems(items);
+        menu_.render(sprite_.value());
+    }
+}
+
 void Engine::display() {
     renderer_->startFrame();
     Geometry::PiecesSet sol;
@@ -47,6 +60,7 @@ void Engine::display() {
 
     piecesset_renderer_.render(sol);
 
+    renderOverlay();
     if (sprite_.has_value()) {
         renderer_->drawOverlay(sprite_.value());
     }
@@ -56,10 +70,15 @@ void Engine::display() {
 
 void Engine::resize(int width, int height) {
     renderer_->resize(width, height);
+    renderOverlay();
 }
 
 void Engine::rotateStart(int x, int y) {
     renderer_->camera().rotateStart(x, y);
+    auto selected_item = menu_.selectItem(x, y);
+    if (selected_item >= 0) {
+        showSolution(selected_item + 1);
+    }
 }
 
 void Engine::shiftStart(int x, int y) {

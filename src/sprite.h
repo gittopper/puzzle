@@ -12,6 +12,13 @@ struct Color {
 class Sprite {
   public:
     enum Type { RGBA, RGB };
+    Sprite(std::size_t width, std::size_t height, Type type) :
+        width_(width),
+        height_(height),
+        gl_width_(width),
+        gl_height_(height),
+        type_(type),
+        data_(width * height * (type == RGBA ? 4 : 3), 0) {}
     Sprite(std::size_t width,
            std::size_t height,
            std::size_t gl_width,

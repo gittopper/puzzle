@@ -5,7 +5,7 @@
 #include <sstream>
 #include <string>
 
-using Clock = std::chrono::high_resolution_clock;
+using Clock = std::chrono::system_clock;
 
 class Timer {
   public:
