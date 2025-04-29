@@ -1,3 +1,4 @@
+#include <cassert>
 #include <font.h>
 #include <stdexcept>
 
@@ -33,10 +34,11 @@ void Font::renderText(Sprite& sprite,
         auto glyph_x = cur_x + face_->glyph->bitmap_left;
         auto glyph_y = y + ascender - face_->glyph->bitmap_top;
         auto color = color_;
+        auto transparency = color_.a / 255.;
         for (auto c = 0; c < bitmap->width; ++c) {
             for (auto r = 0; r < bitmap->rows; ++r) {
                 auto gray = bitmap->buffer[r * bitmap->pitch + c];
-                color.a = gray;
+                color.a = gray * transparency;
                 if (gray > 0) {
                     sprite.setPixel(glyph_x + c, glyph_y + r, color);
                 }
@@ -44,4 +46,26 @@ void Font::renderText(Sprite& sprite,
         }
         cur_x += (face_->glyph->advance.x >> 6);
     }
+}
+std::pair<int, int> Font::getTextWidthHeight(const UString& text) {
+    auto width = 0;
+    auto ascender = face_->size->metrics.ascender >> 6;
+    auto descender = face_->size->metrics.descender >> 6;
+    auto height = ascender - descender;
+    for (auto& symbol : text) {
+        FT_UInt glyph_index = FT_Get_Char_Index(face_, symbol);
+        if (FT_Load_Glyph(face_, glyph_index, FT_LOAD_RENDER)) {
+            throw std::runtime_error("FT_Load_Glyph failed");
+        }
+        FT_Bitmap* bitmap = &(face_->glyph->bitmap);
+        auto glyph_x = face_->glyph->bitmap_left;
+        auto glyph_y = ascender - face_->glyph->bitmap_top;
+        auto glyph_advance = face_->glyph->advance.x >> 6;
+        auto glyph_width = bitmap->width;
+        auto glyph_height = bitmap->rows;
+        assert(height >= glyph_y + glyph_height);
+        //        assert(glyph_advance >= glyph_x + glyph_width);
+        width += (face_->glyph->advance.x >> 6);
+    }
+    return {width, height};
 }

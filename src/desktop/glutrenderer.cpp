@@ -110,11 +110,7 @@ void GlutRenderer::render() {
         Geometry::PiecesSet solution;
         puzzle.getSolution(solution, num_solutions_);
         std::stringstream s;
-        s << num_solutions_ << "(";
-        for (auto& piece : solution) {
-            s << piece.id;
-        }
-        s << ")";
+        s << num_solutions_ << "(" << solution.tag() << ")";
         glutAddMenuEntry(s.str().c_str(), num_solutions_);
     }
 }

@@ -21,9 +21,12 @@ Engine::Engine(Geometry::VolumePuzzle& puzzle,
     PngReader png_reader;
     sprite_ = png_reader.read(daco2, false);
 
-    font_.setColor({255, 0, 255, 255});
-    font_.setFontSize(50);
-    font_.renderText(sprite_.value(), 10, 10, U"Привет!:)");
+    font_.setColor({255, 0, 255, 100});
+    font_.setFontSize(100);
+    auto text = U"Привет!:)";
+    auto [text_width, text_height] = font_.getTextWidthHeight(text);
+    sprite_.value().drawRect(10, 10, text_width, text_height, {0, 255, 0, 100});
+    font_.renderText(sprite_.value(), 10, 10, text);
 }
 
 Engine::~Engine() {

@@ -1,5 +1,6 @@
 #include "solver.h"
 
+#include <logger.hpp>
 #include <thread>
 
 #include "utils.h"
@@ -218,10 +219,8 @@ void Solver::recursiveSolve(Data& data) {
         return;
     }
     if (data.num_placed == 1) {
-        std::cout << "Progress:"
-                  << (float(++progress_) / piece_all_positions_number_)
-                  << std::endl;
-        std::cout << "Elapsed time:" << timer_.asString() << std::endl;
+        LOGI("Progress:", float(++progress_) / piece_all_positions_number_);
+        LOGI("Elapsed time:", timer_.elapsedAsString());
     }
     for (unsigned i_puzzle = 0; i_puzzle < pieces_.size(); i_puzzle++) {
         if (!data.piece_is_placed[i_puzzle]) {
@@ -272,12 +271,12 @@ void Solver::recursiveSolve(Data& data, std::size_t i_puzzle) {
 }
 
 void Solver::solve() {
-    std::cout << "starting to solve puzzle" << std::endl;
+    LOGI("starting to solve puzzle");
     timer_.start();
     std::vector<std::thread> threads;
     auto num_threads = pieces_.size();
     for (auto i_thread = 0UL; i_thread < num_threads; ++i_thread) {
-        std::cout << "starting " << i_thread << " thread" << std::endl;
+        LOGI("starting ", i_thread, " thread");
         threads.push_back(std::thread([this, i_thread]() {
             solveForPiece(i_thread);
         }));
@@ -286,8 +285,8 @@ void Solver::solve() {
         t.join();
     }
     timer_.stop();
-    std::cout << "solved" << std::endl;
-    std::cout << getLogString("finish time: ", timer_.time()) << std::endl;
+    LOGI("solved!");
+    LOGI("elapsed time: ", timer_.elapsedAsString());
 }
 
 }  // namespace Geometry

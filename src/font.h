@@ -21,6 +21,7 @@ class Font {
                     std::size_t x,
                     std::size_t y,
                     const UString& text);
+    std::pair<int, int> getTextWidthHeight(const UString& text);
 
   private:
     std::vector<char> font_ttf_data_;

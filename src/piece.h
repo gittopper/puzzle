@@ -1,27 +1,24 @@
 #pragma once
 
-#include "vector.h"
-#include "mat.h"
-#include "volpart.h"
 #include "bbox.h"
 #include "box.h"
+#include "mat.h"
+#include "vector.h"
+#include "volpart.h"
 
-namespace Geometry
-{
+namespace Geometry {
 
 using Bitset = std::vector<bool>;
 
-class Piece
-{
-public:
-    Piece(int n):
-        id(n) {}
+class Piece {
+  public:
+    Piece(int n) : id(n) {}
 
     Piece& rotate(RotType rot);
 
     Piece& rotate(Mat rot);
 
-    bool operator == (const Piece& part) const;
+    bool operator==(const Piece& part) const;
 
     Piece& shift(const Vector& shift);
 
@@ -39,22 +36,20 @@ public:
 
     Piece copy() const;
 
-
     std::size_t id;
     std::vector<VolPart> parts;
 };
 
-class PiecesSet: public std::vector<Piece>
-{
-public:
-    template<typename ...Args>
-    PiecesSet(Args&&... args):
-             std::vector<Piece>{std::forward<Args>(args)...}
-    {}
+class PiecesSet : public std::vector<Piece> {
+  public:
+    template<typename... Args>
+    PiecesSet(Args&&... args) :
+        std::vector<Piece>{std::forward<Args>(args)...} {}
     bool operator==(const PiecesSet& set) const;
     void rotate(Mat rot);
     void shift(Vector v);
     void order();
+    std::string tag() const;
 };
 
-}
+}  // namespace Geometry

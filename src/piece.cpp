@@ -109,9 +109,17 @@ void PiecesSet::order() {
 }
 
 void PiecesSet::shift(Vector v) {
-    for (std::vector<Piece>::iterator it = begin(); it != end(); ++it) {
-        (*it).shift(v);
+    for (auto& piece : *this) {
+        piece.shift(v);
     }
+}
+
+std::string PiecesSet::tag() const {
+    std::string res;
+    for (auto& piece : *this) {
+        res += std::to_string(piece.id);
+    }
+    return res;
 }
 
 }  // namespace Geometry

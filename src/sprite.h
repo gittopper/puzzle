@@ -48,6 +48,17 @@ class Sprite {
             data_[shift + 3] = color.a;
         }
     }
+    void drawRect(std::size_t x,
+                  std::size_t y,
+                  std::size_t width,
+                  std::size_t height,
+                  const Color& color) {
+        for (auto i = x; i < x + width; ++i) {
+            for (auto j = y; j < y + height; ++j) {
+                setPixel(i, j, color);
+            }
+        }
+    }
     Type type() const {
         return type_;
     }

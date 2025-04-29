@@ -57,8 +57,8 @@ class Timer {
         return ss.str();
     }
 
-    std::string asString() const {
-        return asString(now());
+    std::string elapsedAsString() const {
+        return asString(time());
     }
 
     ~Timer() {}
