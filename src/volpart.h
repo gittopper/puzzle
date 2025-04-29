@@ -1,22 +1,15 @@
 #pragma once
 
 #include "base.h"
-#include "vector.h"
 #include "mat.h"
+#include "vector.h"
 
-namespace Geometry
-{
-class VolPart
-{
-public:
-    enum class VolType
-    {
-        Empty,
-        Full,
-        Angle
-    };
+namespace Geometry {
+class VolPart {
+  public:
+    enum class VolType { Empty, Full, Angle };
 
-    VolPart(VolType t, Vector coord, Vector iniDir = Vector(0, 0, 0)):
+    VolPart(VolType t, Vector coord, Vector iniDir = Vector(0, 0, 0)) :
         fill_info_(t), xyz_(coord), dir_(iniDir) {}
 
     bool operator==(const VolPart& vol) const;
@@ -37,35 +30,29 @@ public:
 
     bool shareOneOfSides(const VolPart& another) const;
 
-    const Vector& getCoords() const
-    {
+    const Vector& getCoords() const {
         return xyz_;
     }
-    void setCoords(const Vector& coords)
-    {
+    void setCoords(const Vector& coords) {
         xyz_ = coords;
     }
 
-    const Vector& getDir() const
-    {
+    const Vector& getDir() const {
         return dir_;
     }
-    void setDir(const Vector& d)
-    {
+    void setDir(const Vector& d) {
         dir_ = d;
     }
 
-    VolType type() const
-    {
+    VolType type() const {
         return fill_info_;
     }
-    void setType(VolType t)
-    {
+    void setType(VolType t) {
         fill_info_ = t;
     }
-private:
 
+  private:
     VolType fill_info_;
     Vector xyz_, dir_;
 };
-}
+}  // namespace Geometry

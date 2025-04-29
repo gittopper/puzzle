@@ -7,8 +7,12 @@ bool VolPart::operator==(const VolPart& vol) const {
 }
 
 bool VolPart::hasSide(int dim, int val) const {
-    if (fill_info_ == VolType::Empty) return false;
-    if (fill_info_ == VolType::Full) return true;
+    if (fill_info_ == VolType::Empty) {
+        return false;
+    }
+    if (fill_info_ == VolType::Full) {
+        return true;
+    }
     BREAK_ON_LINE(!dir_[dim] || dir_[dim] * dir_[dim] == 1);
     return dir_[dim] * (1 - 2 * val) >= 0;
 }
@@ -37,13 +41,17 @@ VolPart& VolPart::operator+=(const VolPart& v) {
 VolPart& VolPart::rotate(RotType rot) {
     BREAK_ON_LINE(fill_info_ != VolType::Empty);
     xyz_.rotate(rot);
-    if (fill_info_ == VolType::Angle) dir_.rotate(rot);
+    if (fill_info_ == VolType::Angle) {
+        dir_.rotate(rot);
+    }
     return *this;
 }
 
 VolPart& VolPart::rotate(const Mat& m) {
     xyz_ = m * xyz_;
-    if (fill_info_ == VolType::Angle) dir_ = m * dir_;
+    if (fill_info_ == VolType::Angle) {
+        dir_ = m * dir_;
+    }
     return *this;
 }
 
@@ -74,8 +82,8 @@ bool VolPart::couldPlace(const VolPart& another) const {
     BREAK_ON_LINE(xyz_ == another.xyz_);
     BREAK_ON_LINE(another.fill_info_ != VolType::Empty);
     return fill_info_ == VolType::Empty ||
-           fill_info_ == VolType::Angle && another.fill_info_ == VolType::Angle &&
-               dir_ == -another.dir_ ||
+           fill_info_ == VolType::Angle &&
+               another.fill_info_ == VolType::Angle && dir_ == -another.dir_ ||
            fill_info_ == VolType::Full && another.fill_info_ == VolType::Empty;
 }
 bool VolPart::shareOneOfSides(const VolPart& another) const {

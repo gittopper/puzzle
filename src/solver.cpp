@@ -6,12 +6,12 @@
 #include "utils.h"
 
 namespace Geometry {
-Solver::Solver(VolumePuzzle& puzzleInstance) :
+Solver::Solver(VolumePuzzle& puzzle) :
     continue_to_solve_(true),
     max_sol_(0),
     progress_(0),
     search_all_solutions_(true),
-    puzzle_(puzzleInstance),
+    puzzle_(puzzle),
     dim_x_(puzzle_.getXDim()),
     dim_y_(puzzle_.getYDim()),
     dim_z_(puzzle_.getZDim()) {
@@ -21,7 +21,7 @@ Solver::Solver(VolumePuzzle& puzzleInstance) :
         const Piece& piece = pieces_[pn];
         Piece copy0 = piece;
         PiecesSet one_piece_all_positions;
-        std::vector<BBox> piecesBoxes;
+        std::vector<BBox> pieces_boxes;
         for (int k = 0; k < 4; k++) {
             copy0.rotate(RotateX);
             auto copy1 = copy0;
@@ -39,10 +39,12 @@ Solver::Solver(VolumePuzzle& puzzleInstance) :
                         continue;
 
                     for (const Piece& p : one_piece_all_positions) {
-                        if (p == copy2) continue;
+                        if (p == copy2) {
+                            continue;
+                        }
                     }
                     one_piece_all_positions.push_back(copy2);
-                    piecesBoxes.push_back(box);
+                    pieces_boxes.push_back(box);
                 }
             }
         }
@@ -63,15 +65,13 @@ void Solver::place(Data& data, const Piece& part) {
 }
 
 bool Solver::couldPlace(Data& data, const Piece& part, bool& matched) const {
-    matched = true;
+    matched = false;
     for (unsigned i = 0; i < part.parts.size(); i++) {
         const VolPart& vol = part.parts[i];
         if (!data.bbox.isInside(vol.getCoords()) ||
             !data.bbox.getVolPart(vol.getCoords()).couldPlace(vol)) {
             return false;
         }
-
-        continue;
 
         if (matched) {
             continue;
@@ -134,8 +134,6 @@ bool Solver::hasSqueezed(Data& data, const Piece& part) const {
     for (int x = bbox.minV()[0]; x <= bbox.maxV()[0]; x++) {
         for (int y = bbox.minV()[1]; y <= bbox.maxV()[1]; y++) {
             for (int z = bbox.minV()[2]; z <= bbox.maxV()[2]; z++) {
-                //          if (isSqueezed(box.getVolPart(x, y, z])) return
-                //          true;
                 BREAK_ON_LINE(
                     data.bbox.isSqueezed(data.bbox.getVolPart(x, y, z)) ==
                     data.bbox.isSqueezedV2(data.bbox.getVolPart(x, y, z)));
@@ -162,10 +160,10 @@ bool Solver::tryToPlace(Data& data, const Piece& part) {
 
     place(data, part);
 
-    //    if (hasSqueezed(data, part)) {
-    //        remove(data, part);
-    //        return false;
-    //    }
+    if (hasSqueezed(data, part)) {
+        remove(data, part);
+        return false;
+    }
 
     return true;
 }
@@ -201,8 +199,8 @@ void Solver::stopSolving() {
 
 void Solver::solveForPiece(int i_puzzle) {
     Data data(puzzle_.getEmptyBox());
-    data.piece_is_placed.resize(pieces_.size(), true);
-    data.piece_is_placed[i_puzzle] = false;
+    data.piece_is_available.resize(pieces_.size(), true);
+    data.piece_is_available[i_puzzle] = false;
 
     recursiveSolve(data, i_puzzle);
 }
@@ -223,7 +221,7 @@ void Solver::recursiveSolve(Data& data) {
         LOGI("Elapsed time:", timer_.elapsedAsString());
     }
     for (unsigned i_puzzle = 0; i_puzzle < pieces_.size(); i_puzzle++) {
-        if (!data.piece_is_placed[i_puzzle]) {
+        if (!data.piece_is_available[i_puzzle]) {
             continue;
         }
         recursiveSolve(data, i_puzzle);
@@ -231,9 +229,9 @@ void Solver::recursiveSolve(Data& data) {
 }
 
 void Solver::recursiveSolve(Data& data, std::size_t i_puzzle) {
-    data.piece_is_placed[i_puzzle] = false;
+    data.piece_is_available[i_puzzle] = false;
     PiecesSet& piece_all_positions = pieces_in_all_positions_[i_puzzle];
-    for (unsigned i = 0; i < piece_all_positions.size(); i++) {
+    for (unsigned i = 0; i < piece_all_positions.size(); ++i) {
         Piece cur_piece = piece_all_positions[i];
         const BBox boundaries = cur_piece.getBBox();
 
@@ -267,7 +265,7 @@ void Solver::recursiveSolve(Data& data, std::size_t i_puzzle) {
             }
         }
     }
-    data.piece_is_placed[i_puzzle] = true;
+    data.piece_is_available[i_puzzle] = true;
 }
 
 void Solver::solve() {

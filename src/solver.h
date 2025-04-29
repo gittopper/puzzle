@@ -21,7 +21,7 @@ class Solver {
     void solveForPiece(int i_puzzle);
     struct Data {
         Data(const Geometry::Box& box) : bbox(box) {}
-        Bitset piece_is_placed;
+        Bitset piece_is_available;
         Box bbox;
         unsigned num_placed = 0;
         PiecesSet solution;

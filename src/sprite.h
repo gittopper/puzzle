@@ -47,6 +47,9 @@ class Sprite {
         return data_.data();
     }
     void setPixel(std::size_t x, std::size_t y, const Color& color) {
+        if (x >= glWidth() || y >= glHeight()) {
+            return;
+        }
         auto shift = (y * glWidth() + x) * (type_ == RGBA ? 4 : 3);
         data_[shift] = color.r;
         data_[shift + 1] = color.g;

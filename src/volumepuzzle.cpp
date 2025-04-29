@@ -7,49 +7,47 @@ using namespace Geometry;
 
 bool VolumePuzzle::addSolution(const PiecesSet& sol) {
     {
-        std::lock_guard<std::mutex> block(mutex_);
-        PiecesSet orderedSolution = sol;
-        orderedSolution.order();
+        std::lock_guard<std::mutex> lock(mutex_);
+        PiecesSet ordered_solution = sol;
+        ordered_solution.order();
 
-        // orderedSolution.shift(-orderedSolution[0].getZero());
+        // ordered_solution.shift(-ordered_solution[0].getZero());
 
-        PiecesSet normalizedSolution = orderedSolution;
+        PiecesSet normalized_solution = ordered_solution;
 
-        Piece part = normalizedSolution[0];
+        Piece part = normalized_solution[0];
         Piece p = pieces_[part.id - 1];
         p.shift(-p.getZero());
 
         Mat rotation = part.getRotationMatrix(p);
         BREAK_ON_LINE(rotation.det() == 1);
 
-        normalizedSolution.rotate(rotation);
-        normalizedSolution.shift(-normalizedSolution[0].getZero());
+        normalized_solution.rotate(rotation);
+        normalized_solution.shift(-normalized_solution[0].getZero());
 
-        part = normalizedSolution[0];
+        part = normalized_solution[0];
         BREAK_ON_LINE(part == p);
 
         for (unsigned iSol = 0; iSol < normalized_solutions_.size(); iSol++) {
-            if (normalized_solutions_[iSol] == normalizedSolution) return false;
+            if (normalized_solutions_[iSol] == normalized_solution)
+                return false;
         }
 
-        solutions_.push_back(orderedSolution);
-        normalized_solutions_.push_back(normalizedSolution);
+        solutions_.push_back(ordered_solution);
+        normalized_solutions_.push_back(normalized_solution);
     }
     LOGI("added solution");
     addedSolution();
     return true;
 }
 
-// std::mutex VolumePuzzle::lock;
-
 int VolumePuzzle::numFoundSolutions() const {
-    std::lock_guard<std::mutex> block(mutex_);
-    int l = solutions_.size();
-    return l;
+    std::lock_guard<std::mutex> lock(mutex_);
+    return solutions_.size();
 }
 
 void VolumePuzzle::getSolution(PiecesSet& sol, int i) const {
-    std::lock_guard<std::mutex> block(mutex_);
+    std::lock_guard<std::mutex> lock(mutex_);
     assert(i >= 1 && i <= solutions_.size());
     sol = solutions_[i - 1];
 }
@@ -57,9 +55,9 @@ void VolumePuzzle::getSolution(PiecesSet& sol, int i) const {
 VolumePuzzle::VolumePuzzle(int xDim,
                            int yDim,
                            int zDim,
-                           const PiecesSet puzzlePieces) :
-    dim_x_(xDim), dim_y_(yDim), dim_z_(zDim), pieces_(puzzlePieces) {
-    PiecesSet c = puzzlePieces;
+                           const PiecesSet puzzle_pieces) :
+    dim_x_(xDim), dim_y_(yDim), dim_z_(zDim), pieces_(puzzle_pieces) {
+    PiecesSet c = puzzle_pieces;
     for (int i = 0; i < c.size(); i++) {
         c[i].shift(Vector(2 * i, 0, 0));
     }
