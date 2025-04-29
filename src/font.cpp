@@ -23,7 +23,7 @@ void Font::renderText(Sprite& sprite,
                       std::size_t y,
                       const UString& text) {
     auto cur_x = x;
-    auto ascender = face_->ascender >> 6;
+    auto ascender = face_->size->metrics.ascender >> 6;
     for (auto& symbol : text) {
         FT_UInt glyph_index = FT_Get_Char_Index(face_, symbol);
         if (FT_Load_Glyph(face_, glyph_index, FT_LOAD_RENDER)) {

@@ -1,5 +1,8 @@
 #include "volumepuzzle.h"
 
+#include <logger.hpp>
+#include <timer.h>
+
 using namespace Geometry;
 
 bool VolumePuzzle::addSolution(const PiecesSet& sol) {
@@ -32,6 +35,7 @@ bool VolumePuzzle::addSolution(const PiecesSet& sol) {
         solutions_.push_back(orderedSolution);
         normalized_solutions_.push_back(normalizedSolution);
     }
+    LOGI("added solution");
     addedSolution();
     return true;
 }

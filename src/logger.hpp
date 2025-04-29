@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <timer.h>
 
 template<typename T>
 inline void getLogLine(std::stringstream& stream, const T& a) {
@@ -38,40 +39,46 @@ inline std::string getLogString(Types... args) {
 
 #include <android/log.h>
 
-#define LOGE(...)                                         \
-    __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "%s", \
+#define LOGE(...)                                                   \
+    __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "%s ERROR: %s", \
+                        getTimestamp().c_str(),                     \
                         getLogString(__VA_ARGS__).c_str());
-#define LOGI(...)                                        \
-    __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "%s", \
+#define LOGI(...)                                                 \
+    __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "%s INFO: %s", \
+                        getTimestamp().c_str(),                   \
                         getLogString(__VA_ARGS__).c_str());
-#define LOGD(...)                                         \
-    __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "%s", \
+#define LOGD(...)                                                   \
+    __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "%s DEBUG: %s", \
+                        getTimestamp().c_str(),                     \
                         getLogString(__VA_ARGS__).c_str());
 
 #else
 
 #ifdef QT_ENV
 
+#include <QDebug>
 #include <QtGlobal>
-
-#define LOGE(...) \
-    qCritical() << LOG_TAG << "error:" << getLogString(__VA_ARGS__).c_str();
-#define LOGI(...) \
-    qWarning() << LOG_TAG << "info:" << getLogString(__VA_ARGS__).c_str();
-#define LOGD(...) \
-    qDebug() << LOG_TAG << "debug:" << getLogString(__VA_ARGS__).c_str();
+#define LOGE(...)                                           \
+    qCritical() << getTimestamp().c_str() << ":" << LOG_TAG \
+                << "error:" << getLogString(__VA_ARGS__).c_str();
+#define LOGI(...)                                       \
+    qInfo() << getTimestamp().c_str() << ":" << LOG_TAG \
+            << "info:" << getLogString(__VA_ARGS__).c_str();
+#define LOGD(...)                                        \
+    qDebug() << getTimestamp().c_str() << ":" << LOG_TAG \
+             << "debug:" << getLogString(__VA_ARGS__).c_str();
 
 #else
 
-#define LOGE(...)                                                         \
-    std::cout << LOG_TAG << "error:" << getLogString(__VA_ARGS__).c_str() \
-              << std::endl;
-#define LOGI(...)                                                        \
-    std::cout << LOG_TAG << "info:" << getLogString(__VA_ARGS__).c_str() \
-              << std::endl;
-#define LOGD(...)                                                         \
-    std::cout << LOG_TAG << "debug:" << getLogString(__VA_ARGS__).c_str() \
-              << std::endl;
+#define LOGE(...)                                 \
+    std::cout << getTimestamp() << ":" << LOG_TAG \
+              << "error:" << getLogString(__VA_ARGS__).c_str() << std::endl;
+#define LOGI(...)                                 \
+    std::cout << getTimestamp() << ":" << LOG_TAG \
+              << "info:" << getLogString(__VA_ARGS__).c_str() << std::endl;
+#define LOGD(...)                                 \
+    std::cout << getTimestamp() << ":" << LOG_TAG \
+              << "debug:" << getLogString(__VA_ARGS__).c_str() << std::endl;
 
 #endif
 #endif

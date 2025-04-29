@@ -23,7 +23,7 @@ Engine::Engine(Geometry::VolumePuzzle& puzzle,
 
     font_.setColor({255, 0, 255, 255});
     font_.setFontSize(50);
-    font_.renderText(sprite_.value(), 10, 40, U"Привет!:)");
+    font_.renderText(sprite_.value(), 10, 10, U"Привет!:)");
 }
 
 Engine::~Engine() {
