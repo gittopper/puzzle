@@ -11,7 +11,7 @@ Solver::Solver(VolumePuzzle& puzzle) :
     max_sol_(0),
     progress_(0),
     search_all_solutions_(true),
-    multithread_(false),
+    multithread_(true),
     puzzle_(puzzle),
     dim_x_(puzzle_.getXDim()),
     dim_y_(puzzle_.getYDim()),
