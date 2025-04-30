@@ -25,10 +25,12 @@ JNIEXPORT void JNICALL
                                                  jint height,
                                                  jobject javaAssetManager) {
     std::lock_guard<std::mutex> lock(m);
-    auto res = std::make_shared<AndroidResourceLoader>(
-        AAssetManager_fromJava(env, javaAssetManager));
-    engine =
-        std::make_shared<Engine>(puzzle, std::make_shared<GLESRenderer>(), res);
+    if (nullptr == engine) {
+        auto res = std::make_shared<AndroidResourceLoader>(
+                AAssetManager_fromJava(env, javaAssetManager));
+        engine =
+                std::make_shared<Engine>(puzzle, std::make_shared<GLESRenderer>(), res);
+    }
     engine->setup();
     engine->resize(width, height);
 }

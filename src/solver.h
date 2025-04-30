@@ -14,7 +14,6 @@ class Solver {
 
     void solve();
 
-    void multithread(bool ml = false);
     void stopSolving();
 
   private:
@@ -40,16 +39,19 @@ class Solver {
     void recursiveSolve(Data& data, std::size_t i_puzzle);
 
   private:
+    void solveOneThread();
+    void solveMultithread();
     Timer timer_;
     VolumePuzzle& puzzle_;
     int dim_x_, dim_y_, dim_z_;
     bool continue_to_solve_;
+    bool multithread_;
     PiecesSet pieces_;
     unsigned piece_all_positions_number_;
     std::vector<PiecesSet> pieces_in_all_positions_;
     int progress_;
     bool search_all_solutions_;
     std::mutex mutex_;
-    std::atomic<int> max_sol_;
+    int max_sol_;
 };
 }  // namespace Geometry

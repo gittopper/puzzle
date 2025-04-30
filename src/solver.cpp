@@ -11,6 +11,7 @@ Solver::Solver(VolumePuzzle& puzzle) :
     max_sol_(0),
     progress_(0),
     search_all_solutions_(true),
+    multithread_(false),
     puzzle_(puzzle),
     dim_x_(puzzle_.getXDim()),
     dim_y_(puzzle_.getYDim()),
@@ -191,12 +192,6 @@ bool Solver::foundNewSolution(Data& data) {
     return false;
 }
 
-void Solver::multithread(bool ml) {}
-
-void Solver::stopSolving() {
-    continue_to_solve_ = false;
-}
-
 void Solver::solveForPiece(int i_puzzle) {
     Data data(puzzle_.getEmptyBox());
     data.piece_is_available.resize(pieces_.size(), true);
@@ -268,7 +263,31 @@ void Solver::recursiveSolve(Data& data, std::size_t i_puzzle) {
     data.piece_is_available[i_puzzle] = true;
 }
 
+void Solver::stopSolving() {
+    continue_to_solve_ = false;
+}
+
 void Solver::solve() {
+    if (multithread_) {
+        solveMultithread();
+    } else {
+        solveOneThread();
+    }
+}
+
+void Solver::solveOneThread() {
+    LOGI("starting to solve puzzle");
+    timer_.start();
+    for (auto i_piece = 0UL; i_piece < pieces_.size(); ++i_piece) {
+        LOGI("starting to solve piece ", i_piece);
+        solveForPiece(i_piece);
+    }
+    timer_.stop();
+    LOGI("solved!");
+    LOGI("elapsed time: ", timer_.elapsedAsString());
+}
+
+void Solver::solveMultithread() {
     LOGI("starting to solve puzzle");
     timer_.start();
     std::vector<std::thread> threads;
