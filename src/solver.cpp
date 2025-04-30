@@ -127,14 +127,13 @@ bool Solver::couldPlace(Data& data, const Piece& part, bool& matched) const {
 }
 
 bool Solver::hasSqueezed(Data& data, const Piece& part) const {
-    return false;
     BBox bbox;
     part.addToBBox(bbox);
     bbox.grow();
 
-    for (int x = bbox.minV()[0]; x <= bbox.maxV()[0]; x++) {
-        for (int y = bbox.minV()[1]; y <= bbox.maxV()[1]; y++) {
-            for (int z = bbox.minV()[2]; z <= bbox.maxV()[2]; z++) {
+    for (int x = bbox.minV()[0]; x <= bbox.maxV()[0]; ++x) {
+        for (int y = bbox.minV()[1]; y <= bbox.maxV()[1]; ++y) {
+            for (int z = bbox.minV()[2]; z <= bbox.maxV()[2]; ++z) {
                 BREAK_ON_LINE(
                     data.bbox.isSqueezed(data.bbox.getVolPart(x, y, z)) ==
                     data.bbox.isSqueezedV2(data.bbox.getVolPart(x, y, z)));
@@ -224,10 +223,11 @@ void Solver::recursiveSolve(Data& data, std::size_t i_puzzle) {
     PiecesSet& piece_all_positions = pieces_in_all_positions_[i_puzzle];
     for (unsigned i = 0; i < piece_all_positions.size(); ++i) {
         if (data.num_placed == 0) {
-            LOGI("Progress:",
-                 int(10000 * float(++progress_) / pieces_all_positions_number_) /
-                     100.,
-                 "%");
+            LOGI(
+                "Progress:",
+                int(10000 * float(++progress_) / pieces_all_positions_number_) /
+                    100.,
+                "%");
             LOGI("Elapsed time:", timer_.elapsedAsString());
         }
         Piece cur_piece = piece_all_positions[i];
