@@ -18,7 +18,7 @@ Solver::Solver(VolumePuzzle& puzzle) :
     dim_z_(puzzle_.getZDim()) {
     pieces_ = puzzle_.getPieces();
     for (unsigned pn = 0; pn < pieces_.size(); pn++) {
-        piece_all_positions_number_ = 0;
+        pieces_all_positions_number_ = 0;
         const Piece& piece = pieces_[pn];
         Piece copy0 = piece;
         PiecesSet one_piece_all_positions;
@@ -49,7 +49,7 @@ Solver::Solver(VolumePuzzle& puzzle) :
                 }
             }
         }
-        piece_all_positions_number_ += one_piece_all_positions.size();
+        pieces_all_positions_number_ += one_piece_all_positions.size();
         pieces_in_all_positions_.push_back(one_piece_all_positions);
     }
 }
@@ -211,10 +211,6 @@ void Solver::recursiveSolve(Data& data) {
         foundNewSolution(data);
         return;
     }
-    if (data.num_placed == 1) {
-        LOGI("Progress:", float(++progress_) / piece_all_positions_number_);
-        LOGI("Elapsed time:", timer_.elapsedAsString());
-    }
     for (unsigned i_puzzle = 0; i_puzzle < pieces_.size(); i_puzzle++) {
         if (!data.piece_is_available[i_puzzle]) {
             continue;
@@ -227,6 +223,13 @@ void Solver::recursiveSolve(Data& data, std::size_t i_puzzle) {
     data.piece_is_available[i_puzzle] = false;
     PiecesSet& piece_all_positions = pieces_in_all_positions_[i_puzzle];
     for (unsigned i = 0; i < piece_all_positions.size(); ++i) {
+        if (data.num_placed == 0) {
+            LOGI("Progress:",
+                 int(10000 * float(++progress_) / pieces_all_positions_number_) /
+                     100.,
+                 "%");
+            LOGI("Elapsed time:", timer_.elapsedAsString());
+        }
         Piece cur_piece = piece_all_positions[i];
         const BBox boundaries = cur_piece.getBBox();
 

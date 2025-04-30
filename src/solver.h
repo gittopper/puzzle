@@ -47,7 +47,7 @@ class Solver {
     bool continue_to_solve_;
     bool multithread_;
     PiecesSet pieces_;
-    unsigned piece_all_positions_number_;
+    unsigned pieces_all_positions_number_;
     std::vector<PiecesSet> pieces_in_all_positions_;
     int progress_;
     bool search_all_solutions_;

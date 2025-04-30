@@ -124,26 +124,26 @@ void Box::rotate(Mat rot) {
         }
     }
 
-    Box newBox(bbox.maxV()[0] - bbox.minV()[0] + 1,
-               bbox.maxV()[1] - bbox.minV()[1] + 1,
-               bbox.maxV()[2] - bbox.minV()[2] + 1);
+    Box new_box(bbox.maxV()[0] - bbox.minV()[0] + 1,
+                bbox.maxV()[1] - bbox.minV()[1] + 1,
+                bbox.maxV()[2] - bbox.minV()[2] + 1);
     Vector shift(-bbox.minV());
 
-    for (int i = 0; i < dim_x_; i++) {
-        for (int j = 0; j < dim_y_; j++) {
-            for (int k = 0; k < dim_z_; k++) {
-                VolPart newVol(getVolPart(i, j, k));
-                newVol.rotate(rot).shift(shift);
-                const Vector& xyz = newVol.getCoords();
-                newBox.getVolPart(xyz[0], xyz[1], xyz[2]) = newVol;
+    for (int i = 0; i < dim_x_; ++i) {
+        for (int j = 0; j < dim_y_; ++j) {
+            for (int k = 0; k < dim_z_; ++k) {
+                VolPart new_vol(getVolPart(i, j, k));
+                new_vol.rotate(rot).shift(shift);
+                const Vector& xyz = new_vol.getCoords();
+                new_box.getVolPart(xyz[0], xyz[1], xyz[2]) = new_vol;
             }
         }
     }
-    *this = newBox;
+    *this = new_box;
 }
 
 void Box::remove(const std::vector<VolPart>& vols) {
-    for (unsigned i = 0; i < vols.size(); i++) {
+    for (unsigned i = 0; i < vols.size(); ++i) {
         getVolPart(vols[i].getCoords()) -= vols[i];
     }
 }
