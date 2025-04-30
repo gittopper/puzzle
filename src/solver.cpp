@@ -126,7 +126,7 @@ bool Solver::couldPlace(Data& data, const Piece& part, bool& matched) const {
     return true;
 }
 
-bool Solver::hasSqueezed(Data& data, const Piece& part) const {
+bool Solver::hasSqueezed(Box& box, const Piece& part) const {
     BBox bbox;
     part.addToBBox(bbox);
     bbox.grow();
@@ -137,7 +137,7 @@ bool Solver::hasSqueezed(Data& data, const Piece& part) const {
                 BREAK_ON_LINE(
                     data.bbox.isSqueezed(data.bbox.getVolPart(x, y, z)) ==
                     data.bbox.isSqueezedV2(data.bbox.getVolPart(x, y, z)));
-                if (data.bbox.isSqueezedV2(data.bbox.getVolPart(x, y, z))) {
+                if (box.isSqueezedV2(box.getVolPart(x, y, z))) {
                     return true;
                 }
             }
@@ -145,6 +145,63 @@ bool Solver::hasSqueezed(Data& data, const Piece& part) const {
     }
 
     return false;
+}
+bool Solver::hasDoubleSqueezed(Box& box, const Piece& part) const {
+    BBox bbox;
+    part.addToBBox(bbox);
+    bbox.grow();
+
+    for (int x = bbox.minV()[0]; x <= bbox.maxV()[0] - 1; ++x) {
+        for (int y = bbox.minV()[1]; y <= bbox.maxV()[1] - 1; ++y) {
+            for (int z = bbox.minV()[2]; z <= bbox.maxV()[2] - 1; ++z) {
+                auto& vol = box.getVolPart(x, y, z);
+                BBox dbox;
+                dbox.merge(vol.getCoords());
+                if (vol.type() != VolPart::VolType::Angle) {
+                    continue;
+                }
+                auto& nvol1 = box.getVolPart(x + 1, y, z);
+                if (nvol1.type() == VolPart::VolType::Angle) {
+                    auto ddbox = dbox;
+                    ddbox.merge(nvol1.getCoords());
+                    if (boxIsSqueezed(box, ddbox)) {
+                        return false;
+                    }
+                }
+                auto& nvol2 = box.getVolPart(x, y + 1, z);
+                if (nvol2.type() == VolPart::VolType::Angle) {
+                    auto ddbox = dbox;
+                    ddbox.merge(nvol2.getCoords());
+                    if (boxIsSqueezed(box, ddbox)) {
+                        return true;
+                    }
+                }
+                auto& nvol3 = box.getVolPart(x, y, z + 1);
+                if (nvol3.type() == VolPart::VolType::Angle) {
+                    auto ddbox = dbox;
+                    ddbox.merge(nvol3.getCoords());
+                    if (boxIsSqueezed(box, ddbox)) {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
+bool Solver::boxIsSqueezed(Box& box, const BBox& roi) const {
+    for (auto x : {roi.minV()[0] - 1, roi.maxV()[0] + 1}) {
+        for (auto y : {roi.minV()[1] - 1, roi.maxV()[1] + 1}) {
+            for (auto z : {roi.minV()[2] - 1, roi.maxV()[2] + 1}) {
+                if (box.getVolPart(x, y, z).type() != VolPart::VolType::Full) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
 }
 
 bool Solver::tryToPlace(Data& data, const Piece& part) {
@@ -160,7 +217,7 @@ bool Solver::tryToPlace(Data& data, const Piece& part) {
 
     place(data, part);
 
-    if (hasSqueezed(data, part)) {
+    if (hasSqueezed(data.bbox, part) || hasDoubleSqueezed(data.bbox, part)) {
         remove(data, part);
         return false;
     }

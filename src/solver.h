@@ -28,7 +28,9 @@ class Solver {
     void remove(Data& data, const Piece& part);
     void place(Data& data, const Piece& part);
     bool couldPlace(Data& data, const Piece& part, bool& matched) const;
-    bool hasSqueezed(Data& data, const Piece& part) const;
+    bool hasSqueezed(Box& box, const Piece& part) const;
+    bool hasDoubleSqueezed(Box& box, const Piece& part) const;
+    bool boxIsSqueezed(Box& box, const BBox& roi) const;
     bool tryToPlace(Data& data, const Piece& part);
 
     bool verifyAlgorithm(Data& data);
