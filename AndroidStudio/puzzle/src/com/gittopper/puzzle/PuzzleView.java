@@ -57,12 +57,14 @@ class PuzzleView extends GLSurfaceView
             switch(e.getAction())
             {
                 case MotionEvent.ACTION_DOWN:
+                case MotionEvent.ACTION_POINTER_2_DOWN:
                     NativeLibrary.dragStart((int)pc0.x, (int)pc0.y, (int)pc1.x, (int)pc1.y);
                     break;
                 case MotionEvent.ACTION_MOVE:
                     NativeLibrary.drag((int)pc0.x, (int)pc0.y, (int)pc1.x, (int)pc1.y);
                     break;
                 case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_POINTER_2_UP:
                     NativeLibrary.dragStop();
                     break;
             }
