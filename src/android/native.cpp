@@ -19,7 +19,7 @@ float lstart;
 }  // namespace
 
 JNIEXPORT void JNICALL
-    Java_com_gittopper_puzzle_NativeLibrary_init(JNIEnv* env,
+    Java_com_gittopper_puzzle_NativeLibrary_onSurfaceChanged(JNIEnv* env,
                                                  jobject obj,
                                                  jint width,
                                                  jint height,

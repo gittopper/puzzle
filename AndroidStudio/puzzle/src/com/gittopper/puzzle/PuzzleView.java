@@ -30,8 +30,7 @@ class PuzzleView extends GLSurfaceView
         {
             final int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
             int[] attrib_list = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL10.EGL_NONE };
-            EGLContext context = egl.eglCreateContext(display, eglConfig, EGL10.EGL_NO_CONTEXT, attrib_list);
-            return context;
+            return egl.eglCreateContext(display, eglConfig, EGL10.EGL_NO_CONTEXT, attrib_list);
         }
 
         public void destroyContext(EGL10 egl, EGLDisplay display, EGLContext context)
@@ -58,14 +57,12 @@ class PuzzleView extends GLSurfaceView
             switch(e.getAction())
             {
                 case MotionEvent.ACTION_DOWN:
-                case MotionEvent.ACTION_POINTER_2_DOWN:
                     NativeLibrary.dragStart((int)pc0.x, (int)pc0.y, (int)pc1.x, (int)pc1.y);
                     break;
                 case MotionEvent.ACTION_MOVE:
                     NativeLibrary.drag((int)pc0.x, (int)pc0.y, (int)pc1.x, (int)pc1.y);
                     break;
                 case MotionEvent.ACTION_UP:
-                case MotionEvent.ACTION_POINTER_2_UP:
                     NativeLibrary.dragStop();
                     break;
             }
@@ -105,7 +102,7 @@ class PuzzleView extends GLSurfaceView
 
             public void onSurfaceChanged(GL10 gl, int width, int height)
             {
-                NativeLibrary.init(width, height, asset_manager);
+                NativeLibrary.onSurfaceChanged(width, height, asset_manager);
             }
 
             public void onSurfaceCreated(GL10 gl, EGLConfig config)

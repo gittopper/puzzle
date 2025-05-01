@@ -8,7 +8,7 @@ import android.util.Log;
 public class PuzzleActivity extends Activity
 {
     private static String LOGTAG = "PuzzleActivity";
-    protected PuzzleView graphicsView;
+    private PuzzleView graphicsView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)

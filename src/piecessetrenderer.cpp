@@ -1,5 +1,10 @@
 #include <piecessetrenderer.h>
 
+PiecesSetRenderer::PiecesSetRenderer(IRenderer& vol_part_renderer) :
+    vol_part_renderer_(vol_part_renderer),
+    engine_(fixed_colors_ ? 777 : std::random_device()()),
+    dist_(0, 1) {}
+
 void PiecesSetRenderer::render(const Geometry::PiecesSet& pieces_set) {
     Geometry::Vector cm;
     for (const auto& piece : pieces_set) {
@@ -21,9 +26,8 @@ void PiecesSetRenderer::render(const Geometry::Piece& piece,
 
 Geometry::Vector PiecesSetRenderer::getColor(std::size_t piece_id) {
     while (colors_.size() <= piece_id) {
-        colors_.push_back(Geometry::Vector((rand() % 256) / 256.f,
-                                           (rand() % 256) / 256.f,
-                                           (rand() % 256) / 256.f));
+        colors_.push_back(
+            Geometry::Vector(dist_(engine_), dist_(engine_), dist_(engine_)));
     }
     assert(piece_id < colors_.size());
     return colors_[piece_id];
